@@ -36,6 +36,7 @@ The system will provide:
 - AIS base stations and satellite services provide reliable data.
 - Only one zone of interest can be applied at a time.
 - Primary platform language is going to be english.
+- Admins have also tha ability to use the registered users features
 
 ## Requirements
 
