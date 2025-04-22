@@ -37,7 +37,7 @@ The platform will provide real-time ship tracking on a map, showing ships based 
 - User authentication and authorization.
 - Tracking the previous routes of ships (for the past 12 hours).
 - Allowing registered users to save ships of interest to their fleet.
-- Allowing registered users to display ships on the map based on filters (e.g. type, status, my fleet).
+- Allowing registered users to display ships on the map based on filters (e.g. type, my fleet).
 - Registered users can create zones of interest with restrictions for which a notification will be sent when violated.
 - Registered users will have access to a notification list.
 - Administrators can edit static data about the ships (e.g. their type).
