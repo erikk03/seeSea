@@ -19,8 +19,9 @@ class LoadDatabase {
     CommandLineRunner initDatabase(VesselRepository repository) {
 
         return args -> {
-            log.info("Preloading " + repository.save(new Vessel("99239923", "cargo")));
-            log.info("Preloading " + repository.save(new Vessel("38883838", "fishing")));
+          log.info("Used to load Vessels Here");
+//            log.info("Preloading " + repository.save(new Vessel("99239923", "cargo")));
+//            log.info("Preloading " + repository.save(new Vessel("38883838", "fishing")));
         };
     }
 }

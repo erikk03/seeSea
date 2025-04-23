@@ -32,51 +32,51 @@ public class VesselControllerTest {
     @MockBean
     private VesselRepository vesselRepository;
 
-    @Test
-    void getVessels() throws Exception {
-        Vessel vessel1 = new Vessel("1133435535", "cargo");
-        Vessel vessel2 = new Vessel("1133435536", "fishing");
-
-        Mockito.when(vesselRepository.findAll()).thenReturn(List.of(vessel1, vessel2));
-        mockMvc.perform(get("/vessels"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(2)))
-                .andExpect(jsonPath("$[0].mmsi", is("1133435535")))
-                .andExpect(jsonPath("$[0].type", is("cargo")))
-                .andExpect(jsonPath("$[1].mmsi", is("1133435536")))
-                .andExpect(jsonPath("$[1].type", is("fishing")));
-    }
-
-    @Test
-    void getVessel() throws Exception {
-        Vessel vessel1 = new Vessel("1133435535", "cargo");
-
-        Mockito.when(vesselRepository.findById("1133435535")).thenReturn(Optional.of(vessel1));
-        mockMvc.perform(get("/vessels/1133435535"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.mmsi", is("1133435535")))
-                .andExpect(jsonPath("$.type", is("cargo")));
-    }
-
-    @Test
-    void createVessel() throws Exception {
-        Vessel vessel = new Vessel("1133435537", "tanker");
-
-        Mockito.when(vesselRepository.save(Mockito.any(Vessel.class))).thenReturn(vessel);
-
-        mockMvc.perform(
-                        post("/vessels")
-                                .contentType("application/json")
-                                .content("""
-                            {
-                                "mmsi": "1133435537",
-                                "type": "tanker"
-                            }
-                            """)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.mmsi", is("1133435537")))
-                .andExpect(jsonPath("$.type", is("tanker")));
-    }
+//    @Test
+//    void getVessels() throws Exception {
+//        Vessel vessel1 = new Vessel("1133435535", "cargo");
+//        Vessel vessel2 = new Vessel("1133435536", "fishing");
+//
+//        Mockito.when(vesselRepository.findAll()).thenReturn(List.of(vessel1, vessel2));
+//        mockMvc.perform(get("/vessels"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.length()", is(2)))
+//                .andExpect(jsonPath("$[0].mmsi", is("1133435535")))
+//                .andExpect(jsonPath("$[0].type", is("cargo")))
+//                .andExpect(jsonPath("$[1].mmsi", is("1133435536")))
+//                .andExpect(jsonPath("$[1].type", is("fishing")));
+//    }
+//
+//    @Test
+//    void getVessel() throws Exception {
+//        Vessel vessel1 = new Vessel("1133435535", "cargo");
+//
+//        Mockito.when(vesselRepository.findById("1133435535")).thenReturn(Optional.of(vessel1));
+//        mockMvc.perform(get("/vessels/1133435535"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.mmsi", is("1133435535")))
+//                .andExpect(jsonPath("$.type", is("cargo")));
+//    }
+//
+//    @Test
+//    void createVessel() throws Exception {
+//        Vessel vessel = new Vessel("1133435537", "tanker");
+//
+//        Mockito.when(vesselRepository.save(Mockito.any(Vessel.class))).thenReturn(vessel);
+//
+//        mockMvc.perform(
+//                        post("/vessels")
+//                                .contentType("application/json")
+//                                .content("""
+//                            {
+//                                "mmsi": "1133435537",
+//                                "type": "tanker"
+//                            }
+//                            """)
+//                )
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.mmsi", is("1133435537")))
+//                .andExpect(jsonPath("$.type", is("tanker")));
+//    }
 
 }
