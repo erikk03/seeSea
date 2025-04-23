@@ -1,0 +1,3 @@
+[2025-02-19 20:17:58,373] INFO [GroupCoordinator 0]: Member consumer-map-group-1-d37f7a08-aded-4964-a884-17e9e31591af in group map-group has failed, removing it from the group (kafka.coordinator.group.GroupCoordinator)
+[2025-02-19 20:17:58,384] INFO [GroupCoordinator 0]: Preparing to rebalance group map-group in state PreparingRebalance with old generation 4 (__consumer_offsets-40) (reason: removing member consumer-map-group-1-d37f7a08-aded-4964-a884-17e9e31591af on heartbeat expiration) (kafka.coordinator.group.GroupCoordinator)
+[2025-02-19 20:17:58,384] INFO [GroupCoordinator 0]: Group map-group with generation 5 is now empty (__consumer_offsets-40) (kafka.coordinator.group.GroupCoordinator)
