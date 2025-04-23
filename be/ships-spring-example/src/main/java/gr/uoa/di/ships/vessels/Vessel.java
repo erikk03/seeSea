@@ -4,7 +4,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 import java.util.Objects;
-
+// test
 @Entity
 public class Vessel {
 
