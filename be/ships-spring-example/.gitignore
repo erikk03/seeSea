@@ -35,5 +35,8 @@ build/
 ### logs ###
 *.log
 logs/
+
+/kafka/
+/kafka/*
 kafka/VTS/kafka_2.12-3.9.0/logs/
 
