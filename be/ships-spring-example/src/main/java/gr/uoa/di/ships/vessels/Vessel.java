@@ -46,6 +46,8 @@ public class Vessel {
                 Objects.equals(this.type, vessel.type);
     }
 
+    // just a commit test!
+
     @Override
     public String toString() {
         return "Vessel{" +"mmsi='" + mmsi + '\'' + ", type='" + type + '\'' + '}';
