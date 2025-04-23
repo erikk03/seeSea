@@ -11,3 +11,5 @@
 .DS_Store
 
 kafka/VTS/kafka_2.12-3.9.0/logs/
+!kafka/VTS/dataset/ais/
+!kafka/VTS/dataset/ais/*
