@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### logs ###
+*.log
+logs/
+kafka/VTS/kafka_2.12-3.9.0/logs/
+
