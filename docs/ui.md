@@ -28,7 +28,7 @@ We can see the main page of the admin user. On the left we can see the main cate
 
 Selecting a vessel will open a pop up window where information about it will appear. There is an option to add the selected vessel to your fleet. Admin users, can edit the static info of a vessel, e.g. type of vessel.
 
-![Admin](assets/AdminUser-FiltersApplied-VesselSelection.png)
+![Admin](assets/AdminUser-Edit.png)
 
 ## Registered User Pages
 
@@ -75,7 +75,7 @@ Guests have access on the main page of the map and can see all the vessels' posi
 
 Guest users can also watch ship movement history for up to twelve hours.
 
-![Guest](assets/GuestUser-PastTrackOfAShip.png)
+![Guest](assets/GuestUser-PastTrack.png)
 
 If a guest user tries to enter **Filters** or **Alerts** Tab, considered as premium content, a pop up is shown, where he is being asked to sign in or register, if he has not already an account.
 
