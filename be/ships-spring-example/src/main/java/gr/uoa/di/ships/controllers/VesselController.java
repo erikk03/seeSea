@@ -1,8 +1,9 @@
-package gr.uoa.di.ships.services;
+package gr.uoa.di.ships.controllers;
 
-import gr.uoa.di.ships.vessels.Vessel;
-import gr.uoa.di.ships.vessels.VesselNotFoundException;
-import gr.uoa.di.ships.vessels.VesselRepository;
+import gr.uoa.di.ships.api.dto.VesselDTO;
+import gr.uoa.di.ships.persistence.model.Vessel;
+import gr.uoa.di.ships.configurations.exceptions.VesselNotFoundException;
+import gr.uoa.di.ships.persistence.repository.VesselRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +11,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/vessel")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 class VesselController {
 
-    private final VesselRepository repository;
+    private final VesselRepository vesselRepository;
 
-    VesselController(VesselRepository repository) {
-        this.repository = repository;
+    VesselController(VesselRepository vesselRepository) {
+        this.vesselRepository = vesselRepository;
     }
 
 
@@ -28,16 +29,16 @@ class VesselController {
     @CrossOrigin(origins ="${cors.urls}")
     @GetMapping("/get-all")
     List<Vessel> all() {
-        return repository.findAll();
+        return vesselRepository.findAll();
     }
     // end::get-aggregate-root[]
 
     @CrossOrigin(origins ="${cors.urls}")
     @PostMapping("/create")
     Vessel newVessel(@RequestBody VesselDTO vesselDTO) {
-        return repository.save(
+        return vesselRepository.save(
             Vessel.builder()
-                  .mmsi(vesselDTO.mmsi)
+                  .mmsi(vesselDTO.getMmsi())
                   .build());
     }
 
@@ -47,27 +48,24 @@ class VesselController {
     @GetMapping("/{mmsi}")
     Vessel one(@PathVariable String mmsi) {
 
-        return repository.findById(mmsi)
-                .orElseThrow(() -> new VesselNotFoundException(mmsi));
+        return vesselRepository.findByMmsi(mmsi)
+                               .orElseThrow(() -> new VesselNotFoundException(mmsi));
     }
 
     @CrossOrigin(origins ="${cors.urls}")
     @PutMapping("/{mmsi}")
     Vessel replaceVessel(@RequestBody Vessel newVessel, @PathVariable String mmsi) {
-
-        return repository.findById(mmsi)
-                .map(vessel -> {
-                    vessel.setMmsi(newVessel.getMmsi());
-                    return repository.save(vessel);
-                })
-                .orElseGet(() -> {
-                    return repository.save(newVessel);
-                });
+      return vesselRepository.findByMmsi(mmsi)
+          .map(vessel -> {
+            vessel.setMmsi(newVessel.getMmsi());
+            return vesselRepository.save(vessel);
+          })
+          .orElseGet(() -> vesselRepository.save(newVessel));
     }
 
     @CrossOrigin(origins ="${cors.urls}")
     @DeleteMapping("/{mmsi}")
     void deleteVessel(@PathVariable String mmsi) {
-        repository.deleteById(mmsi);
+        vesselRepository.deleteByMmsi(mmsi);
     }
 }

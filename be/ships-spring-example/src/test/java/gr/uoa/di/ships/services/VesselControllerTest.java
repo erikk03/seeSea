@@ -1,10 +1,8 @@
 package gr.uoa.di.ships.services;
 
-import gr.uoa.di.ships.vessels.Vessel;
-import gr.uoa.di.ships.vessels.VesselRepository;
-import org.junit.jupiter.api.Test;
+import gr.uoa.di.ships.controllers.VesselController;
+import gr.uoa.di.ships.persistence.repository.VesselRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -12,15 +10,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-import java.util.Optional;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.*;
-
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = VesselController.class,  excludeAutoConfiguration = {SecurityAutoConfiguration.class})

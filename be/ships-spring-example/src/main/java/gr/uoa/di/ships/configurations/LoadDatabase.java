@@ -1,7 +1,6 @@
 package gr.uoa.di.ships.configurations;
 
-import gr.uoa.di.ships.vessels.Vessel;
-import gr.uoa.di.ships.vessels.VesselRepository;
+import gr.uoa.di.ships.persistence.repository.VesselRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
