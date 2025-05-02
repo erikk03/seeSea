@@ -2,7 +2,10 @@ package gr.uoa.di.ships.services.implementation;
 
 import gr.uoa.di.ships.api.dto.JwtTokenDTO;
 import gr.uoa.di.ships.api.dto.UserAuthDTO;
+import gr.uoa.di.ships.api.dto.UserInfoDTO;
 import gr.uoa.di.ships.api.dto.UserRegisterDTO;
+import gr.uoa.di.ships.api.mapper.interfaces.RegisteredUserMapper;
+import gr.uoa.di.ships.configurations.exceptions.UserNotFoundException;
 import gr.uoa.di.ships.configurations.security.JwtService;
 import gr.uoa.di.ships.configurations.security.SecurityConfig;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
@@ -32,17 +35,20 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   private final RegisteredUserRepository registeredUserRepository;
   private final SecurityConfig securityConfig;
   private final RoleService roleService;
+  private final RegisteredUserMapper registeredUserMapper;
 
   public RegisteredUserServiceImpl(JwtService jwtService,
                                    AuthenticationManager authManager,
                                    RegisteredUserRepository registeredUserRepository,
                                    SecurityConfig securityConfig,
-                                   RoleService roleService) {
+                                   RoleService roleService,
+                                   RegisteredUserMapper registeredUserMapper) {
     this.jwtService = jwtService;
     this.authManager = authManager;
     this.registeredUserRepository = registeredUserRepository;
     this.securityConfig = securityConfig;
     this.roleService = roleService;
+    this.registeredUserMapper = registeredUserMapper;
   }
 
   @Override
@@ -74,6 +80,20 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
       throw new RuntimeException(INCORRECT_EMAIL_OR_PASSWORD, e);
     }
     return null;
+  }
+
+  @Override
+  public UserInfoDTO getUserInfo(Long id) {
+    return registeredUserRepository.findById(id).map(registeredUserMapper::toUserInfoDTO)
+        .orElseThrow(() -> new UserNotFoundException(id));
+  }
+
+  @Override
+  public void changePassword(Long id, String newPassword) {
+    RegisteredUser registeredUser = registeredUserRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
+    registeredUser.setPassword(securityConfig.encoder().encode(newPassword));
+    registeredUserRepository.save(registeredUser);
   }
 
   private void validate(UserRegisterDTO userRegisterDTO) {

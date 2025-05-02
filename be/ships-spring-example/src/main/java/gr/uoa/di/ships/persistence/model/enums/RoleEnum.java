@@ -21,7 +21,7 @@ public enum RoleEnum {
         .findAny().orElseThrow(() -> new IllegalArgumentException("No such role: " + role));
   }
 
-  public static RoleEnum fromDescription(String description) {
+  public static RoleEnum fromAuthority(String description) {
     return Arrays.stream(RoleEnum.values())
         .filter(s -> s.authority.equals(description))
         .findAny().orElseThrow(() -> new IllegalArgumentException("No such description for role: " + description));

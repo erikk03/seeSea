@@ -11,7 +11,9 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class VesselDTO {
-  private String mmsi;
-  private String type;
+public class UserInfoDTO {
+  private Long id;
+  private String username;
+  private String email;
+  private String role;
 }

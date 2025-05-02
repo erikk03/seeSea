@@ -44,7 +44,8 @@ public class SecurityConfig {
       .authorizeHttpRequests(request -> request
           .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // let the browser send OPTIONS to any URL (including /ws/info)
           .requestMatchers("/auth/login", "/auth/register").permitAll()
-          .requestMatchers("/admin/change-vessel-type").hasAuthority(RoleEnum.ADMINISTRATOR.name())
+          .requestMatchers("/admin", "/admin/**").hasAuthority(RoleEnum.ADMINISTRATOR.name())
+          .requestMatchers("/registered-user", "/registered-user/**").hasAnyAuthority(RoleEnum.ADMINISTRATOR.name(), RoleEnum.REGISTERED_USER.name())
           .requestMatchers("/ws/**").permitAll() // allow SockJS/WebSocket handshakes
           .anyRequest()
           .authenticated()
