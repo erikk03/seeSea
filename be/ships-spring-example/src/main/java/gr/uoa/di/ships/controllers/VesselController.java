@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/vessel")
-//@PreAuthorize("hasRole('ADMIN')")
+@CrossOrigin(origins ="${cors.urls}")
 class VesselController {
 
     private final VesselRepository vesselRepository;
@@ -26,14 +26,12 @@ class VesselController {
     // curl -v localhost:8080/vessels
     // Aggregate root
     // tag::get-aggregate-root[]
-    @CrossOrigin(origins ="${cors.urls}")
     @GetMapping("/get-all")
     List<Vessel> all() {
         return vesselRepository.findAll();
     }
     // end::get-aggregate-root[]
 
-    @CrossOrigin(origins ="${cors.urls}")
     @PostMapping("/create")
     Vessel newVessel(@RequestBody VesselDTO vesselDTO) {
         return vesselRepository.save(
@@ -44,7 +42,6 @@ class VesselController {
 
     // Single item
 
-    @CrossOrigin(origins ="${cors.urls}")
     @GetMapping("/{mmsi}")
     Vessel one(@PathVariable String mmsi) {
 
@@ -52,7 +49,6 @@ class VesselController {
                                .orElseThrow(() -> new VesselNotFoundException(mmsi));
     }
 
-    @CrossOrigin(origins ="${cors.urls}")
     @PutMapping("/{mmsi}")
     Vessel replaceVessel(@RequestBody Vessel newVessel, @PathVariable String mmsi) {
       return vesselRepository.findByMmsi(mmsi)
@@ -63,7 +59,6 @@ class VesselController {
           .orElseGet(() -> vesselRepository.save(newVessel));
     }
 
-    @CrossOrigin(origins ="${cors.urls}")
     @DeleteMapping("/{mmsi}")
     void deleteVessel(@PathVariable String mmsi) {
         vesselRepository.deleteByMmsi(mmsi);
