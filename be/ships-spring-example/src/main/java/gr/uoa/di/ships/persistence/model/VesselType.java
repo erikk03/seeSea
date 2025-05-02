@@ -20,8 +20,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "roles")
-public class Role {
+@Table(name = "vessel_type")
+public class VesselType {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +30,6 @@ public class Role {
   @Column(name = "name")
   private String name;
 
-  @OneToMany(mappedBy = "role")
-  private Set<RegisteredUser> registeredUsers;
+  @OneToMany(mappedBy = "vesselType")
+  private Set<Vessel> vessels;
 }

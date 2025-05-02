@@ -1,10 +1,13 @@
 package gr.uoa.di.ships.persistence.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -22,24 +25,14 @@ import lombok.Setter;
 @Table(name = "vessel")
 public class Vessel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "mmsi")
-    String mmsi;
+  @Column(name = "mmsi")
+  String mmsi;
 
-    @Override
-    public boolean equals(Object o){
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vessel vessel = (Vessel) o;
-        return Objects.equals(this.mmsi, vessel.mmsi );
-    }
-
-    @Override
-    public String toString() {
-//      return "Vessel{" +"mmsi='" + mmsi + '\'' + ", type='" + type + '\'' + '}';
-      return "Vessel{" +"mmsi='" + mmsi + '\'' + '}';
-    }
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "vessel_type_id")
+  private VesselType vesselType;
 }

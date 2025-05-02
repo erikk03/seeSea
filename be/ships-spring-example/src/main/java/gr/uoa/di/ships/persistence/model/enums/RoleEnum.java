@@ -9,10 +9,10 @@ public enum RoleEnum {
   ADMINISTRATOR("Administrator"),
   ANONYMOUS_USER("Anonymous User");
 
-  final String description;
+  final String authority;
 
-  RoleEnum(final String description) {
-      this.description = description;
+  RoleEnum(final String authority) {
+      this.authority = authority;
   }
 
   public static RoleEnum fromRole(String role) {
@@ -23,7 +23,7 @@ public enum RoleEnum {
 
   public static RoleEnum fromDescription(String description) {
     return Arrays.stream(RoleEnum.values())
-        .filter(s -> s.description.equals(description))
+        .filter(s -> s.authority.equals(description))
         .findAny().orElseThrow(() -> new IllegalArgumentException("No such description for role: " + description));
   }
 }

@@ -1,15 +1,15 @@
 package gr.uoa.di.ships.persistence.repository;
 
-import gr.uoa.di.ships.persistence.model.User;
+import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface RegisteredUserRepository extends JpaRepository<RegisteredUser, Long> {
   @EntityGraph(attributePaths = "role")
-  Optional<User> findByUsername(String username);
+  Optional<RegisteredUser> findByUsername(String username);
 
-  Optional<User> findByEmail(String email);
+  Optional<RegisteredUser> findByEmail(String email);
 }

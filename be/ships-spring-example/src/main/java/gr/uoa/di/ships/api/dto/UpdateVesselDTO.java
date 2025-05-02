@@ -1,15 +1,20 @@
 package gr.uoa.di.ships.api.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class VesselDTO {
+@AllArgsConstructor
+@Builder
+public class UpdateVesselDTO {
+  @NotNull
   private String mmsi;
-  private String type;
+  @NotNull
+  private String newType;
 }

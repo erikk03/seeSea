@@ -1,6 +1,6 @@
 package gr.uoa.di.ships.services.implementation;
 
-import gr.uoa.di.ships.persistence.repository.UserRepository;
+import gr.uoa.di.ships.persistence.repository.RegisteredUserRepository;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,15 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserDetailsServiceImpl implements SeeSeaUserDetailsService {
 
   public static final String USER_NOT_FOUND = "User not found: %s";
-  private final UserRepository userRepository;
+  private final RegisteredUserRepository registeredUserRepository;
 
-  public UserDetailsServiceImpl(UserRepository userRepository) {
-    this.userRepository = userRepository;
+  public UserDetailsServiceImpl(RegisteredUserRepository registeredUserRepository) {
+    this.registeredUserRepository = registeredUserRepository;
   }
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return userRepository.findByUsername(username)
+    return registeredUserRepository.findByUsername(username)
         .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.formatted(username)));
   }
 }

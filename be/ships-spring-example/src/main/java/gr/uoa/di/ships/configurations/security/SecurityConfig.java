@@ -1,5 +1,6 @@
 package gr.uoa.di.ships.configurations.security;
 
+import gr.uoa.di.ships.persistence.model.enums.RoleEnum;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,10 +44,14 @@ public class SecurityConfig {
       .authorizeHttpRequests(request -> request
           .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // let the browser send OPTIONS to any URL (including /ws/info)
           .requestMatchers("/auth/login", "/auth/register").permitAll()
+          .requestMatchers("/admin/change-vessel-type").hasAuthority(RoleEnum.ADMINISTRATOR.name())
           .requestMatchers("/ws/**").permitAll() // allow SockJS/WebSocket handshakes
           .anyRequest()
           .authenticated()
       )
+     .exceptionHandling(exception -> exception
+         .accessDeniedHandler(new CustomAccessDeniedHandler())
+     )
       .sessionManagement(session -> session
           .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       )

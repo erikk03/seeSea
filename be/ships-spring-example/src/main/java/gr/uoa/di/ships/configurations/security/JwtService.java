@@ -1,6 +1,6 @@
 package gr.uoa.di.ships.configurations.security;
 
-import gr.uoa.di.ships.persistence.model.User;
+import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.services.implementation.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -63,12 +63,12 @@ public class JwtService {
   }
 
   private String createToken(String subject) {
-    User user = (User) userDetailsService.loadUserByUsername(subject);
+    RegisteredUser registeredUser = (RegisteredUser) userDetailsService.loadUserByUsername(subject);
     return Jwts.builder()
         .subject(subject)
-        .claim("role", user.getRole().getName())
-        .claim("email", user.getEmail())
-        .claim("username", user.getUsername())
+        .claim("role", registeredUser.getRole().getName())
+        .claim("email", registeredUser.getEmail())
+        .claim("username", registeredUser.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + millisToHours(tokenExpirationHours)))
         .signWith(secretKey)

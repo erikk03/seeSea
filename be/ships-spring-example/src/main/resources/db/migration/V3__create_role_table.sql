@@ -3,9 +3,9 @@ CREATE TABLE [roles] (
     [name] VARCHAR(255) NOT NULL
 );
 
-ALTER TABLE [users] ADD [role_id] BIGINT;
+ALTER TABLE [registered_user] ADD [role_id] BIGINT;
 
-ALTER TABLE [users] ADD CONSTRAINT [FK_roles_user]
+ALTER TABLE [registered_user] ADD CONSTRAINT [FK_roles_registered_user]
     FOREIGN KEY ([role_id]) REFERENCES [roles]([id]);
 
 INSERT INTO roles (name) VALUES ( 'REGISTERED_USER');
