@@ -1,15 +1,19 @@
 package gr.uoa.di.ships.controllers;
 
 import gr.uoa.di.ships.api.dto.VesselDTO;
-import gr.uoa.di.ships.persistence.model.Vessel;
 import gr.uoa.di.ships.configurations.exceptions.VesselNotFoundException;
-import gr.uoa.di.ships.persistence.model.VesselType;
+import gr.uoa.di.ships.persistence.model.Vessel;
 import gr.uoa.di.ships.persistence.repository.VesselRepository;
 import gr.uoa.di.ships.services.interfaces.VesselTypeService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/vessel")
