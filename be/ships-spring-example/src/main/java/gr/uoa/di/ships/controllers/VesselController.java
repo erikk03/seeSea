@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/vessel")
-@CrossOrigin(origins ="${cors.urls}")
 class VesselController {
 
     private final VesselRepository vesselRepository;
