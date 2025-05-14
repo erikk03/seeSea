@@ -4,6 +4,7 @@ import gr.uoa.di.ships.configurations.exceptions.VesselTypeNotFoundException;
 import gr.uoa.di.ships.persistence.model.VesselType;
 import gr.uoa.di.ships.persistence.repository.VesselTypeRepository;
 import gr.uoa.di.ships.services.interfaces.VesselTypeService;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,5 +24,15 @@ public class VesselTypeServiceImpl implements VesselTypeService {
   public VesselType findVesselTypeByName(String name) {
     return vesselTypeRepository.findVesselTypeByName(name)
         .orElseThrow(() -> new VesselTypeNotFoundException(name));
+  }
+
+  @Override
+  public List<VesselType> findAllVesselTypes() {
+    return vesselTypeRepository.findAll();
+  }
+
+  @Override
+  public VesselType saveVesselType(VesselType vesselType) {
+    return vesselTypeRepository.save(vesselType);
   }
 }
