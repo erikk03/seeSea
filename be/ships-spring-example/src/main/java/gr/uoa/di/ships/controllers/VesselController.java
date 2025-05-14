@@ -22,7 +22,7 @@ class VesselController {
     private final VesselRepository vesselRepository;
     private final VesselTypeService vesselTypeService;
 
-    VesselController(VesselRepository vesselRepository, final VesselTypeService vesselTypeService) {
+    VesselController(VesselRepository vesselRepository, VesselTypeService vesselTypeService) {
         this.vesselRepository = vesselRepository;
       this.vesselTypeService = vesselTypeService;
     }
