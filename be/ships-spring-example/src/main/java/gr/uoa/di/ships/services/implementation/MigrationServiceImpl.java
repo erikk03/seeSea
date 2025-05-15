@@ -48,7 +48,7 @@ public class MigrationServiceImpl implements MigrationService {
     Migration migration = validateLoadVesselTypesFromCsv();
     try (
         InputStream inputStream = new ClassPathResource(ASSETS_VESSEL_TYPES_CSV).getInputStream();
-        CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream));
+        CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream))
         ) {
       Map<String, VesselType> vesselTypeMap = vesselTypeService.findAllVesselTypes()
           .stream()
