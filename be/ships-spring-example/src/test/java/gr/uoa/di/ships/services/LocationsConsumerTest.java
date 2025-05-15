@@ -1,6 +1,7 @@
 package gr.uoa.di.ships.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.uoa.di.ships.services.interfaces.LocationsConsumer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,9 +21,13 @@ public class LocationsConsumerTest {
     @InjectMocks
     LocationsConsumer locationsConsumer;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
-    @Test
+  public LocationsConsumerTest(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
+
+  @Test
     void testConsume_validJson_sendsMessageToWebSocket() throws Exception {
         // given
         String kafkaMessage = "{\"ship\":\"Titanic\",\"location\":\"Atlantic\"}";

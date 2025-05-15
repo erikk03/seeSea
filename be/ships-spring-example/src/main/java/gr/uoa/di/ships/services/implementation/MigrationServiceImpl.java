@@ -10,6 +10,7 @@ import gr.uoa.di.ships.persistence.repository.MigrationRepository;
 import gr.uoa.di.ships.services.interfaces.MigrationService;
 import gr.uoa.di.ships.services.interfaces.VesselService;
 import gr.uoa.di.ships.services.interfaces.VesselTypeService;
+import jakarta.persistence.EntityManager;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -33,11 +34,13 @@ public class MigrationServiceImpl implements MigrationService {
   private final VesselTypeService vesselTypeService;
   private final VesselService vesselService;
   private final MigrationRepository migrationRepository;
+  private final EntityManager entityManager;
 
-  public MigrationServiceImpl(VesselTypeService vesselTypeService, VesselService vesselService, MigrationRepository migrationRepository) {
+  public MigrationServiceImpl(VesselTypeService vesselTypeService, VesselService vesselService, MigrationRepository migrationRepository, EntityManager entityManager) {
     this.vesselTypeService = vesselTypeService;
     this.vesselService = vesselService;
     this.migrationRepository = migrationRepository;
+    this.entityManager = entityManager;
   }
 
   @Override
@@ -45,7 +48,7 @@ public class MigrationServiceImpl implements MigrationService {
     Migration migration = validateLoadVesselTypesFromCsv();
     try (
         InputStream inputStream = new ClassPathResource(ASSETS_VESSEL_TYPES_CSV).getInputStream();
-        CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream));
+        CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream))
         ) {
       Map<String, VesselType> vesselTypeMap = vesselTypeService.findAllVesselTypes()
           .stream()
@@ -58,9 +61,17 @@ public class MigrationServiceImpl implements MigrationService {
       readCsv(csvReader, vesselTypeMap, existingMmsis, newVessels);
       vesselService.saveAllVessels(newVessels);
       updateMigration(migration);
+      entityManager.flush();
     } catch (Exception e) {
       throw new RuntimeException("Unable to load vessel types from CSV", e);
     }
+  }
+
+  @Override
+  public boolean completedMigration(MigrationEnum migrationEnum) {
+    Migration migration = migrationRepository.findByDescription(migrationEnum.getDescription())
+        .orElseThrow(() -> new MigrationNotFoundException(migrationEnum.getDescription()));
+    return migration.getDone();
   }
 
   private void updateMigration(Migration migration) {
