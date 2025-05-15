@@ -17,6 +17,6 @@ class MigrationsController {
 
   @PostMapping("/load-vessel-types-csv")
     public void loadVesselTypesFromCSV() {
-    migrationService.loadVesselTypesFromCSV();
+      migrationService.loadVesselTypesFromCSV();
     }
 }

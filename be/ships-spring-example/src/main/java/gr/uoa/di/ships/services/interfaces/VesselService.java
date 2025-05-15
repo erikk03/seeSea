@@ -3,6 +3,7 @@ package gr.uoa.di.ships.services.interfaces;
 import gr.uoa.di.ships.api.dto.UpdateVesselDTO;
 import gr.uoa.di.ships.persistence.model.Vessel;
 import java.util.List;
+import java.util.Optional;
 
 public interface VesselService {
 
@@ -11,4 +12,8 @@ public interface VesselService {
   List<Vessel> getAllVessels();
 
   void saveAllVessels(List<Vessel> vessels);
+
+  Optional<Vessel> getVesselByMMSI(String mmsi);
+
+  Vessel saveVessel(Vessel vessel);
 }
