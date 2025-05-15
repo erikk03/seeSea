@@ -1,9 +1,7 @@
 package gr.uoa.di.ships.api.mapper.interfaces;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import gr.uoa.di.ships.api.dto.UserInfoDTO;
 import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
-import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.persistence.model.VesselHistoryData;
 
 public interface VesselHistoryDataMapper {

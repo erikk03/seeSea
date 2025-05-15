@@ -4,7 +4,6 @@ import gr.uoa.di.ships.api.dto.VesselDTO;
 import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.configurations.exceptions.VesselNotFoundException;
 import gr.uoa.di.ships.persistence.model.Vessel;
-import gr.uoa.di.ships.persistence.model.VesselHistoryData;
 import gr.uoa.di.ships.persistence.repository.VesselRepository;
 import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
 import gr.uoa.di.ships.services.interfaces.VesselTypeService;

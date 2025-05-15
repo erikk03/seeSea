@@ -25,7 +25,6 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private final ObjectMapper objectMapper;
   private final List<JsonNode> buffer = Collections.synchronizedList(new ArrayList<>());
   private final AtomicInteger batchCount = new AtomicInteger(0);
-  private final int BATCH_LIMIT = 20;
 
   private final SimpMessagingTemplate template;
   private final VesselHistoryDataService vesselHistoryDataService;
@@ -69,14 +68,15 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private void handleBatches(JsonNode jsonNode) {
     buffer.add(jsonNode);
     int currentCount = batchCount.incrementAndGet();
-    if (currentCount >= BATCH_LIMIT) {
+    int batchSize = 20;
+    if (currentCount >= batchSize) {
       synchronized (buffer) {
         if (!buffer.isEmpty()) {
           validateVesselTypesMigrated();
           vesselHistoryDataService.saveVesselHistoryData(new ArrayList<>(buffer));
           buffer.clear();
           batchCount.set(0);
-          log.info("Saved {} vessel history entries to DB", BATCH_LIMIT);
+          log.info("Saved {} vessel history entries to DB", batchSize);
         }
       }
     }
