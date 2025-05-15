@@ -6,6 +6,8 @@ import gr.uoa.di.ships.persistence.model.Vessel;
 import gr.uoa.di.ships.persistence.repository.VesselRepository;
 import gr.uoa.di.ships.services.interfaces.VesselService;
 import gr.uoa.di.ships.services.interfaces.VesselTypeService;
+import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,5 +30,25 @@ public class VesselServiceImpl implements VesselService {
     Vessel vessel = vesselRepository.findByMmsi(updateVesselDTO.getMmsi())
         .orElseThrow(() -> new VesselNotFoundException(updateVesselDTO.getMmsi()));
     vessel.setVesselType(vesselTypeService.findVesselTypeByName(updateVesselDTO.getNewType()));
+  }
+
+  @Override
+  public List<Vessel> getAllVessels() {
+    return vesselRepository.findAll();
+  }
+
+  @Override
+  public void saveAllVessels(List<Vessel> vessels) {
+    vesselRepository.saveAll(vessels);
+  }
+
+  @Override
+  public Optional<Vessel> getVesselByMMSI(String mmsi) {
+    return vesselRepository.findByMmsi(mmsi);
+  }
+
+  @Override
+  public Vessel saveVessel(final Vessel vessel) {
+    return vesselRepository.save(vessel);
   }
 }
