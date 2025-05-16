@@ -1,6 +1,5 @@
 package gr.uoa.di.ships.persistence.repository;
 
-import gr.uoa.di.ships.persistence.model.Vessel;
 import gr.uoa.di.ships.persistence.model.VesselHistoryData;
 import java.time.LocalDateTime;
 import java.util.List;

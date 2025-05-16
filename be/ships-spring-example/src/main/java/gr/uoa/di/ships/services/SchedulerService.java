@@ -1,6 +1,5 @@
-package gr.uoa.di.ships.services.implementation;
+package gr.uoa.di.ships.services;
 
-import gr.uoa.di.ships.services.interfaces.SchedulerService;
 import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional()
 @Slf4j
-public class SchedulerServiceImpl implements SchedulerService {
+public class SchedulerService {
 
   private final VesselHistoryDataService vesselHistoryDataService;
 
-  public SchedulerServiceImpl(VesselHistoryDataService vesselHistoryDataService) {
+  public SchedulerService(VesselHistoryDataService vesselHistoryDataService) {
     this.vesselHistoryDataService = vesselHistoryDataService;
   }
 
