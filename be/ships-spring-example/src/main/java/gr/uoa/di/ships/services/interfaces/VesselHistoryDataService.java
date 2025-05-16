@@ -8,4 +8,6 @@ public interface VesselHistoryDataService {
   void saveVesselHistoryData(List<JsonNode> vesselHistoryDataList);
 
   List<VesselHistoryDataDTO> getMap();
+
+  void deleteOldVesselHistoryData();
 }

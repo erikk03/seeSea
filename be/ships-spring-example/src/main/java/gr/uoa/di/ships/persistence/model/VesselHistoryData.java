@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,4 +56,7 @@ public class VesselHistoryData {
 
   @Column(name = "timestamp")
   private Long timestamp;
+
+  @Column(name = "datetime_created")
+  private LocalDateTime datetimeCreated;
 }
