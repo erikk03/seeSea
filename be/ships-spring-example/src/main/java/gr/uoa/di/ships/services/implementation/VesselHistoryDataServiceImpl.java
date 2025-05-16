@@ -5,6 +5,8 @@ import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
 import gr.uoa.di.ships.persistence.repository.VesselHistoryDataRepository;
 import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,5 +40,11 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
         .stream()
         .map(vesselHistoryDataMapper::toVesselHistoryDataDTO)
         .toList();
+  }
+
+  @Override
+  public void deleteOldVesselHistoryData() {
+    LocalDateTime datetimeNow = LocalDateTime.now(ZoneOffset.UTC);
+    vesselHistoryDataRepository.deleteByDatetimeCreatedBefore(datetimeNow.minusHours(12));
   }
 }

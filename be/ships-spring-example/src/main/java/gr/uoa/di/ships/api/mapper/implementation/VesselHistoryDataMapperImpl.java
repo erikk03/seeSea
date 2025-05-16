@@ -6,6 +6,8 @@ import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
 import gr.uoa.di.ships.persistence.model.Vessel;
 import gr.uoa.di.ships.persistence.model.VesselHistoryData;
 import gr.uoa.di.ships.services.interfaces.VesselService;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -36,6 +38,7 @@ public class VesselHistoryDataMapperImpl implements VesselHistoryDataMapper {
         .longitude(vesselHistoryDataJsonNode.get("lon").asDouble())
         .latitude(vesselHistoryDataJsonNode.get("lat").asDouble())
         .timestamp(vesselHistoryDataJsonNode.get("timestamp").asLong())
+        .datetimeCreated(LocalDateTime.now(ZoneOffset.UTC))
         .build();
   }
 

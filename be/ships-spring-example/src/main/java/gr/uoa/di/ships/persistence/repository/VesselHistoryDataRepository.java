@@ -1,6 +1,8 @@
 package gr.uoa.di.ships.persistence.repository;
 
+import gr.uoa.di.ships.persistence.model.Vessel;
 import gr.uoa.di.ships.persistence.model.VesselHistoryData;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VesselHistoryDataRepository extends JpaRepository<VesselHistoryData, Long>{
+
+  void deleteByDatetimeCreatedBefore(LocalDateTime dateTime);
 
   @Modifying
   @Query(value = """
