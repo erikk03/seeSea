@@ -32,4 +32,7 @@ public class VesselType {
 
   @OneToMany(mappedBy = "vesselType")
   private Set<Vessel> vessels;
+
+  @OneToMany(mappedBy = "vesselType")
+  private Set<Filters> filters;
 }

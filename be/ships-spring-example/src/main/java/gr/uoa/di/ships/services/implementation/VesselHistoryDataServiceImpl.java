@@ -5,6 +5,7 @@ import gr.uoa.di.ships.api.dto.FiltersDTO;
 import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
 import gr.uoa.di.ships.persistence.repository.VesselHistoryDataRepository;
+import gr.uoa.di.ships.services.interfaces.FiltersService;
 import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -20,10 +21,12 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
 
   private final VesselHistoryDataRepository vesselHistoryDataRepository;
   private final VesselHistoryDataMapper vesselHistoryDataMapper;
+  private final FiltersService filtersService;
 
-  public VesselHistoryDataServiceImpl(VesselHistoryDataRepository vesselHistoryDataRepository, VesselHistoryDataMapper vesselHistoryDataMapper) {
+  public VesselHistoryDataServiceImpl(VesselHistoryDataRepository vesselHistoryDataRepository, VesselHistoryDataMapper vesselHistoryDataMapper, FiltersService filtersService) {
     this.vesselHistoryDataRepository = vesselHistoryDataRepository;
     this.vesselHistoryDataMapper = vesselHistoryDataMapper;
+    this.filtersService = filtersService;
   }
 
   @Override
@@ -37,6 +40,8 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
 
   @Override
   public List<VesselHistoryDataDTO> getMap(FiltersDTO filtersDTO) {
+    filtersService.persistFilters(filtersDTO);
+    //todo: implement filtering on the map here
     return vesselHistoryDataRepository.getLastVesselHistoryDataPerVessel()
         .stream()
         .map(vesselHistoryDataMapper::toVesselHistoryDataDTO)

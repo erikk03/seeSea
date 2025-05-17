@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.Collection;
 import java.util.List;
@@ -62,6 +63,10 @@ public class RegisteredUser implements UserDetails {
       inverseJoinColumns = {@JoinColumn(name = "vessel_mmsi")}
   )
   private List<Vessel> vessels;
+
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "filters_id")
+  private Filters filters;
 
   @Override
   public String toString() {

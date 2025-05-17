@@ -4,6 +4,7 @@ import gr.uoa.di.ships.api.dto.JwtTokenDTO;
 import gr.uoa.di.ships.api.dto.UserAuthDTO;
 import gr.uoa.di.ships.api.dto.UserInfoDTO;
 import gr.uoa.di.ships.api.dto.UserRegisterDTO;
+import gr.uoa.di.ships.persistence.model.RegisteredUser;
 
 public interface RegisteredUserService {
   void register(UserRegisterDTO userDTO);
@@ -13,4 +14,6 @@ public interface RegisteredUserService {
   UserInfoDTO getUserInfo(Long id);
 
   void changePassword(Long id, String newPassword);
+
+  RegisteredUser getRegisteredUserById(Long id);
 }

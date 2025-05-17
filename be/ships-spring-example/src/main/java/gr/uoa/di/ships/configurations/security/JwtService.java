@@ -66,6 +66,7 @@ public class JwtService {
     RegisteredUser registeredUser = (RegisteredUser) userDetailsService.loadUserByUsername(subject);
     return Jwts.builder()
         .subject(subject)
+        .claim("id", registeredUser.getId())
         .claim("role", registeredUser.getRole().getName())
         .claim("email", registeredUser.getEmail())
         .claim("username", registeredUser.getUsername())

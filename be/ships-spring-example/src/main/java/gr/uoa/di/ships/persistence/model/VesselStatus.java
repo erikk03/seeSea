@@ -30,4 +30,7 @@ public class VesselStatus {
 
   @OneToMany(mappedBy = "vesselStatus")
   private Set<Vessel> vessels;
+
+  @OneToMany(mappedBy = "vesselStatus")
+  private Set<Filters> filters;
 }

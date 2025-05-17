@@ -96,6 +96,12 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
     registeredUserRepository.save(registeredUser);
   }
 
+  @Override
+  public RegisteredUser getRegisteredUserById(Long id) {
+    return registeredUserRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
+  }
+
   private void validate(UserRegisterDTO userRegisterDTO) {
     if (Objects.nonNull(registeredUserRepository.findByEmail(userRegisterDTO.getEmail()).orElse(null))) {
       throw new RuntimeException(ACCOUNT_WITH_THAT_EMAIL + userRegisterDTO.getEmail());

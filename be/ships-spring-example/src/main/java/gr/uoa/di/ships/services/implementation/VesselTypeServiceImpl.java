@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class VesselTypeServiceImpl implements VesselTypeService {
 
+  private static final String WITH_ID_S = "with id %s";
   private final VesselTypeRepository vesselTypeRepository;
 
   public VesselTypeServiceImpl(VesselTypeRepository vesselTypeRepository) {
@@ -34,5 +35,11 @@ public class VesselTypeServiceImpl implements VesselTypeService {
   @Override
   public VesselType saveVesselType(VesselType vesselType) {
     return vesselTypeRepository.save(vesselType);
+  }
+
+  @Override
+  public VesselType findVesselTypeById(Long id) {
+    return vesselTypeRepository.findById(id)
+        .orElseThrow(() -> new VesselTypeNotFoundException(WITH_ID_S.formatted(id)));
   }
 }
