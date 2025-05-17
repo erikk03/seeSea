@@ -6,5 +6,7 @@ public interface MigrationService {
 
   void loadVesselTypesFromCSV();
 
+  void loadVesselStatusFromCSV();
+
   boolean completedMigration(MigrationEnum migrationEnum);
 }

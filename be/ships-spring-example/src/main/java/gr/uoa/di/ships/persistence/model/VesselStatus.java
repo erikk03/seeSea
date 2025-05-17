@@ -1,0 +1,33 @@
+package gr.uoa.di.ships.persistence.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity
+@Table(name = "vessel_status")
+public class VesselStatus {
+
+  @Id
+  @Column(name = "id", nullable = false, unique = true)
+  private Long id;
+
+  @Column(name = "name")
+  private String name;
+
+  @OneToMany(mappedBy = "vesselStatus")
+  private Set<Vessel> vessels;
+}

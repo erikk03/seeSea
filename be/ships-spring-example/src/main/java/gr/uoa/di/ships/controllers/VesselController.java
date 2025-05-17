@@ -1,5 +1,6 @@
 package gr.uoa.di.ships.controllers;
 
+import gr.uoa.di.ships.api.dto.FiltersDTO;
 import gr.uoa.di.ships.api.dto.VesselDTO;
 import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.configurations.exceptions.VesselNotFoundException;
@@ -8,6 +9,7 @@ import gr.uoa.di.ships.persistence.repository.VesselRepository;
 import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
 import gr.uoa.di.ships.services.interfaces.VesselTypeService;
 import java.util.List;
+import java.util.logging.Filter;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +34,8 @@ class VesselController {
   }
 
   @GetMapping("/get-map")
-  List<VesselHistoryDataDTO> getVesselHistoryData() {
-    return vesselHistoryDataService.getMap();
+  List<VesselHistoryDataDTO> getVesselHistoryData(@RequestBody FiltersDTO filtersDTO) {
+    return vesselHistoryDataService.getMap(filtersDTO);
   }
 
   @GetMapping("/get-all")
@@ -49,7 +51,6 @@ class VesselController {
             .vesselType(vesselTypeService.findVesselTypeByName(vesselDTO.getType()))
             .build());
   }
-
 
   @GetMapping("/{mmsi}")
   Vessel one(@PathVariable String mmsi) {

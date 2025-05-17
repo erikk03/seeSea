@@ -2,7 +2,6 @@ package gr.uoa.di.ships.services.implementation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gr.uoa.di.ships.persistence.model.enums.MigrationEnum;
 import gr.uoa.di.ships.services.interfaces.LocationsConsumer;
 import gr.uoa.di.ships.services.interfaces.MigrationService;
 import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
@@ -28,13 +27,11 @@ public class LocationsConsumerImpl implements LocationsConsumer {
 
   private final SimpMessagingTemplate template;
   private final VesselHistoryDataService vesselHistoryDataService;
-  private final MigrationService migrationService;
 
-  public LocationsConsumerImpl(ObjectMapper objectMapper, SimpMessagingTemplate template, VesselHistoryDataService vesselHistoryDataService, MigrationService migrationService) {
+  public LocationsConsumerImpl(ObjectMapper objectMapper, SimpMessagingTemplate template, VesselHistoryDataService vesselHistoryDataService) {
     this.objectMapper = objectMapper;
     this.template = template;
     this.vesselHistoryDataService = vesselHistoryDataService;
-    this.migrationService = migrationService;
   }
 
   @KafkaListener(topics = "${kafka.topic}")
@@ -56,7 +53,6 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     synchronized (buffer) {
       if (!buffer.isEmpty()) {
         log.info("Flushing final batch of {} vessel history entries before shutdown.", buffer.size());
-        validateVesselTypesMigrated();
         vesselHistoryDataService.saveVesselHistoryData(new ArrayList<>(buffer));
         log.info("Saved final batch of {} vessel history entries to DB", buffer.size());
         buffer.clear();
@@ -72,19 +68,12 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     if (currentCount >= batchSize) {
       synchronized (buffer) {
         if (!buffer.isEmpty()) {
-          validateVesselTypesMigrated();
           vesselHistoryDataService.saveVesselHistoryData(new ArrayList<>(buffer));
           buffer.clear();
           batchCount.set(0);
           log.info("Saved {} vessel history entries to DB", batchSize);
         }
       }
-    }
-  }
-
-  private void validateVesselTypesMigrated() {
-    if (!migrationService.completedMigration(MigrationEnum.LOAD_VESSEL_TYPES_CSV)) {
-      migrationService.loadVesselTypesFromCSV();
     }
   }
 }

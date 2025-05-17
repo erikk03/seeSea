@@ -1,6 +1,7 @@
 package gr.uoa.di.ships.services.implementation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import gr.uoa.di.ships.api.dto.FiltersDTO;
 import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
 import gr.uoa.di.ships.persistence.repository.VesselHistoryDataRepository;
@@ -35,7 +36,7 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
   }
 
   @Override
-  public List<VesselHistoryDataDTO> getMap() {
+  public List<VesselHistoryDataDTO> getMap(FiltersDTO filtersDTO) {
     return vesselHistoryDataRepository.getLastVesselHistoryDataPerVessel()
         .stream()
         .map(vesselHistoryDataMapper::toVesselHistoryDataDTO)
