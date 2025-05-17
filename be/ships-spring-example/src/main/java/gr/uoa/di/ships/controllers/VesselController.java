@@ -9,7 +9,6 @@ import gr.uoa.di.ships.persistence.repository.VesselRepository;
 import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
 import gr.uoa.di.ships.services.interfaces.VesselTypeService;
 import java.util.List;
-import java.util.logging.Filter;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

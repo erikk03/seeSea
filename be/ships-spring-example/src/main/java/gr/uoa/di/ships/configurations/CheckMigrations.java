@@ -30,12 +30,8 @@ public class CheckMigrations {
       migrationNeeded = true;
     }
     if (migrationNeeded) {
-      return args -> {
-        log.info("Migrations completed successfully");
-      };
+      return args -> log.info("Migrations completed successfully");
     }
-    return args -> {
-      log.info("Migrations are already completed");
-    };
+    return args -> log.info("Migrations are already completed");
   }
 }

@@ -3,7 +3,6 @@ package gr.uoa.di.ships.services.implementation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.uoa.di.ships.services.interfaces.LocationsConsumer;
-import gr.uoa.di.ships.services.interfaces.MigrationService;
 import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
 import jakarta.annotation.PreDestroy;
 import java.util.ArrayList;

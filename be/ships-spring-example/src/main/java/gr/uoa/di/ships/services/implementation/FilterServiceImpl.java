@@ -1,8 +1,6 @@
 package gr.uoa.di.ships.services.implementation;
 
 import gr.uoa.di.ships.api.dto.AvailableFiltersDTO;
-import gr.uoa.di.ships.persistence.model.VesselStatus;
-import gr.uoa.di.ships.persistence.model.VesselType;
 import gr.uoa.di.ships.persistence.model.enums.FIlterFromEnum;
 import gr.uoa.di.ships.services.interfaces.FilterService;
 import gr.uoa.di.ships.services.interfaces.VesselStatusService;
