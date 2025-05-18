@@ -36,11 +36,6 @@ public class VesselStatus {
   @OneToMany(mappedBy = "vesselStatus")
   private Set<Vessel> vessels;
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(
-      name = "filters_vessel_status",
-      joinColumns = {@JoinColumn(name = "vessel_status_id")},
-      inverseJoinColumns = {@JoinColumn(name = "filters_id")}
-  )
+  @ManyToMany(mappedBy = "vesselStatuses", fetch = FetchType.EAGER)
   private List<Filters> filters;
 }

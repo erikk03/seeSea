@@ -32,7 +32,7 @@ class VesselController {
     this.vesselHistoryDataService = vesselHistoryDataService;
   }
 
-  @GetMapping("/get-map")
+  @PostMapping("/set-filters-and-get-map")
   List<VesselHistoryDataDTO> getVesselHistoryData(@RequestBody FiltersDTO filtersDTO) {
     return vesselHistoryDataService.getMap(filtersDTO);
   }

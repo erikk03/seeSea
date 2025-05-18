@@ -4,6 +4,7 @@ import gr.uoa.di.ships.configurations.exceptions.VesselTypeNotFoundException;
 import gr.uoa.di.ships.persistence.model.VesselType;
 import gr.uoa.di.ships.persistence.repository.VesselTypeRepository;
 import gr.uoa.di.ships.services.interfaces.VesselTypeService;
+import java.util.Collection;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,7 @@
 -- create table
 CREATE TABLE filters (
     [id] BIGINT PRIMARY KEY IDENTITY(1,1) NOT NULL,
-    [registered_user_id] BIGINT NOT NULL ,
     [filter_from] VARCHAR(255) NOT NULL DEFAULT 'All',
-    [vessel_status_id] BIGINT
 );
 
 -- registered user relations
@@ -11,9 +9,6 @@ ALTER TABLE [registered_user] ADD [filters_id] BIGINT;
 
 ALTER TABLE registered_user ADD CONSTRAINT [FK_filters_registered_user]
     FOREIGN KEY ([filters_id]) REFERENCES [filters]([id]);
-
-ALTER TABLE filters ADD CONSTRAINT [FK_registered_user_filters]
-    FOREIGN KEY ([registered_user_id]) REFERENCES [registered_user]([id]);
 
 -- vessel type relations
 CREATE TABLE filters_vessel_type (

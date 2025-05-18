@@ -38,11 +38,6 @@ public class VesselType {
   @OneToMany(mappedBy = "vesselType")
   private Set<Vessel> vessels;
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(
-      name = "filters_vessel_type",
-      joinColumns = {@JoinColumn(name = "vessel_type_id")},
-      inverseJoinColumns = {@JoinColumn(name = "filters_id")}
-  )
+  @ManyToMany(mappedBy = "vesselTypes", fetch = FetchType.EAGER)
   private List<Filters> filters;
 }

@@ -30,7 +30,7 @@ public class VesselStatusServiceImpl implements VesselStatusService {
   }
 
   @Override
-  public List<VesselStatus> findVesselStatusesByIds(List<Long> vesselStatusIds) {
-    return vesselStatusRepository.findVesselStatusesByIdIn(vesselStatusIds);
+  public List<VesselStatus> getVesselStatusesByIds(List<Long> vesselStatusIds) {
+    return vesselStatusRepository.getVesselStatusesByIdIn(vesselStatusIds);
   }
 }
