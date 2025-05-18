@@ -3,6 +3,7 @@ package gr.uoa.di.ships.configurations;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
 
@@ -13,10 +14,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Value("#{'${cors.urls}'.split(',')}")
   private List<String> allowedOrigins;
 
-  @Override
-  public void configureMessageBroker(MessageBrokerRegistry registry) {
-    registry.enableSimpleBroker("/topic/locations");
-    registry.setApplicationDestinationPrefixes("/app");
+  private final MessageInterceptor messageInterceptor;
+
+  public WebSocketConfig(MessageInterceptor messageInterceptor) {
+    this.messageInterceptor = messageInterceptor;
   }
 
   @Override
@@ -24,5 +25,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     registry.addEndpoint("/ws")
         .setAllowedOrigins(allowedOrigins.toArray(new String[0]))
         .withSockJS();
+  }
+
+  @Override
+  public void configureMessageBroker(MessageBrokerRegistry registry) {
+    registry.setApplicationDestinationPrefixes("/app");
+    registry.enableSimpleBroker("/topic", "/queue");
+    registry.setUserDestinationPrefix("/user");
+  }
+
+  @Override
+  public void configureClientInboundChannel(ChannelRegistration registration) {
+    registration.interceptors(messageInterceptor);
   }
 }

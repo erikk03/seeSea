@@ -2,9 +2,14 @@ package gr.uoa.di.ships.persistence.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +36,11 @@ public class VesselStatus {
   @OneToMany(mappedBy = "vesselStatus")
   private Set<Vessel> vessels;
 
-  @OneToMany(mappedBy = "vesselStatus")
-  private Set<Filters> filters;
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "filters_vessel_status",
+      joinColumns = {@JoinColumn(name = "vessel_status_id")},
+      inverseJoinColumns = {@JoinColumn(name = "filters_id")}
+  )
+  private List<Filters> filters;
 }

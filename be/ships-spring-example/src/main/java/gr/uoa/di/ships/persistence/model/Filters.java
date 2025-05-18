@@ -7,9 +7,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,11 +39,19 @@ public class Filters {
   @Column(name = "filter_from")
   private String filterFrom;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "vessel_type_id")
-  private VesselType vesselType;
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "filters_vessel_type",
+      joinColumns = {@JoinColumn(name = "filters_id")},
+      inverseJoinColumns = {@JoinColumn(name = "vessel_type_id")}
+  )
+  private List<VesselType> vesselTypes;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "vessel_status_id")
-  private VesselStatus vesselStatus;
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "filters_vessel_status",
+      joinColumns = {@JoinColumn(name = "filters_id")},
+      inverseJoinColumns = {@JoinColumn(name = "vessel_status_id")}
+  )
+  private List<VesselStatus> vesselStatuses;
 }

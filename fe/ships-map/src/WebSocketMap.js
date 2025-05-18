@@ -25,38 +25,62 @@ export default function WebSocketMap({ token, onLogout }) {
   const [ships, setShips] = useState({});
 
   useEffect(() => {
-    const socket = new SockJS('https://localhost:8443/ws');
-    const stompClient = new Client({
-      webSocketFactory: () => socket,
-      reconnectDelay: 5000,
-      connectHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-      onConnect: () => {
-        console.log("Connected to WebSocket (SockJS)");
+  const socket = new SockJS('https://localhost:8443/ws');
+  const stompClient = new Client({
+    webSocketFactory: () => socket,
+    reconnectDelay: 5000,
+    connectHeaders: token
+      ? { Authorization: `Bearer ${token}` }
+      : {},
 
-        stompClient.subscribe('/topic/locations', message => {  // from lecture: maybe a path with userId?
+    onConnect: () => {
+      console.log("Connected to WebSocket (SockJS)");
+      console.log("WebSocket token:", token);
+
+      // Authenticated users: subscribe only to personalized messages
+      if (token) {
+        console.log("Authenticated user detected. Subscribing to personalized messages.");
+        stompClient.subscribe(`/user/queue/locations`, message => {
+          try {
+            console.log("Hello!");
+            console.log("Active subscriptions:", stompClient.subscriptions);
+            const newShip = JSON.parse(message.body);
+            console.log("Received WebSocket Data:", newShip);
+            setShips(prev => ({
+              ...prev,
+              [newShip.mmsi]: newShip // Store ships using MMSI as key
+            }));
+          } catch (error) {
+            console.error("Error parsing personalized WebSocket message:", error);
+          }
+        });
+      } else {
+        // Anonymous users: subscribe only to broadcast messages
+        console.log("Anonymous user detected. Subscribing to broadcast messages.");
+        stompClient.subscribe('/topic/locations', message => {
           try {
             const newShip = JSON.parse(message.body);
             console.log("Received WebSocket Data:", newShip);
-
-            setShips((prevShips) => ({
-              ...prevShips,
-              [newShip.mmsi]: newShip, // Store ships using MMSI as key
+            setShips(prev => ({
+              ...prev,
+              [newShip.mmsi]: newShip // Store ships using MMSI as key
             }));
           } catch (error) {
-            console.error("Error parsing WebSocket message:", error);
+            console.error("Error parsing broadcast WebSocket message:", error);
           }
         });
-      },
-      onStompError: frame => {
-        console.error('STOMP Error:', frame.headers['message']);
-      },
-    });
+      }
+    },
 
-    stompClient.activate();
-    return () => stompClient.deactivate();
-  }, [token]);
+    onStompError: frame => {
+      console.error('STOMP Error:', frame.headers['message']);
+    },
+  });
+
+  stompClient.activate();
+  return () => stompClient.deactivate();
+}, [token]);
+
 
   return (
     <div>

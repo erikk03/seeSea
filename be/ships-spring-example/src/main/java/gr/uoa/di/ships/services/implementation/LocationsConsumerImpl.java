@@ -2,7 +2,10 @@ package gr.uoa.di.ships.services.implementation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.uoa.di.ships.persistence.model.RegisteredUser;
+import gr.uoa.di.ships.services.interfaces.FiltersService;
 import gr.uoa.di.ships.services.interfaces.LocationsConsumer;
+import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
 import jakarta.annotation.PreDestroy;
 import java.util.ArrayList;
@@ -26,11 +29,19 @@ public class LocationsConsumerImpl implements LocationsConsumer {
 
   private final SimpMessagingTemplate template;
   private final VesselHistoryDataService vesselHistoryDataService;
+  private final RegisteredUserService registeredUserService;
+  private final FiltersService filtersService;
 
-  public LocationsConsumerImpl(ObjectMapper objectMapper, SimpMessagingTemplate template, VesselHistoryDataService vesselHistoryDataService) {
+  public LocationsConsumerImpl(ObjectMapper objectMapper,
+                               SimpMessagingTemplate template,
+                               VesselHistoryDataService vesselHistoryDataService,
+                               RegisteredUserService registeredUserService,
+                               FiltersService filtersService) {
     this.objectMapper = objectMapper;
     this.template = template;
     this.vesselHistoryDataService = vesselHistoryDataService;
+    this.registeredUserService = registeredUserService;
+    this.filtersService = filtersService;
   }
 
   @KafkaListener(topics = "${kafka.topic}")
@@ -38,13 +49,26 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   public void consume(String message) {
     try {
       JsonNode jsonNode = objectMapper.readTree(message);
-      template.convertAndSend("/topic/locations", jsonNode.toPrettyString());
+      sentToAnonymousUsers(jsonNode);
+      sendToFilterCompliantRegisteredUsers(jsonNode);
       System.out.println("Sent message: " + jsonNode.toPrettyString());
       handleBatches(jsonNode);
     } catch (Exception e) {
       System.err.println(e.getMessage());
       log.error("Error while consuming Kafka message: {}", e.getMessage(), e);
     }
+  }
+
+  private void sentToAnonymousUsers(JsonNode jsonNode) {
+    template.convertAndSend("/topic/locations", jsonNode.toPrettyString());
+  }
+
+  private void sendToFilterCompliantRegisteredUsers(JsonNode jsonNode) {
+    registeredUserService.getAllRegisteredUsers().stream()
+        .filter(user -> filtersService.compliesWithUserFilters(jsonNode, user.getId()))
+        .forEach(user -> {
+          template.convertAndSendToUser(user.getUsername(), "/queue/locations", jsonNode.toPrettyString());
+        });
   }
 
   @PreDestroy

@@ -40,26 +40,27 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)
-      .cors(Customizer.withDefaults())
-      .authorizeHttpRequests(request -> request
-          .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // let the browser send OPTIONS to any URL (including /ws/info)
-          .requestMatchers("/auth/login", "/auth/register").permitAll()
-          .requestMatchers("/admin", "/admin/**").hasAuthority(RoleEnum.ADMINISTRATOR.name())
-          .requestMatchers("/migration", "/migration/**").hasAuthority(RoleEnum.ADMINISTRATOR.name())
-          .requestMatchers("/registered-user", "/registered-user/**").hasAnyAuthority(RoleEnum.ADMINISTRATOR.name(), RoleEnum.REGISTERED_USER.name())
-          .requestMatchers("/vessel", "/vessel/**").permitAll()
-          .requestMatchers("/ws/**").permitAll() // allow SockJS/WebSocket handshakes
-          .anyRequest()
-          .authenticated()
-      )
-     .exceptionHandling(exception -> exception
-         .accessDeniedHandler(new CustomAccessDeniedHandler())
-     )
-      .sessionManagement(session -> session
-          .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-      )
-      .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-      .build();
+        .cors(Customizer.withDefaults())
+        .authorizeHttpRequests(request -> request
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // let the browser send OPTIONS to any URL (including /ws/info)
+            .requestMatchers("/auth/login", "/auth/register").permitAll()
+            .requestMatchers("/admin", "/admin/**").hasAuthority(RoleEnum.ADMINISTRATOR.name())
+            .requestMatchers("/migration", "/migration/**").hasAuthority(RoleEnum.ADMINISTRATOR.name())
+            .requestMatchers("/registered-user", "/registered-user/**").hasAnyAuthority(RoleEnum.ADMINISTRATOR.name(), RoleEnum.REGISTERED_USER.name())
+            .requestMatchers("/vessel", "/vessel/**").permitAll()
+            .requestMatchers("/ws/**", "/topic/**", "/app/**").permitAll() // allow SockJS/WebSocket handshakes
+            .anyRequest()
+            .authenticated()
+        )
+        .exceptionHandling(exception -> exception
+           .accessDeniedHandler(new CustomAccessDeniedHandler())
+        )
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        )
+        .anonymous(Customizer.withDefaults())
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
   }
 
   @Bean

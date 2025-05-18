@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class VesselStatusServiceImpl implements VesselStatusService {
 
-  private static final String WITH_ID_S = "with id %s";
   private final VesselStatusRepository vesselStatusRepository;
 
   public VesselStatusServiceImpl(VesselStatusRepository vesselStatusRepository) {
@@ -32,8 +31,7 @@ public class VesselStatusServiceImpl implements VesselStatusService {
   }
 
   @Override
-  public VesselStatus findVesselStatusById(Long vesselStatusId) {
-    return vesselStatusRepository.findById(vesselStatusId)
-        .orElseThrow(() -> new VesselStatusNotFoundException(WITH_ID_S.formatted(vesselStatusId)));
+  public List<VesselStatus> findVesselStatusesByIds(List<Long> vesselStatusIds) {
+    return vesselStatusRepository.findVesselStatusesByIdIn(vesselStatusIds);
   }
 }

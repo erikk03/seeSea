@@ -8,7 +8,7 @@ public interface VesselTypeService {
 
   List<VesselType> findAllVesselTypes();
 
-  VesselType saveVesselType(VesselType vesselType);
+  List<VesselType> findVesselTypesByIds(List<Long> ids);
 
-  VesselType findVesselTypeById(Long id);
+  VesselType saveVesselType(VesselType vesselType);
 }

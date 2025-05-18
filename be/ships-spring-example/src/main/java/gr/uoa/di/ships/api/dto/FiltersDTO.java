@@ -1,5 +1,6 @@
 package gr.uoa.di.ships.api.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +18,6 @@ public class FiltersDTO {
   private Long registeredUserId;
   @NonNull
   private String filterFrom;
-  private Long vesselTypeId;
-  private Long vesselStatusId;
+  private List<Long> vesselTypeIds;
+  private List<Long> vesselStatusIds;
 }

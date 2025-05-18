@@ -8,5 +8,5 @@ public interface VesselStatusService {
 
   VesselStatus saveVesselStatus(VesselStatus vesselStatus);
 
-  VesselStatus findVesselStatusById(Long vesselStatusId);
+  List<VesselStatus> findVesselStatusesByIds(List<Long> vesselStatusIds);
 }
