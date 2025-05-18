@@ -11,8 +11,8 @@ import gr.uoa.di.ships.configurations.security.SecurityConfig;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.persistence.model.enums.RoleEnum;
 import gr.uoa.di.ships.persistence.repository.RegisteredUserRepository;
-import gr.uoa.di.ships.services.interfaces.RoleService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
+import gr.uoa.di.ships.services.interfaces.RoleService;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -110,11 +110,6 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
         .stream()
         .map(RegisteredUser::getId)
         .collect(Collectors.toList());
-  }
-
-  @Override
-  public List<RegisteredUser> getAllRegisteredUsers() {
-    return registeredUserRepository.findAll();
   }
 
   private void validate(UserRegisterDTO userRegisterDTO) {

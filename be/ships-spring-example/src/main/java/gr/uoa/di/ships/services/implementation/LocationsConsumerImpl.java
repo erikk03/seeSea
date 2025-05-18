@@ -63,9 +63,9 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   }
 
   private void sendToFilterCompliantRegisteredUsers(JsonNode jsonNode) {
-    registeredUserService.getAllRegisteredUsers().stream()
-        .filter(user -> filtersService.compliesWithUserFilters(jsonNode, user.getId()))
-        .forEach(user -> template.convertAndSendToUser(user.getId().toString(), "/queue/locations", jsonNode.toPrettyString()));
+    registeredUserService.getAllUsersIds().stream()
+        .filter(userId -> filtersService.compliesWithUserFilters(jsonNode, userId))
+        .forEach(userId -> template.convertAndSendToUser(userId.toString(), "/queue/locations", jsonNode.toPrettyString()));
   }
 
   @PreDestroy

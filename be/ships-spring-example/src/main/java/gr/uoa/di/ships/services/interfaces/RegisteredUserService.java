@@ -19,6 +19,4 @@ public interface RegisteredUserService {
   RegisteredUser getRegisteredUserById(Long id);
 
   List<Long> getAllUsersIds();
-
-  List<RegisteredUser> getAllRegisteredUsers();
 }
