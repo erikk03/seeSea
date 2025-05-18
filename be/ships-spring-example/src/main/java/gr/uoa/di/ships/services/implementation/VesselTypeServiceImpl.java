@@ -32,6 +32,11 @@ public class VesselTypeServiceImpl implements VesselTypeService {
   }
 
   @Override
+  public List<VesselType> findVesselTypesByIds(List<Long> ids) {
+    return vesselTypeRepository.findVesselTypesByIdIn(ids);
+  }
+
+  @Override
   public VesselType saveVesselType(VesselType vesselType) {
     return vesselTypeRepository.save(vesselType);
   }

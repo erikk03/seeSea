@@ -3,8 +3,6 @@ package gr.uoa.di.ships.persistence.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -25,23 +23,23 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "vessel_type")
-public class VesselType {
+@Table(name = "vessel_status")
+public class VesselStatus {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", nullable = false, unique = true)
   private Long id;
 
   @Column(name = "name")
   private String name;
 
-  @OneToMany(mappedBy = "vesselType")
+  @OneToMany(mappedBy = "vesselStatus")
   private Set<Vessel> vessels;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-      name = "filters_vessel_type",
-      joinColumns = {@JoinColumn(name = "vessel_type_id")},
+      name = "filters_vessel_status",
+      joinColumns = {@JoinColumn(name = "vessel_status_id")},
       inverseJoinColumns = {@JoinColumn(name = "filters_id")}
   )
   private List<Filters> filters;

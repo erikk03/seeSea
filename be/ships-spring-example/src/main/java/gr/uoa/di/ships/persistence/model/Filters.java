@@ -9,10 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,24 +24,33 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "vessel_type")
-public class VesselType {
+@Table(name = "filters")
+public class Filters {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "name")
-  private String name;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "registered_user_id")
+  private RegisteredUser registeredUser;
 
-  @OneToMany(mappedBy = "vesselType")
-  private Set<Vessel> vessels;
+  @Column(name = "filter_from")
+  private String filterFrom;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "filters_vessel_type",
-      joinColumns = {@JoinColumn(name = "vessel_type_id")},
-      inverseJoinColumns = {@JoinColumn(name = "filters_id")}
+      joinColumns = {@JoinColumn(name = "filters_id")},
+      inverseJoinColumns = {@JoinColumn(name = "vessel_type_id")}
   )
-  private List<Filters> filters;
+  private List<VesselType> vesselTypes;
+
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "filters_vessel_status",
+      joinColumns = {@JoinColumn(name = "filters_id")},
+      inverseJoinColumns = {@JoinColumn(name = "vessel_status_id")}
+  )
+  private List<VesselStatus> vesselStatuses;
 }

@@ -11,9 +11,11 @@ import gr.uoa.di.ships.configurations.security.SecurityConfig;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.persistence.model.enums.RoleEnum;
 import gr.uoa.di.ships.persistence.repository.RegisteredUserRepository;
-import gr.uoa.di.ships.services.interfaces.RoleService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
+import gr.uoa.di.ships.services.interfaces.RoleService;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -94,6 +96,20 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
         .orElseThrow(() -> new UserNotFoundException(id));
     registeredUser.setPassword(securityConfig.encoder().encode(newPassword));
     registeredUserRepository.save(registeredUser);
+  }
+
+  @Override
+  public RegisteredUser getRegisteredUserById(Long id) {
+    return registeredUserRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
+  }
+
+  @Override
+  public List<Long> getAllUsersIds() {
+    return registeredUserRepository.findAll()
+        .stream()
+        .map(RegisteredUser::getId)
+        .collect(Collectors.toList());
   }
 
   private void validate(UserRegisterDTO userRegisterDTO) {

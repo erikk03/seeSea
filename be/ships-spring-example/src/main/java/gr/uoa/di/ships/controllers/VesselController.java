@@ -1,5 +1,6 @@
 package gr.uoa.di.ships.controllers;
 
+import gr.uoa.di.ships.api.dto.FiltersDTO;
 import gr.uoa.di.ships.api.dto.VesselDTO;
 import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.configurations.exceptions.VesselNotFoundException;
@@ -32,8 +33,8 @@ class VesselController {
   }
 
   @GetMapping("/get-map")
-  List<VesselHistoryDataDTO> getVesselHistoryData() {
-    return vesselHistoryDataService.getMap();
+  List<VesselHistoryDataDTO> getVesselHistoryData(@RequestBody FiltersDTO filtersDTO) {
+    return vesselHistoryDataService.getMap(filtersDTO);
   }
 
   @GetMapping("/get-all")
@@ -49,7 +50,6 @@ class VesselController {
             .vesselType(vesselTypeService.findVesselTypeByName(vesselDTO.getType()))
             .build());
   }
-
 
   @GetMapping("/{mmsi}")
   Vessel one(@PathVariable String mmsi) {
