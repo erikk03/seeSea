@@ -2,6 +2,8 @@ package gr.uoa.di.ships.configurations;
 
 import gr.uoa.di.ships.configurations.security.JwtService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
+import java.util.List;
+import java.util.Objects;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -56,30 +58,36 @@ public class MessageInterceptor implements ChannelInterceptor {
   @Override
   public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
     StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-    assert accessor != null;
+    validateAccessor(accessor);
     if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-      /// this checks if the command being sent is a CONNECT command
-      /// a user will not be able to send any frames unless they are connected to a STOMP protocol
-      var authHeaderList =  accessor.getNativeHeader("Authorization");
-      log.info("authHeader: {}", authHeaderList);
-
-      assert authHeaderList != null;
-      ///header returns a list of strings
-      String authHeader = authHeaderList.get(0);
-      if(authHeader!=null && authHeader.startsWith("Bearer ")) {
-
+      List<String> authHeaderList =  accessor.getNativeHeader("Authorization");
+      validateAuthHeaderList(authHeaderList);
+      String authHeader = authHeaderList.getFirst();
+      if (Objects.nonNull(authHeader) && authHeader.startsWith("Bearer ")) {
         String jwt = authHeader.substring(7);
         String username = jwtService.extractUsername(jwt);
         log.info("username: {}", username);
         UserDetails userDetails = seeSeaUserDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken authenticatedUser = new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
-        accessor.setUser(authenticatedUser); ///setting the context of the user as the principal
+        accessor.setUser(authenticatedUser);
 
       } else{
         log.info("Authorization header not present");
       }
     }
-    /// if any other frames are being sent they don't need authentication as it is already set
     return message;
+  }
+
+  private static void validateAuthHeaderList(List<String> authHeaderList) {
+    log.info("authHeader: {}", authHeaderList);
+    if (Objects.isNull(authHeaderList)) {
+      throw new IllegalStateException("NativeHeader authHeaderList, could not be retrieved from the accessor.");
+    }
+  }
+
+  private static void validateAccessor(StompHeaderAccessor accessor) {
+    if (Objects.isNull(accessor)) {
+      throw new IllegalStateException("StompHeaderAccessor could not be retrieved from the message.");
+    }
   }
 }
