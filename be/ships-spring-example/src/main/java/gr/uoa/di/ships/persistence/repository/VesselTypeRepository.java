@@ -1,7 +1,6 @@
 package gr.uoa.di.ships.persistence.repository;
 
 import gr.uoa.di.ships.persistence.model.VesselType;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

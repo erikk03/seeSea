@@ -1,6 +1,5 @@
 package gr.uoa.di.ships.services.implementation;
 
-import gr.uoa.di.ships.configurations.exceptions.VesselStatusNotFoundException;
 import gr.uoa.di.ships.persistence.model.VesselStatus;
 import gr.uoa.di.ships.persistence.repository.VesselStatusRepository;
 import gr.uoa.di.ships.services.interfaces.VesselStatusService;

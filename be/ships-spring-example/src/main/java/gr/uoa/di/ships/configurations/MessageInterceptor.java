@@ -1,12 +1,8 @@
 package gr.uoa.di.ships.configurations;
 
 import gr.uoa.di.ships.configurations.security.JwtService;
-import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
-import java.security.Principal;
-import java.util.Objects;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;

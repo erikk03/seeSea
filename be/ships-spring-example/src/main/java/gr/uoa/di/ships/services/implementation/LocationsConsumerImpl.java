@@ -2,7 +2,6 @@ package gr.uoa.di.ships.services.implementation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.services.interfaces.FiltersService;
 import gr.uoa.di.ships.services.interfaces.LocationsConsumer;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
@@ -66,9 +65,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private void sendToFilterCompliantRegisteredUsers(JsonNode jsonNode) {
     registeredUserService.getAllRegisteredUsers().stream()
         .filter(user -> filtersService.compliesWithUserFilters(jsonNode, user.getId()))
-        .forEach(user -> {
-          template.convertAndSendToUser(user.getUsername(), "/queue/locations", jsonNode.toPrettyString());
-        });
+        .forEach(user -> template.convertAndSendToUser(user.getUsername(), "/queue/locations", jsonNode.toPrettyString()));
   }
 
   @PreDestroy
