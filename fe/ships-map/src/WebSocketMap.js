@@ -35,15 +35,11 @@ export default function WebSocketMap({ token, onLogout }) {
 
     onConnect: () => {
       console.log("Connected to WebSocket (SockJS)");
-      console.log("WebSocket token:", token);
-
       // Authenticated users: subscribe only to personalized messages
       if (token) {
         console.log("Authenticated user detected. Subscribing to personalized messages.");
         stompClient.subscribe(`/user/queue/locations`, message => {
           try {
-            console.log("Hello!");
-            console.log("Active subscriptions:", stompClient.subscriptions);
             const newShip = JSON.parse(message.body);
             console.log("Received WebSocket Data:", newShip);
             setShips(prev => ({

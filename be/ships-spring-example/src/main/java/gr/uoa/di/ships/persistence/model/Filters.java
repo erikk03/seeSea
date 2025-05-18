@@ -31,8 +31,7 @@ public class Filters {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "registered_user_id")
+  @OneToOne(mappedBy = "filters")
   private RegisteredUser registeredUser;
 
   @Column(name = "filter_from")

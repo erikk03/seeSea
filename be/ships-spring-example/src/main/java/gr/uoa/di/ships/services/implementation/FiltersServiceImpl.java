@@ -56,32 +56,25 @@ public class FiltersServiceImpl implements FiltersService {
 
   @Override
   public void persistFilters(FiltersDTO filtersDTO) {
-    List<VesselType> vesselTypes = vesselTypeService.findVesselTypesByIds(filtersDTO.getVesselTypeIds());
-    List<VesselStatus> vesselStatuses = vesselStatusService.findVesselStatusesByIds(filtersDTO.getVesselStatusIds());
     if (!FilterFromEnum.isValidFilterFrom(filtersDTO.getFilterFrom())) {
       throw new IllegalArgumentException("Invalid filterFrom value: " + filtersDTO.getFilterFrom());
     }
-    Filters filters = Optional.ofNullable(
-        filtersRepository.findByRegisteredUserId(filtersDTO.getRegisteredUserId())
-    ).orElseGet(() -> Filters.builder()
-        .registeredUser(registeredUserService.getRegisteredUserById(filtersDTO.getRegisteredUserId()))
-        .filterFrom(filtersDTO.getFilterFrom())
-        .vesselTypes(vesselTypes)
-        .vesselStatuses(vesselStatuses)
-        .build()
-    );
-    if (Objects.nonNull(filters.getId())) {
-      filters.setFilterFrom(filtersDTO.getFilterFrom());
-      filters.setVesselTypes(vesselTypes);
-      filters.setVesselStatuses(vesselStatuses);
-    }
+    RegisteredUser registeredUser = registeredUserService.getRegisteredUserById(filtersDTO.getRegisteredUserId());
+    Filters filters = Optional.ofNullable(filtersRepository.findByRegisteredUserId(filtersDTO.getRegisteredUserId()))
+        .orElseGet(() -> Filters.builder()
+                       .registeredUser(registeredUserService.getRegisteredUserById(filtersDTO.getRegisteredUserId()))
+                       .build());
+    filters.setFilterFrom(filtersDTO.getFilterFrom());
+    filters.setVesselTypes(vesselTypeService.findVesselTypesByIds(filtersDTO.getVesselTypeIds()));
+    filters.setVesselStatuses(vesselStatusService.getVesselStatusesByIds(filtersDTO.getVesselStatusIds()));
     filtersRepository.save(filters);
+    registeredUser.setFilters(filters);
   }
 
   @Override
   public boolean compliesWithUserFilters(JsonNode jsonNode, Long userId) {
     RegisteredUser registeredUser = registeredUserService.getRegisteredUserById(userId);
-    Filters filters = filtersRepository.findByRegisteredUserId(userId);
+    Filters filters = registeredUser.getFilters();
     if (Objects.isNull(filters)) {
       return true;
     }

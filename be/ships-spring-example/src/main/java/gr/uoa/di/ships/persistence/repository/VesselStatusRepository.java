@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VesselStatusRepository extends JpaRepository<VesselStatus, Long>{
-  List<VesselStatus> findVesselStatusesByIdIn(List<Long> ids);
+  List<VesselStatus> getVesselStatusesByIdIn(List<Long> ids);
 }
