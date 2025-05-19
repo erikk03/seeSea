@@ -1,0 +1,1 @@
+Pure helper functions (formatDate, validators)

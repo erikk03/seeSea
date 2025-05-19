@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import loginImage from './assets/login/login_ships.png';
+import loginImage from '../../assets/login/login_ships.png';
 
 
 export default function Login({ onLogin }) {

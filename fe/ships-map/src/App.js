@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Login from './Login';
-import WebSocketMap from './WebSocketMap';
+import Login from './features/auth/Login';
+import WebSocketMap from './features/map/WebSocketMap';
 
 export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token') || '');
