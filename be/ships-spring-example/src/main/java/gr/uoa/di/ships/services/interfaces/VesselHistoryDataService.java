@@ -8,7 +8,9 @@ import java.util.List;
 public interface VesselHistoryDataService {
   void saveVesselHistoryData(List<JsonNode> vesselHistoryDataList);
 
-  List<VesselHistoryDataDTO> getMap(FiltersDTO filtersDTO);
+  List<VesselHistoryDataDTO> setFiltersAndGetMap(FiltersDTO filtersDTO);
+
+  List<VesselHistoryDataDTO> getMap();
 
   void deleteOldVesselHistoryData();
 }

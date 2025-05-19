@@ -33,8 +33,9 @@ public class VesselHistoryData {
   @JoinColumn(name = "vessel_mmsi")
   private Vessel vessel;
 
-  @Column(name = "status")
-  private Integer status;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "vessel_status_id")
+  private VesselStatus vesselStatus;
 
   @Column(name = "turn")
   private Float turn;

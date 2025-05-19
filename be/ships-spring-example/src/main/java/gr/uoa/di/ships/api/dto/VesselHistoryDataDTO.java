@@ -16,7 +16,7 @@ public class VesselHistoryDataDTO {
   @NotNull
   private String mmsi;
   private String vesselType;
-  private Integer status;
+  private String status;
   private Float turn;
   private Float speed;
   private Float course;

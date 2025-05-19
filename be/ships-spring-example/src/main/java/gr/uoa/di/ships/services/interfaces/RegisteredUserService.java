@@ -19,4 +19,6 @@ public interface RegisteredUserService {
   RegisteredUser getRegisteredUserById(Long id);
 
   List<Long> getAllUsersIds();
+
+  void saveRegisteredUser(RegisteredUser registeredUser);
 }
