@@ -21,4 +21,8 @@ public interface RegisteredUserService {
   List<Long> getAllUsersIds();
 
   void saveRegisteredUser(RegisteredUser registeredUser);
+
+  void addVesselToFleet(String mmsi);
+
+  void removeVesselFromFleet(String mmsi);
 }

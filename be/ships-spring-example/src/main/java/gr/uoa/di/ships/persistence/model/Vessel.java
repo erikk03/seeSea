@@ -10,7 +10,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,7 +43,7 @@ public class Vessel {
       joinColumns = {@JoinColumn(name = "vessel_mmsi")},
       inverseJoinColumns = {@JoinColumn(name = "registered_user_id")}
   )
-  private List<RegisteredUser> registeredUsers;
+  private Set<RegisteredUser> registeredUsers;
 
   public Vessel(String mmsi) {
     this.mmsi = mmsi;

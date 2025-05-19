@@ -6,15 +6,21 @@ import gr.uoa.di.ships.api.dto.UserInfoDTO;
 import gr.uoa.di.ships.api.dto.UserRegisterDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.RegisteredUserMapper;
 import gr.uoa.di.ships.configurations.exceptions.UserNotFoundException;
+import gr.uoa.di.ships.configurations.exceptions.VesselNotFoundException;
 import gr.uoa.di.ships.configurations.security.JwtService;
 import gr.uoa.di.ships.configurations.security.SecurityConfig;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
+import gr.uoa.di.ships.persistence.model.Vessel;
 import gr.uoa.di.ships.persistence.model.enums.RoleEnum;
 import gr.uoa.di.ships.persistence.repository.RegisteredUserRepository;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.RoleService;
+import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
+import gr.uoa.di.ships.services.interfaces.VesselService;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +37,8 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
 
   private static final String ACCOUNT_WITH_THAT_EMAIL = "There is already a user with the email: ";
   private static final String INCORRECT_EMAIL_OR_PASSWORD = "Incorrect email or password";
+  private static final String USER_HAS_NO_VESSELS_IN_FLEET = "User has no vessels in fleet";
+  public static final String VESSEL_WITH_MMSI_S_IS_NOT_IN_THE_USER_S_FLEET = "Vessel with mmsi %s is not in the user's fleet";
 
   private final JwtService jwtService;
   private final AuthenticationManager authManager;
@@ -38,19 +46,25 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   private final SecurityConfig securityConfig;
   private final RoleService roleService;
   private final RegisteredUserMapper registeredUserMapper;
+  private final SeeSeaUserDetailsService seeSeaUserDetailsService;
+  private final VesselService vesselService;
 
   public RegisteredUserServiceImpl(JwtService jwtService,
                                    AuthenticationManager authManager,
                                    RegisteredUserRepository registeredUserRepository,
                                    SecurityConfig securityConfig,
                                    RoleService roleService,
-                                   RegisteredUserMapper registeredUserMapper) {
+                                   RegisteredUserMapper registeredUserMapper,
+                                   SeeSeaUserDetailsService seeSeaUserDetailsService,
+                                   VesselService vesselService) {
     this.jwtService = jwtService;
     this.authManager = authManager;
     this.registeredUserRepository = registeredUserRepository;
     this.securityConfig = securityConfig;
     this.roleService = roleService;
     this.registeredUserMapper = registeredUserMapper;
+    this.seeSeaUserDetailsService = seeSeaUserDetailsService;
+    this.vesselService = vesselService;
   }
 
   @Override
@@ -115,6 +129,30 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   @Override
   public void saveRegisteredUser(RegisteredUser registeredUser) {
     registeredUserRepository.save(registeredUser);
+  }
+
+  @Override
+  public void addVesselToFleet(String mmsi) {
+    RegisteredUser registeredUser = getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId());
+    Set<Vessel> registeredUserVessels = Objects.nonNull(registeredUser.getVessels())
+        ? registeredUser.getVessels()
+        : new HashSet<>();
+    registeredUserVessels.add(vesselService.getVesselByMMSI(mmsi).orElseThrow(() -> new VesselNotFoundException(mmsi)));
+    registeredUser.setVessels(registeredUserVessels);
+    registeredUserRepository.save(registeredUser);
+  }
+
+  @Override
+  public void removeVesselFromFleet(String mmsi) {
+    RegisteredUser registeredUser = getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId());
+    Set<Vessel> registeredUserVessels = registeredUser.getVessels();
+    if (Objects.isNull(registeredUserVessels)) {
+      throw new RuntimeException(USER_HAS_NO_VESSELS_IN_FLEET);
+    }
+    if (registeredUser.getVessels().stream().noneMatch(vessel -> vessel.getMmsi().equals(mmsi))) {
+      throw new RuntimeException(VESSEL_WITH_MMSI_S_IS_NOT_IN_THE_USER_S_FLEET.formatted(mmsi));
+    }
+    registeredUserVessels.remove(vesselService.getVesselByMMSI(mmsi).orElseThrow(() -> new VesselNotFoundException(mmsi)));
   }
 
   private void validate(UserRegisterDTO userRegisterDTO) {
