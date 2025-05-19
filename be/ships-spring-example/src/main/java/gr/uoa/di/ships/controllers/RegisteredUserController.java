@@ -32,4 +32,16 @@ public class RegisteredUserController {
   public void changePassword(@PathVariable Long id, @RequestBody String newPassword) {
     registeredUserService.changePassword(id, newPassword);
   }
+
+  @PutMapping("/add-vessel-to-fleet")
+  @ResponseStatus(HttpStatus.OK)
+  public void addVesselToFleet(@RequestBody String mmsi) {
+    registeredUserService.addVesselToFleet(mmsi);
+  }
+
+  @PutMapping("/remove-vessel-from-fleet")
+  @ResponseStatus(HttpStatus.OK)
+  public void removeVesselFromFleet(@RequestBody String mmsi) {
+    registeredUserService.removeVesselFromFleet(mmsi);
+  }
 }
