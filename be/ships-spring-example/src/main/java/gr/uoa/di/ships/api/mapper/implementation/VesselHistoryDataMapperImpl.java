@@ -5,13 +5,11 @@ import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
 import gr.uoa.di.ships.persistence.model.Vessel;
 import gr.uoa.di.ships.persistence.model.VesselHistoryData;
-import gr.uoa.di.ships.persistence.model.VesselStatus;
 import gr.uoa.di.ships.services.interfaces.VesselService;
 import gr.uoa.di.ships.services.interfaces.VesselStatusService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
-import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -2,8 +2,6 @@ package gr.uoa.di.ships.persistence.repository;
 
 import gr.uoa.di.ships.persistence.model.Filters;
 import gr.uoa.di.ships.persistence.model.VesselHistoryData;
-import gr.uoa.di.ships.persistence.model.VesselStatus;
-import gr.uoa.di.ships.persistence.model.VesselType;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
