@@ -6,6 +6,7 @@ import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
 import gr.uoa.di.ships.persistence.model.Filters;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
+import gr.uoa.di.ships.persistence.model.Vessel;
 import gr.uoa.di.ships.persistence.model.VesselStatus;
 import gr.uoa.di.ships.persistence.model.VesselType;
 import gr.uoa.di.ships.persistence.repository.VesselHistoryDataRepository;
@@ -63,9 +64,8 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
   public List<VesselHistoryDataDTO> getMap() {
     RegisteredUser registeredUser = registeredUserService.getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId());
     Filters filters = registeredUser.getFilters();
-    List<VesselType> vesselTypes = Objects.nonNull(filters) ? filters.getVesselTypes() : List.of();
-    List<VesselStatus> vesselStatuses = Objects.nonNull(filters) ? filters.getVesselStatuses() : List.of();
-    return filtersService.getVesselHistoryDataFiltered(vesselTypes, vesselStatuses).stream()
+    List<String> mmsisFromFleet = registeredUser.getVessels().stream().map(Vessel::getMmsi).toList();
+    return filtersService.getVesselHistoryDataFiltered(filters, mmsisFromFleet).stream()
         .map(vesselHistoryDataMapper::toVesselHistoryDataDTO)
         .toList();
   }

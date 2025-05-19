@@ -44,7 +44,7 @@ public class Vessel {
       joinColumns = {@JoinColumn(name = "vessel_mmsi")},
       inverseJoinColumns = {@JoinColumn(name = "registered_user_id")}
   )
-  private List<RegisteredUser> registeredUsers;
+  private Set<RegisteredUser> registeredUsers;
 
   public Vessel(String mmsi) {
     this.mmsi = mmsi;

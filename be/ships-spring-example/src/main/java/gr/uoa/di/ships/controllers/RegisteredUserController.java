@@ -2,6 +2,7 @@ package gr.uoa.di.ships.controllers;
 
 import gr.uoa.di.ships.api.dto.UserInfoDTO;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,5 +32,17 @@ public class RegisteredUserController {
   @ResponseStatus(HttpStatus.OK)
   public void changePassword(@PathVariable Long id, @RequestBody String newPassword) {
     registeredUserService.changePassword(id, newPassword);
+  }
+
+  @PutMapping("/add-vessel-to-fleet")
+  @ResponseStatus(HttpStatus.OK)
+  public void addVesselToFleet(@RequestBody String mmsi) {
+    registeredUserService.addVesselToFleet(mmsi);
+  }
+
+  @PutMapping("/remove-vessel-from-fleet")
+  @ResponseStatus(HttpStatus.OK)
+  public void removeVesselFromFleet(@RequestBody String mmsi) {
+    registeredUserService.removeVesselFromFleet(mmsi);
   }
 }

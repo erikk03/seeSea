@@ -20,6 +20,7 @@ import gr.uoa.di.ships.services.interfaces.VesselTypeService;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,13 +92,21 @@ public class FiltersServiceImpl implements FiltersService {
   }
 
   @Override
-  public List<VesselHistoryData> getVesselHistoryDataFiltered(List<VesselType> vesselTypes, List<VesselStatus> vesselStatuses) {
-    List<Long> vesselTypeIds = !vesselTypes.isEmpty()
-        ? vesselTypes.stream().map(VesselType::getId).toList()
-        : vesselTypeService.findAllVesselTypes().stream().map(VesselType::getId).toList();
-    List<Long> vesselStatusIds = !vesselStatuses.isEmpty()
-        ? vesselStatuses.stream().map(VesselStatus::getId).toList()
-        : vesselStatusService.findAllVesselStatuses().stream().map(VesselStatus::getId).toList();
+  public List<VesselHistoryData> getVesselHistoryDataFiltered(Filters filters, List<String> mmsisFromFleet) {
+    String filterFrom = filters.getFilterFrom();
+    List<VesselType> vesselTypes = Optional.of(filters)
+        .map(Filters::getVesselTypes)
+        .filter(list -> !list.isEmpty())
+        .orElseGet(vesselTypeService::findAllVesselTypes);
+    List<VesselStatus> vesselStatuses = Optional.of(filters)
+        .map(Filters::getVesselStatuses)
+        .filter(list -> !list.isEmpty())
+        .orElseGet(vesselStatusService::findAllVesselStatuses);
+    List<Long> vesselTypeIds = vesselTypes.stream().map(VesselType::getId).toList();
+    List<Long> vesselStatusIds = vesselStatuses.stream().map(VesselStatus::getId).toList();
+    if (filterFrom.equals(FilterFromEnum.MY_FLEET.getDescription())) {
+      return filtersRepository.getVesselHistoryDataFilteredByFleet(vesselTypeIds, vesselStatusIds, mmsisFromFleet);
+    }
     return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds);
   }
 
