@@ -17,7 +17,6 @@ import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.RoleService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
 import gr.uoa.di.ships.services.interfaces.VesselService;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;

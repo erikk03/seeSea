@@ -2,7 +2,6 @@ package gr.uoa.di.ships.controllers;
 
 import gr.uoa.di.ships.api.dto.UserInfoDTO;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
