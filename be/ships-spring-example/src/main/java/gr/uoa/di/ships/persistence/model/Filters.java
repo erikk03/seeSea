@@ -37,7 +37,7 @@ public class Filters {
   @Column(name = "filter_from")
   private String filterFrom;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "filters_vessel_type",
       joinColumns = {@JoinColumn(name = "filters_id")},

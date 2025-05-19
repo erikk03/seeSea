@@ -64,7 +64,7 @@ public class RegisteredUser implements UserDetails {
   )
   private List<Vessel> vessels;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "filters_id")
   private Filters filters;
 

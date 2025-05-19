@@ -31,9 +31,9 @@ public class VesselStatus {
   @Column(name = "name")
   private String name;
 
-  @OneToMany(mappedBy = "vesselStatus")
-  private Set<Vessel> vessels;
-
   @ManyToMany(mappedBy = "vesselStatuses", fetch = FetchType.EAGER)
   private List<Filters> filters;
+
+  @OneToMany(mappedBy = "vesselStatus")
+  private Set<VesselHistoryData> vesselHistoryData;
 }

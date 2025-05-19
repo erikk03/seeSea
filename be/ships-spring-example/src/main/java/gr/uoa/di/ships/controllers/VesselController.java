@@ -33,8 +33,13 @@ class VesselController {
   }
 
   @PostMapping("/set-filters-and-get-map")
-  List<VesselHistoryDataDTO> getVesselHistoryData(@RequestBody FiltersDTO filtersDTO) {
-    return vesselHistoryDataService.getMap(filtersDTO);
+  List<VesselHistoryDataDTO> setFiltersAndGetMap(@RequestBody FiltersDTO filtersDTO) {
+    return vesselHistoryDataService.setFiltersAndGetMap(filtersDTO);
+  }
+
+  @GetMapping("/get-map")
+  List<VesselHistoryDataDTO> getMap() {
+    return vesselHistoryDataService.getMap();
   }
 
   @GetMapping("/get-all")

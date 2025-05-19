@@ -6,12 +6,14 @@ import gr.uoa.di.ships.api.dto.FiltersDTO;
 import gr.uoa.di.ships.persistence.model.Filters;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.persistence.model.Vessel;
+import gr.uoa.di.ships.persistence.model.VesselHistoryData;
 import gr.uoa.di.ships.persistence.model.VesselStatus;
 import gr.uoa.di.ships.persistence.model.VesselType;
 import gr.uoa.di.ships.persistence.model.enums.FilterFromEnum;
 import gr.uoa.di.ships.persistence.repository.FiltersRepository;
 import gr.uoa.di.ships.services.interfaces.FiltersService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
+import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
 import gr.uoa.di.ships.services.interfaces.VesselService;
 import gr.uoa.di.ships.services.interfaces.VesselStatusService;
 import gr.uoa.di.ships.services.interfaces.VesselTypeService;
@@ -32,17 +34,20 @@ public class FiltersServiceImpl implements FiltersService {
   private final FiltersRepository filtersRepository;
   private final RegisteredUserService registeredUserService;
   private final VesselService vesselService;
+  private final SeeSeaUserDetailsService seeSeaUserDetailsService;
 
   public FiltersServiceImpl(VesselTypeService vesselTypeService,
                             VesselStatusService vesselStatusService,
                             FiltersRepository filtersRepository,
                             RegisteredUserService registeredUserService,
-                            VesselService vesselService) {
+                            VesselService vesselService,
+                            SeeSeaUserDetailsService seeSeaUserDetailsService) {
     this.vesselTypeService = vesselTypeService;
     this.vesselStatusService = vesselStatusService;
     this.filtersRepository = filtersRepository;
     this.registeredUserService = registeredUserService;
     this.vesselService = vesselService;
+    this.seeSeaUserDetailsService = seeSeaUserDetailsService;
   }
 
   @Override
@@ -59,16 +64,17 @@ public class FiltersServiceImpl implements FiltersService {
     if (!FilterFromEnum.isValidFilterFrom(filtersDTO.getFilterFrom())) {
       throw new IllegalArgumentException("Invalid filterFrom value: " + filtersDTO.getFilterFrom());
     }
-    RegisteredUser registeredUser = registeredUserService.getRegisteredUserById(filtersDTO.getRegisteredUserId());
-    Filters filters = Optional.ofNullable(filtersRepository.findByRegisteredUserId(filtersDTO.getRegisteredUserId()))
+    RegisteredUser registeredUser = seeSeaUserDetailsService.getUserDetails();
+    Filters filters = Optional.ofNullable(filtersRepository.findByRegisteredUserId(registeredUser.getId()))
         .orElseGet(() -> Filters.builder()
-                       .registeredUser(registeredUserService.getRegisteredUserById(filtersDTO.getRegisteredUserId()))
+                       .registeredUser(registeredUser)
                        .build());
     filters.setFilterFrom(filtersDTO.getFilterFrom());
     filters.setVesselTypes(vesselTypeService.findVesselTypesByIds(filtersDTO.getVesselTypeIds()));
     filters.setVesselStatuses(vesselStatusService.getVesselStatusesByIds(filtersDTO.getVesselStatusIds()));
     filtersRepository.save(filters);
     registeredUser.setFilters(filters);
+    registeredUserService.saveRegisteredUser(registeredUser);
   }
 
   @Override
@@ -82,6 +88,17 @@ public class FiltersServiceImpl implements FiltersService {
     return compliesWithFilterFrom(filters.getFilterFrom(), mmsi, registeredUser)
         && compliesWithVesselTypes(filters.getVesselTypes(), mmsi)
         && compliesWithVesselStatuses(filters.getVesselStatuses(), jsonNode.get("status").asLong());
+  }
+
+  @Override
+  public List<VesselHistoryData> getVesselHistoryDataFiltered(List<VesselType> vesselTypes, List<VesselStatus> vesselStatuses) {
+    List<Long> vesselTypeIds = !vesselTypes.isEmpty()
+        ? vesselTypes.stream().map(VesselType::getId).toList()
+        : vesselTypeService.findAllVesselTypes().stream().map(VesselType::getId).toList();
+    List<Long> vesselStatusIds = !vesselStatuses.isEmpty()
+        ? vesselStatuses.stream().map(VesselStatus::getId).toList()
+        : vesselStatusService.findAllVesselStatuses().stream().map(VesselStatus::getId).toList();
+    return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds);
   }
 
   private boolean compliesWithFilterFrom(String filterFrom, String mmsi, RegisteredUser registeredUser) {

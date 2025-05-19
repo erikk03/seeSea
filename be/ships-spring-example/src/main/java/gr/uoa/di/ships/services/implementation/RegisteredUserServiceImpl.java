@@ -112,6 +112,11 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
         .collect(Collectors.toList());
   }
 
+  @Override
+  public void saveRegisteredUser(RegisteredUser registeredUser) {
+    registeredUserRepository.save(registeredUser);
+  }
+
   private void validate(UserRegisterDTO userRegisterDTO) {
     if (Objects.nonNull(registeredUserRepository.findByEmail(userRegisterDTO.getEmail()).orElse(null))) {
       throw new RuntimeException(ACCOUNT_WITH_THAT_EMAIL + userRegisterDTO.getEmail());

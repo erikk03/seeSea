@@ -35,10 +35,6 @@ public class Vessel {
   @JoinColumn(name = "vessel_type_id")
   private VesselType vesselType;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "vessel_status_id")
-  private VesselStatus vesselStatus;
-
   @OneToMany(mappedBy = "vessel")
   private Set<VesselHistoryData> vesselHistoryData;
 

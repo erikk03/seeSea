@@ -6,10 +6,10 @@ import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
 import gr.uoa.di.ships.persistence.model.Vessel;
 import gr.uoa.di.ships.persistence.model.VesselHistoryData;
 import gr.uoa.di.ships.services.interfaces.VesselService;
+import gr.uoa.di.ships.services.interfaces.VesselStatusService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
-import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,19 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class VesselHistoryDataMapperImpl implements VesselHistoryDataMapper {
 
   private final VesselService vesselService;
+  private final VesselStatusService vesselStatusService;
 
-  public VesselHistoryDataMapperImpl(VesselService vesselService) {
+  public VesselHistoryDataMapperImpl(VesselService vesselService, VesselStatusService vesselStatusService) {
     this.vesselService = vesselService;
+    this.vesselStatusService = vesselStatusService;
   }
 
   @Override
   public VesselHistoryData toVesselHistoryData(JsonNode vesselHistoryDataJsonNode) {
     String mmsi = vesselHistoryDataJsonNode.get("mmsi").asText();
-    Optional<Vessel> optionalVessel = vesselService.getVesselByMMSI(mmsi);
-    Vessel vessel = optionalVessel.orElseGet(() -> vesselService.saveVessel(new Vessel(mmsi)));
     return VesselHistoryData.builder()
-        .vessel(vessel)
-        .status(vesselHistoryDataJsonNode.get("status").asInt())
+        .vessel(vesselService.getVesselByMMSI(mmsi).orElseGet(() -> vesselService.saveVessel(new Vessel(mmsi))))
+        .vesselStatus(vesselStatusService.getVesselStatusById(vesselHistoryDataJsonNode.get("status").asLong()))
         .turn((float) vesselHistoryDataJsonNode.get("turn").asDouble())
         .speed((float) vesselHistoryDataJsonNode.get("speed").asDouble())
         .course((float) vesselHistoryDataJsonNode.get("course").asDouble())
@@ -50,7 +50,7 @@ public class VesselHistoryDataMapperImpl implements VesselHistoryDataMapper {
             Objects.nonNull(vesselHistoryData.getVessel().getVesselType())
                 ? vesselHistoryData.getVessel().getVesselType().getName()
                 : null)
-        .status(vesselHistoryData.getStatus())
+        .status(vesselHistoryData.getVesselStatus().getName())
         .turn(vesselHistoryData.getTurn())
         .speed(vesselHistoryData.getSpeed())
         .course(vesselHistoryData.getCourse())

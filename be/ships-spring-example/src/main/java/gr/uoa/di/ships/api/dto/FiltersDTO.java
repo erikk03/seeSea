@@ -15,8 +15,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FiltersDTO {
   @NonNull
-  private Long registeredUserId;
-  @NonNull
   private String filterFrom;
   private List<Long> vesselTypeIds;
   private List<Long> vesselStatusIds;
