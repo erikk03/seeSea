@@ -1,0 +1,27 @@
+.welcome-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #004368;  /* your navy blue */
+}
+
+.welcome-logo {
+  max-width: 240px;
+  margin-bottom: 2rem;
+}
+
+.btn-enter {
+  font-size: 2rem;
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  color: #004368;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

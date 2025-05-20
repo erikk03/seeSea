@@ -1,99 +1,115 @@
-# Frontend README
+# Ships Map – Frontend (React + Vite)
 
-This React frontend was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and follows a feature-driven folder structure for maintainability.
+This is the frontend for the **Ships Map** project, built with [React](https://react.dev/) and [Vite](https://vitejs.dev/) for modern, fast development.
 
 ---
 
-## Project Setup
+## 🚀 Quick Start
 
-Install dependencies:
-
+### 📦 Install dependencies
 ```bash
 npm install
 ```
 
-Start in development mode:
-
+### 🧪 Start in development mode (with HTTPS)
 ```bash
-npm start
+npm run dev
 ```
+> Make sure you have `ships.key` and `ships.crt` in the project root for HTTPS. You can generate a dev cert with OpenSSL if needed.
 
-Build for production:
-
+### 📦 Build for production
 ```bash
 npm run build
 ```
 
-Run tests:
+### 🔍 Preview production build locally
+```bash
+npm run preview
+```
+
+---
+
+## 📁 Project Structure
+
+```
+fe/ships-map/
+├── public/              # Optional (not used unless explicitly configured in Vite)
+├── src/
+│   ├── assets/          # Images, logos, static files
+│   ├── components/      # Shared UI components (e.g. Header, Button)
+│   ├── features/        # Domain-specific code (e.g. auth/, map/)
+│   ├── pages/           # Route-based views (e.g. WelcomePage, Dashboard)
+│   ├── styles/          # CSS modules or global styles
+│   ├── utils/           # Utility functions (e.g. API, formatters)
+│   ├── config/          # App setup files (e.g. reportWebVitals, setupTests)
+│   ├── App.jsx          # App layout, providers, and routing
+│   └── index.jsx        # React DOM render entry point
+├── ships.key            # Local HTTPS key (development only)
+├── ships.crt            # Local HTTPS cert (development only)
+├── vite.config.js       # Vite configuration (includes HTTPS cert loading)
+└── package.json         # Project metadata and scripts
+```
+
+---
+
+## 🔐 HTTPS Support (Local Dev)
+
+This project runs on `https://localhost:3000` using a local certificate.
+
+To generate a self-signed cert:
+
+```bash
+openssl req -x509 -newkey rsa:2048 -nodes -keyout ships.key -out ships.crt -days 365 \
+  -subj "/C=US/ST=Local/L=Dev/O=LocalDev/CN=localhost"
+```
+
+Make sure both files are in the root folder next to `vite.config.js`.
+
+---
+
+## 🧪 Testing Setup
+
+- `@testing-library/react` and `jest-dom` are installed.
+- You can write tests in `*.test.js(x)` files.
+- Test setup lives in: `src/config/setupTests.js`
+
+Run tests with:
 
 ```bash
 npm test
 ```
 
-Eject (one-way operation):
+(Optional: configure `vitest` for Vite-native testing)
+
+---
+
+## ✅ Scripts
 
 ```bash
-npm run eject
+npm run dev        # Start dev server (https://localhost:3000)
+npm run build      # Build for production
+npm run preview    # Preview production build locally
 ```
 
 ---
 
-## Available Scripts
+## 🛠 Tech Stack
 
-In the `frontend/` directory, you can run:
-
-- **`npm start`**: Runs the app in development mode at [http://localhost:3000](http://localhost:3000).
-- **`npm test`**: Launches the interactive test runner.
-- **`npm run build`**: Bundles the app for production into the `build/` folder.
-- **`npm run eject`**: Ejects configuration for full control (irreversible).
-
-Refer to the official Create React App docs for more details on each command.
+- **React 19**
+- **Vite** (dev server + bundler)
+- **React Router v7**
+- **Leaflet / React Leaflet**
+- **SockJS + STOMP.js** (for real-time map data)
+- **Testing Library**
 
 ---
 
-## Folder Structure
+## 📦 Deployment Tips
 
-```
-fe/
-├── public/             # Static files (index.html, favicon, manifest)
-├── src/                # Application source code
-│   ├── assets/         # Images, fonts, SVGs
-│   ├── components/     # Shared UI components (Buttons, Modals)
-│   ├── features/       # Feature-specific code (grouped by domain)
-│   │   ├── auth/       # LoginPage.js,
-│   │   └── map/        # WebSocketMap.js,
-│   ├── hooks/          # Custom React hooks (useAuth, useWebSocket)
-│   ├── context/        # React Context providers (ThemeContext, AuthContext)
-│   ├── services/       # API & WebSocket clients (axios, socket setup)
-│   ├── utils/          # Pure helper functions (formatDate, validators)
-│   ├── styles/         # Global CSS, resets, variables
-│   ├── App.js          # Root component with routing/providers
-│   ├── App.css         # Global or App-level styles
-│   ├── index.js        # Entry point rendering `<App />`
-│   ├── index.css       # Global CSS reset/base styles
-│   ├── reportWebVitals.js # Performance metrics helper
-│   └── setupTests.js   # Test setup (Jest, React Testing Library)
-└── package.json        # Scripts, dependencies, metadata
-```
-
-### Directory Descriptions
-
-- **`public/`**: Files copied directly into build output; contains `index.html`, icons, and manifest.
-- **`src/assets/`**: Static assets like images, fonts, and SVGs.
-- **`src/components/`**: Pure, reusable UI controls. Keep business logic minimal here.
-- **`src/features/`**: Group code by domain (e.g., `auth`, `map`, `billing`). Each feature folder holds its UI components/pages, state slices, and API calls.
-- **`src/hooks/`**: Custom hooks encapsulating reusable React logic.
-- **`src/context/`**: Context providers for cross-cutting concerns (theme, global state).
-- **`src/services/`**: API client and socket configuration.
-- **`src/utils/`**: Stateless helper functions. No side effects or React code.
-- **`src/styles/`**: Global CSS files, variables, and resets.
-- **Root files**:
-  - `App.js`: Main app component, sets up routes and providers.
-  - `index.js`: Bootstraps React into the DOM.
-  - `reportWebVitals.js`: Optional performance measurement.
-  - `setupTests.js`: Testing framework setup.
-  - CSS files: `App.css` and `index.css` for global styling.
+- Build output is in the `/dist` folder
+- Ensure any HTTPS certs used in production are real and trusted
+- Vite assets are served as static files — can be hosted on any static host (Netlify, Vercel, Nginx, etc.)
 
 ---
 
-This structure balances Create React App conventions with a clear, feature-driven layout. It should help onboard new developers quickly and keep the codebase organized as it scales!
+This structure is modular, fast, and easy to scale. Happy coding! ⚓🗺️
