@@ -1,4 +1,4 @@
-package gr.uoa.di.ships.configurations;
+package gr.uoa.di.ships.configurations.migrations;
 
 import gr.uoa.di.ships.persistence.model.enums.MigrationEnum;
 import gr.uoa.di.ships.services.interfaces.MigrationService;

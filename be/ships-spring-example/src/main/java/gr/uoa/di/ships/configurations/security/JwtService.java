@@ -29,7 +29,7 @@ public class JwtService {
   }
 
   public String generateToken(String username) {
-      return createToken(username);
+    return createToken(username);
   }
 
   public String extractUsername(String token) {

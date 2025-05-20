@@ -3,14 +3,14 @@ package gr.uoa.di.ships.services.implementation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import gr.uoa.di.ships.persistence.model.Vessel;
-import gr.uoa.di.ships.persistence.model.VesselType;
+import gr.uoa.di.ships.persistence.model.vessel.Vessel;
+import gr.uoa.di.ships.persistence.model.vessel.VesselType;
 import gr.uoa.di.ships.services.interfaces.FiltersService;
 import gr.uoa.di.ships.services.interfaces.LocationsConsumer;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
-import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
-import gr.uoa.di.ships.services.interfaces.VesselService;
-import gr.uoa.di.ships.services.interfaces.VesselStatusService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselStatusService;
 import jakarta.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,8 +84,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
         .forEach(userId -> template.convertAndSendToUser(
             userId.toString(),
             "/queue/locations",
-            tunedJsonNode)
-        );
+            tunedJsonNode));
   }
 
   private ObjectNode getTunedJsonNode(JsonNode jsonNode) {

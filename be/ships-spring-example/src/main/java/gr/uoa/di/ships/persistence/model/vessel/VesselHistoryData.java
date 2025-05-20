@@ -1,4 +1,4 @@
-package gr.uoa.di.ships.persistence.model;
+package gr.uoa.di.ships.persistence.model.vessel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

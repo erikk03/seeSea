@@ -1,7 +1,7 @@
 package gr.uoa.di.ships.controllers;
 
 import gr.uoa.di.ships.api.dto.UpdateVesselDTO;
-import gr.uoa.di.ships.services.interfaces.VesselService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;

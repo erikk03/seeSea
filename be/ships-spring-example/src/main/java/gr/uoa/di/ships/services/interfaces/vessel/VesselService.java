@@ -1,7 +1,7 @@
-package gr.uoa.di.ships.services.interfaces;
+package gr.uoa.di.ships.services.interfaces.vessel;
 
 import gr.uoa.di.ships.api.dto.UpdateVesselDTO;
-import gr.uoa.di.ships.persistence.model.Vessel;
+import gr.uoa.di.ships.persistence.model.vessel.Vessel;
 import java.util.List;
 import java.util.Optional;
 

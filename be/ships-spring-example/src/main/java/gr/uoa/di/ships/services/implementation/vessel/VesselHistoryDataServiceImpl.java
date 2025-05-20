@@ -1,4 +1,4 @@
-package gr.uoa.di.ships.services.implementation;
+package gr.uoa.di.ships.services.implementation.vessel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gr.uoa.di.ships.api.dto.FiltersDTO;
@@ -6,12 +6,12 @@ import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
 import gr.uoa.di.ships.persistence.model.Filters;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
-import gr.uoa.di.ships.persistence.model.Vessel;
-import gr.uoa.di.ships.persistence.repository.VesselHistoryDataRepository;
+import gr.uoa.di.ships.persistence.model.vessel.Vessel;
+import gr.uoa.di.ships.persistence.repository.vessel.VesselHistoryDataRepository;
 import gr.uoa.di.ships.services.interfaces.FiltersService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
-import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;

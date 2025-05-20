@@ -1,6 +1,6 @@
-package gr.uoa.di.ships.services.interfaces;
+package gr.uoa.di.ships.services.interfaces.vessel;
 
-import gr.uoa.di.ships.persistence.model.VesselStatus;
+import gr.uoa.di.ships.persistence.model.vessel.VesselStatus;
 import java.util.List;
 
 public interface VesselStatusService {

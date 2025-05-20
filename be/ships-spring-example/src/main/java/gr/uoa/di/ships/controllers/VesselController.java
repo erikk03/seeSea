@@ -2,7 +2,7 @@ package gr.uoa.di.ships.controllers;
 
 import gr.uoa.di.ships.api.dto.FiltersDTO;
 import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
-import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/vessel")
-class VesselController {
+public class VesselController {
 
   private final VesselHistoryDataService vesselHistoryDataService;
 

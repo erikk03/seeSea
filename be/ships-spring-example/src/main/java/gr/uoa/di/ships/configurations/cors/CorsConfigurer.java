@@ -1,4 +1,4 @@
-package gr.uoa.di.ships.configurations;
+package gr.uoa.di.ships.configurations.cors;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -18,11 +18,11 @@ public class CorsConfigurer implements WebMvcConfigurer {
   }
 
   @Override
-    public void addCorsMappings(CorsRegistry registry) {
-      String urls = env.getProperty("cors.urls");
-      CorsRegistration reg = registry.addMapping("/api/**");
-      for(String url: urls.split(",")) {
-          reg.allowedOrigins(url);
-      }
+  public void addCorsMappings(CorsRegistry registry) {
+    String urls = env.getProperty("cors.urls");
+    CorsRegistration reg = registry.addMapping("/api/**");
+    for (String url : urls.split(",")) {
+      reg.allowedOrigins(url);
     }
+  }
 }

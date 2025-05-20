@@ -1,6 +1,6 @@
 package gr.uoa.di.ships.services;
 
-import gr.uoa.di.ships.services.interfaces.VesselHistoryDataService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

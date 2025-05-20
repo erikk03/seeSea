@@ -1,9 +1,9 @@
-package gr.uoa.di.ships.services.implementation;
+package gr.uoa.di.ships.services.implementation.vessel;
 
-import gr.uoa.di.ships.configurations.exceptions.VesselStatusNotFoundException;
-import gr.uoa.di.ships.persistence.model.VesselStatus;
-import gr.uoa.di.ships.persistence.repository.VesselStatusRepository;
-import gr.uoa.di.ships.services.interfaces.VesselStatusService;
+import gr.uoa.di.ships.configurations.exceptions.vessel.VesselStatusNotFoundException;
+import gr.uoa.di.ships.persistence.model.vessel.VesselStatus;
+import gr.uoa.di.ships.persistence.repository.vessel.VesselStatusRepository;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselStatusService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

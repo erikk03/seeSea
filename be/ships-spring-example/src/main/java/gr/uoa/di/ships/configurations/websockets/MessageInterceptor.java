@@ -1,4 +1,4 @@
-package gr.uoa.di.ships.configurations;
+package gr.uoa.di.ships.configurations.websockets;
 
 import gr.uoa.di.ships.configurations.security.JwtService;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
@@ -51,9 +51,9 @@ public class MessageInterceptor implements ChannelInterceptor {
       UserDetails userDetails = seeSeaUserDetailsService.loadUserByUsername(username);
       Long userId = ((RegisteredUser) userDetails).getId();
       Principal idPrincipal = userId::toString;
-      UsernamePasswordAuthenticationToken authenticatedUser = new UsernamePasswordAuthenticationToken(idPrincipal,null, userDetails.getAuthorities());
+      UsernamePasswordAuthenticationToken authenticatedUser = new UsernamePasswordAuthenticationToken(idPrincipal, null, userDetails.getAuthorities());
       accessor.setUser(authenticatedUser);
-    } else{
+    } else {
       log.info("Authorization header not present");
     }
   }

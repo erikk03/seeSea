@@ -1,7 +1,7 @@
 package gr.uoa.di.ships.api.dto;
 
-import gr.uoa.di.ships.persistence.model.VesselStatus;
-import gr.uoa.di.ships.persistence.model.VesselType;
+import gr.uoa.di.ships.persistence.model.vessel.VesselStatus;
+import gr.uoa.di.ships.persistence.model.vessel.VesselType;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -10,6 +10,6 @@ public enum MigrationEnum {
   final String description;
 
   MigrationEnum(final String description) {
-      this.description = description;
+    this.description = description;
   }
 }

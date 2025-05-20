@@ -1,11 +1,11 @@
-package gr.uoa.di.ships.services.implementation;
+package gr.uoa.di.ships.services.implementation.vessel;
 
 import gr.uoa.di.ships.api.dto.UpdateVesselDTO;
-import gr.uoa.di.ships.configurations.exceptions.VesselNotFoundException;
-import gr.uoa.di.ships.persistence.model.Vessel;
-import gr.uoa.di.ships.persistence.repository.VesselRepository;
-import gr.uoa.di.ships.services.interfaces.VesselService;
-import gr.uoa.di.ships.services.interfaces.VesselTypeService;
+import gr.uoa.di.ships.configurations.exceptions.vessel.VesselNotFoundException;
+import gr.uoa.di.ships.persistence.model.vessel.Vessel;
+import gr.uoa.di.ships.persistence.repository.vessel.VesselRepository;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselTypeService;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;

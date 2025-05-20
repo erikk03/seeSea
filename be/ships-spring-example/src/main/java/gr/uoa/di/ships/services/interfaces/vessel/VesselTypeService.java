@@ -1,6 +1,6 @@
-package gr.uoa.di.ships.services.interfaces;
+package gr.uoa.di.ships.services.interfaces.vessel;
 
-import gr.uoa.di.ships.persistence.model.VesselType;
+import gr.uoa.di.ships.persistence.model.vessel.VesselType;
 import java.util.List;
 
 public interface VesselTypeService {

@@ -1,4 +1,4 @@
-package gr.uoa.di.ships.services.interfaces;
+package gr.uoa.di.ships.services.interfaces.vessel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gr.uoa.di.ships.api.dto.FiltersDTO;

@@ -12,7 +12,7 @@ public enum RoleEnum {
   final String authority;
 
   RoleEnum(final String authority) {
-      this.authority = authority;
+    this.authority = authority;
   }
 
   public static RoleEnum fromRole(String role) {

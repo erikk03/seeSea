@@ -1,10 +1,9 @@
-package gr.uoa.di.ships.persistence.model;
+package gr.uoa.di.ships.persistence.model.vessel;
 
+import gr.uoa.di.ships.persistence.model.Filters;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
@@ -23,19 +22,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "vessel_type")
-public class VesselType {
+@Table(name = "vessel_status")
+public class VesselStatus {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", nullable = false, unique = true)
   private Long id;
 
   @Column(name = "name")
   private String name;
 
-  @OneToMany(mappedBy = "vesselType")
-  private Set<Vessel> vessels;
-
-  @ManyToMany(mappedBy = "vesselTypes", fetch = FetchType.EAGER)
+  @ManyToMany(mappedBy = "vesselStatuses", fetch = FetchType.EAGER)
   private List<Filters> filters;
+
+  @OneToMany(mappedBy = "vesselStatus")
+  private Set<VesselHistoryData> vesselHistoryData;
 }

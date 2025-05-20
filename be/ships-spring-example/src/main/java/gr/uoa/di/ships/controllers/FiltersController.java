@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/filters")
-class FiltersController {
+public class FiltersController {
 
   private final FiltersService filtersService;
 

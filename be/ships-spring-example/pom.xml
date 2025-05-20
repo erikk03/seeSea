@@ -139,7 +139,49 @@
     </dependencies>
 
 	<build>
-		<plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <!-- bump to the latest plugin (bundles a modern Checkstyle), or keep 3.2.2 -->
+                    <version>3.3.0</version>
+                    <!-- override the Checkstyle library to a version that knows COMPACT_CTOR_DEF -->
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <!-- any 9.x+ or 10.x release will work; here’s the current latest -->
+                            <version>10.12.1</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <!-- treat warnings as violations too -->
+                        <violationSeverity>warning</violationSeverity>
+                        <!-- print all violations to console as they’re found -->
+                        <consoleOutput>true</consoleOutput>
+                        <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+                        <failsOnError>true</failsOnError>
+                        <linkXRef>false</linkXRef>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>validate-checkstyle</id>
+                            <phase>validate</phase>
+                            <goals><goal>check</goal></goals>
+                        </execution>
+                        <execution>
+                            <id>report-checkstyle</id>
+                            <phase>site</phase>
+                            <goals><goal>checkstyle</goal></goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
+        <plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -155,10 +197,12 @@
 					</argLine>
 				</configuration>
 			</plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <!-- version and dependencies come from pluginManagement -->
+            </plugin>
 		</plugins>
-
 	</build>
-
-
-
 </project>
