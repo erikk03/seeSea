@@ -1,7 +1,7 @@
 package gr.uoa.di.ships.persistence.repository;
 
 import gr.uoa.di.ships.persistence.model.Filters;
-import gr.uoa.di.ships.persistence.model.VesselHistoryData;
+import gr.uoa.di.ships.persistence.model.vessel.VesselHistoryData;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FiltersRepository extends JpaRepository<Filters, Long>{
+public interface FiltersRepository extends JpaRepository<Filters, Long> {
   Filters findByRegisteredUserId(Long registeredUserId);
 
   @Modifying

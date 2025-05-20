@@ -3,15 +3,15 @@ package gr.uoa.di.ships.services.implementation;
 import com.opencsv.CSVReader;
 import gr.uoa.di.ships.configurations.exceptions.MigrationNotFoundException;
 import gr.uoa.di.ships.persistence.model.Migration;
-import gr.uoa.di.ships.persistence.model.Vessel;
-import gr.uoa.di.ships.persistence.model.VesselStatus;
-import gr.uoa.di.ships.persistence.model.VesselType;
 import gr.uoa.di.ships.persistence.model.enums.MigrationEnum;
+import gr.uoa.di.ships.persistence.model.vessel.Vessel;
+import gr.uoa.di.ships.persistence.model.vessel.VesselStatus;
+import gr.uoa.di.ships.persistence.model.vessel.VesselType;
 import gr.uoa.di.ships.persistence.repository.MigrationRepository;
 import gr.uoa.di.ships.services.interfaces.MigrationService;
-import gr.uoa.di.ships.services.interfaces.VesselService;
-import gr.uoa.di.ships.services.interfaces.VesselStatusService;
-import gr.uoa.di.ships.services.interfaces.VesselTypeService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselStatusService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselTypeService;
 import jakarta.persistence.EntityManager;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -117,7 +117,9 @@ public class MigrationServiceImpl implements MigrationService {
 
   private void readVesselStatusesCsv(CSVReader csvReader, Map<String, VesselStatus> vesselStatusMap) {
     StreamSupport.stream(csvReader.spliterator(), false).forEach(row -> {
-      if (row.length < 2) return;
+      if (row.length < 2) {
+        return;
+      }
       Long statusId = Long.parseLong(row[0].trim());
       String statusName = row[1].trim();
       persistVesselStatus(vesselStatusMap, statusId, statusName);
@@ -135,7 +137,9 @@ public class MigrationServiceImpl implements MigrationService {
 
   private void readVesselTypesCsv(CSVReader csvReader, Map<String, VesselType> vesselTypeMap, Set<String> existingMmsis, List<Vessel> newVessels) {
     StreamSupport.stream(csvReader.spliterator(), false).forEach(row -> {
-      if (row.length < 2) return;
+      if (row.length < 2) {
+        return;
+      }
       String mmsi = row[0].trim();
       String typeName = row[1].trim();
       VesselType vesselType = persistVesselType(vesselTypeMap, typeName);

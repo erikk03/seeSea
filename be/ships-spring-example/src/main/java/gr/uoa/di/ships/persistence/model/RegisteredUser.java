@@ -1,5 +1,6 @@
 package gr.uoa.di.ships.persistence.model;
 
+import gr.uoa.di.ships.persistence.model.vessel.Vessel;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -71,11 +72,11 @@ public class RegisteredUser implements UserDetails {
 
   @Override
   public String toString() {
-    return "Users{" +
-        "id=" + id +
-        ", username='" + username + '\'' +
-        ", password='" + password + '\'' +
-        '}';
+    return "Users{"
+        + "id=" + id
+        + ", username='" + username + '\''
+        + ", password='" + password + '\''
+        +  '}';
   }
 
   @Override

@@ -11,7 +11,7 @@ public enum FilterFromEnum {
   final String description;
 
   FilterFromEnum(final String description) {
-      this.description = description;
+    this.description = description;
   }
 
   public static boolean isValidFilterFrom(String filterFrom) {

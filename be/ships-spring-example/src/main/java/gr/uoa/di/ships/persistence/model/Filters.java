@@ -1,5 +1,7 @@
 package gr.uoa.di.ships.persistence.model;
 
+import gr.uoa.di.ships.persistence.model.vessel.VesselStatus;
+import gr.uoa.di.ships.persistence.model.vessel.VesselType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
