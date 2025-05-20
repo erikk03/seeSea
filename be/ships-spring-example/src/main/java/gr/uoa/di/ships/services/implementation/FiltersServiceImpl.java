@@ -3,6 +3,8 @@ package gr.uoa.di.ships.services.implementation;
 import com.fasterxml.jackson.databind.JsonNode;
 import gr.uoa.di.ships.api.dto.AvailableFiltersDTO;
 import gr.uoa.di.ships.api.dto.FiltersDTO;
+import gr.uoa.di.ships.api.mapper.interfaces.VesselStatusMapper;
+import gr.uoa.di.ships.api.mapper.interfaces.VesselTypeMapper;
 import gr.uoa.di.ships.persistence.model.Filters;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.persistence.model.enums.FilterFromEnum;
@@ -35,27 +37,33 @@ public class FiltersServiceImpl implements FiltersService {
   private final RegisteredUserService registeredUserService;
   private final VesselService vesselService;
   private final SeeSeaUserDetailsService seeSeaUserDetailsService;
+  private final VesselTypeMapper vesselTypeMapper;
+  private final VesselStatusMapper vesselStatusMapper;
 
   public FiltersServiceImpl(VesselTypeService vesselTypeService,
                             VesselStatusService vesselStatusService,
                             FiltersRepository filtersRepository,
                             RegisteredUserService registeredUserService,
                             VesselService vesselService,
-                            SeeSeaUserDetailsService seeSeaUserDetailsService) {
+                            SeeSeaUserDetailsService seeSeaUserDetailsService,
+                            VesselTypeMapper vesselTypeMapper,
+                            VesselStatusMapper vesselStatusMapper) {
     this.vesselTypeService = vesselTypeService;
     this.vesselStatusService = vesselStatusService;
     this.filtersRepository = filtersRepository;
     this.registeredUserService = registeredUserService;
     this.vesselService = vesselService;
     this.seeSeaUserDetailsService = seeSeaUserDetailsService;
+    this.vesselTypeMapper = vesselTypeMapper;
+    this.vesselStatusMapper = vesselStatusMapper;
   }
 
   @Override
   public AvailableFiltersDTO getAvailableFilters() {
     return AvailableFiltersDTO.builder()
         .filterFrom(List.of(FilterFromEnum.ALL.getDescription(), FilterFromEnum.MY_FLEET.getDescription()))
-        .vesselTypes(vesselTypeService.findAllVesselTypes())
-        .vesselStatuses(vesselStatusService.findAllVesselStatuses())
+        .vesselTypes(vesselTypeService.findAllVesselTypes().stream().map(vesselTypeMapper::toSelectOptionDTO).toList())
+        .vesselStatuses(vesselStatusService.findAllVesselStatuses().stream().map(vesselStatusMapper::toSelectOptionDTO).toList())
         .build();
   }
 
