@@ -14,7 +14,7 @@ public interface RegisteredUserService {
 
   UserInfoDTO getUserInfo(Long id);
 
-  void changePassword(Long id, String newPassword);
+  void changePassword(String newPassword);
 
   RegisteredUser getRegisteredUserById(Long id);
 

@@ -27,10 +27,10 @@ public class RegisteredUserController {
     return registeredUserService.getUserInfo(id);
   }
 
-  @PutMapping("/change-password/{id}")
+  @PutMapping("/change-password")
   @ResponseStatus(HttpStatus.OK)
-  public void changePassword(@PathVariable Long id, @RequestBody String newPassword) {
-    registeredUserService.changePassword(id, newPassword);
+  public void changePassword(@RequestBody String newPassword) {
+    registeredUserService.changePassword(newPassword);
   }
 
   @PutMapping("/add-vessel-to-fleet")

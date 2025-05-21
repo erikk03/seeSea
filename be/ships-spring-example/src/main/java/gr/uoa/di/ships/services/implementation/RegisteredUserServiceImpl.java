@@ -105,9 +105,8 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   }
 
   @Override
-  public void changePassword(Long id, String newPassword) {
-    RegisteredUser registeredUser = registeredUserRepository.findById(id)
-        .orElseThrow(() -> new UserNotFoundException(id));
+  public void changePassword(String newPassword) {
+    RegisteredUser registeredUser = getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId());
     registeredUser.setPassword(securityConfig.encoder().encode(newPassword));
     registeredUserRepository.save(registeredUser);
   }
