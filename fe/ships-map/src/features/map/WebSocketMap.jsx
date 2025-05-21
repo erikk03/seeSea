@@ -85,7 +85,19 @@ export default function WebSocketMap({ token, onLogout }) {
         zoom={6}
         style={{ height: '80vh', width: '100%' }}
       >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        {/* Base: Carto Light */}
+        <TileLayer
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+        />
+
+        {/* OpenSeaMap overlay (marine layer) */}
+        <TileLayer
+          url="https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"
+          attribution="&copy; OpenSeaMap contributors"
+          opacity={0.8}
+        />
+
         {Object.values(ships).map(ship => (
           <Marker
             key={ship.mmsi}
