@@ -15,7 +15,8 @@
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.6.0",
     "sockjs-client": "^1.6.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "lucide-react": "^0.511.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
