@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 import WelcomePage from './pages/WelcomePage';
 import Login from './features/auth/Login';
-import WebSocketMap from './features/map/WebSocketMap';
+import GuestMapPage from './pages/GuestMapPage';
 
 export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token') || '');
@@ -38,17 +38,8 @@ export default function App() {
           }
         />
 
-        {/* Protected Map Route */}
-        <Route
-          path="/map"
-          element={
-            token ? (
-              <WebSocketMap token={token} onLogout={handleLogout} />
-            ) : (
-              <Navigate to="/signin" />
-            )
-          }
-        />
+        {/* Map Route */}
+        <Route path="/map" element={<GuestMapPage />}/>
 
         {/* Redirect unknown routes to welcome */}
         <Route path="*" element={<Navigate to="/" />} />

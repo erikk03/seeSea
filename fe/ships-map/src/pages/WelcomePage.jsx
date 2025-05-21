@@ -9,7 +9,7 @@ export default function WelcomePage() {
   const navigate = useNavigate();
 
   const handleEnter = () => {
-    navigate('/signin');
+    navigate('/map');
   };
 
   return (
