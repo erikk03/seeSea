@@ -4,6 +4,9 @@ import 'leaflet/dist/leaflet.css';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import L from 'leaflet';
+import MouseCoordinates from './MouseCoordinates';
+import CustomZoomControl from './CustomZoomControl';
+
 
 // rotateable ship icon factory
 const createShipIcon = heading =>
@@ -83,18 +86,24 @@ export default function WebSocketMap({ token, onLogout }) {
       <MapContainer
         center={[37.9838, 23.7275]}
         zoom={6}
+        zoomControl={false}
         style={{ height: '80vh', width: '100%' }}
+        attributionControl={false}
       >
+        {/* Custom zoom control */}
+        {/* <CustomZoomControl /> */}
+
+        {/* Mouse Coordinates */}
+        <MouseCoordinates />
+        
         {/* Base: Carto Light */}
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
         />
 
         {/* OpenSeaMap overlay (marine layer) */}
         <TileLayer
           url="https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"
-          attribution="&copy; OpenSeaMap contributors"
           opacity={0.8}
         />
 
