@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/vessel")
 public class VesselController {
-
+ // test
   private final VesselHistoryDataService vesselHistoryDataService;
 
   VesselController(VesselHistoryDataService vesselHistoryDataService) {
