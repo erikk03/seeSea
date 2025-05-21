@@ -80,11 +80,6 @@ export default function WebSocketMap({ token, onLogout }) {
 
   return (
     <div>
-      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem' }}>
-        <h1>Live Ship Map</h1>
-        <button onClick={onLogout}>Log Out</button>
-      </header>
-
       <MapContainer
         center={[37.9838, 23.7275]}
         zoom={6}

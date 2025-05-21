@@ -1,49 +1,45 @@
-import React from 'react';
+import { Button } from "@heroui/react";
+import { Ship, Bell, Filter, HelpCircle } from "lucide-react";
 
-export default function SideMenu({ userRole = 'guest', onProtectedClick }) {
-  // Define which items require auth
-  const items = [
-    { label: 'My Fleet', requiresAuth: true },
-    { label: 'Alerts', requiresAuth: true },
-    { label: 'Filters', requiresAuth: true },
-    { label: 'Help', requiresAuth: false },
-  ];
+const menuItems = [
+  { label: "My Fleet", icon: Ship, requiresAuth: true },
+  { label: "Alerts", icon: Bell, requiresAuth: true },
+  { label: "Filters", icon: Filter, requiresAuth: true },
+];
 
-  const handleClick = (item) => {
-    if (item.requiresAuth && userRole === 'guest') {
-      onProtectedClick(item.label); // trigger login prompt
+export default function SideMenu({ userRole = "guest", onProtectedClick }) {
+  const handleClick = (label, requiresAuth) => {
+    if (requiresAuth && userRole === "guest") {
+      onProtectedClick(label);
     } else {
-      console.log(`Accessing ${item.label}`);
-      // You can route or open panel here
+      console.log(`Accessing ${label}`);
     }
   };
 
   return (
-    <div style={{
-      width: '200px',
-      backgroundColor: '#1e3a5f',
-      color: '#fff',
-      padding: '1rem',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1rem'
-    }}>
-      {items.map(item => (
-        <button
-          key={item.label}
-          onClick={() => handleClick(item)}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'white',
-            cursor: 'pointer',
-            fontSize: '16px',
-            textAlign: 'left'
-          }}
-        >
-          {item.label}
-        </button>
-      ))}
+    <div className="fixed left-4 top-1/2 -translate-y-1/2 z-[1100] flex flex-col justify-between w-[150px] h-[280px] bg-[#004368] text-white rounded-2xl shadow-xl p-4">
+      <div className="flex flex-col gap-2">
+        {menuItems.map(({ label, icon: Icon, requiresAuth }) => (
+          <Button
+            key={label}
+            variant="light"
+            onPress={() => handleClick(label, requiresAuth)}
+            className="flex items-center justify-start gap-2 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
+          >
+            <Icon size={18} />
+            <span className="text-sm">{label}</span>
+          </Button>
+        ))}
+      </div>
+
+      <Button
+        variant="light"
+        onPress={() => handleClick("Help", false)}
+        className="flex items-center justify-start gap-2 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
+      >
+        <HelpCircle size={18} />
+        <span className="text-sm">Help</span>
+      </Button>
     </div>
   );
 }
