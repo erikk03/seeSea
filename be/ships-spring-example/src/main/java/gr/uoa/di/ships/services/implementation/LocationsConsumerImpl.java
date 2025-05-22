@@ -11,6 +11,7 @@ import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselStatusService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselTypeService;
 import jakarta.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class LocationsConsumerImpl implements LocationsConsumer {
 
+  private static final String UNKNOWN = "unknown";
   private final ObjectMapper objectMapper;
   private final List<JsonNode> buffer = Collections.synchronizedList(new ArrayList<>());
   private final AtomicInteger batchCount = new AtomicInteger(0);
@@ -38,6 +40,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private final FiltersService filtersService;
   private final VesselStatusService vesselStatusService;
   private final VesselService vesselService;
+  private final VesselTypeService vesselTypeService;
 
   public LocationsConsumerImpl(ObjectMapper objectMapper,
                                SimpMessagingTemplate template,
@@ -45,7 +48,8 @@ public class LocationsConsumerImpl implements LocationsConsumer {
                                RegisteredUserService registeredUserService,
                                FiltersService filtersService,
                                VesselStatusService vesselStatusService,
-                               VesselService vesselService) {
+                               VesselService vesselService,
+                               VesselTypeService vesselTypeService) {
     this.objectMapper = objectMapper;
     this.template = template;
     this.vesselHistoryDataService = vesselHistoryDataService;
@@ -53,6 +57,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     this.filtersService = filtersService;
     this.vesselStatusService = vesselStatusService;
     this.vesselService = vesselService;
+    this.vesselTypeService = vesselTypeService;
   }
 
   @KafkaListener(topics = "${kafka.topic}")
@@ -90,7 +95,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private ObjectNode getTunedJsonNode(JsonNode jsonNode) {
     String mmsi = jsonNode.get("mmsi").asText();
     VesselType vesselType = vesselService.getVesselByMMSI(mmsi)
-        .orElseGet(() -> vesselService.saveVessel(new Vessel(mmsi)))
+        .orElseGet(() -> vesselService.saveVessel(new Vessel(mmsi, vesselTypeService.findVesselTypeByName(UNKNOWN))))
         .getVesselType();
     ObjectNode tunedJsonNode = ((ObjectNode) jsonNode).deepCopy();
     tunedJsonNode.put("vesselType", Objects.nonNull(vesselType) ? vesselType.getName() : null);

@@ -15,6 +15,7 @@ import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,10 +60,7 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
 
   @Override
   public List<VesselHistoryDataDTO> getMap() {
-    RegisteredUser registeredUser = registeredUserService.getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId());
-    Filters filters = registeredUser.getFilters();
-    List<String> mmsisFromFleet = registeredUser.getVessels().stream().map(Vessel::getMmsi).toList();
-    return filtersService.getVesselHistoryDataFiltered(filters, mmsisFromFleet).stream()
+    return filtersService.getVesselHistoryDataFiltered().stream()
         .map(vesselHistoryDataMapper::toVesselHistoryDataDTO)
         .toList();
   }

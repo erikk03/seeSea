@@ -46,7 +46,8 @@ public class Vessel {
   )
   private Set<RegisteredUser> registeredUsers;
 
-  public Vessel(String mmsi) {
+  public Vessel(String mmsi, VesselType vesselType) {
     this.mmsi = mmsi;
+    this.vesselType = vesselType;
   }
 }

@@ -14,5 +14,5 @@ public interface FiltersService {
 
   boolean compliesWithUserFilters(JsonNode jsonNode, Long userId);
 
-  List<VesselHistoryData> getVesselHistoryDataFiltered(Filters filters, List<String> mmsisFromFleet);
+  List<VesselHistoryData> getVesselHistoryDataFiltered();
 }

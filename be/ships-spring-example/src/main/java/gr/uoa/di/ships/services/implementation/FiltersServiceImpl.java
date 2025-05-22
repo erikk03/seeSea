@@ -99,22 +99,49 @@ public class FiltersServiceImpl implements FiltersService {
   }
 
   @Override
-  public List<VesselHistoryData> getVesselHistoryDataFiltered(Filters filters, List<String> mmsisFromFleet) {
-    String filterFrom = Objects.nonNull(filters) ? filters.getFilterFrom() : FilterFromEnum.ALL.getDescription();
-    List<VesselType> vesselTypes = Optional.ofNullable(filters)
-        .map(Filters::getVesselTypes)
-        .filter(list -> !list.isEmpty())
-        .orElseGet(vesselTypeService::findAllVesselTypes);
+  public List<VesselHistoryData> getVesselHistoryDataFiltered() {
+    Optional<RegisteredUser> optionalRegisteredUser = Optional.ofNullable(seeSeaUserDetailsService.getUserDetails())
+        .map(user -> registeredUserService.getRegisteredUserById(user.getId()));
+    Filters filters = getFilters(optionalRegisteredUser);
+    List<Long> vesselTypeIds = getVesselTypeIds(filters);
+    List<Long> vesselStatusIds = getVesselStatusIds(filters);
+    if (getFilterFrom(filters).equals(FilterFromEnum.MY_FLEET.getDescription())) {
+      return filtersRepository.getVesselHistoryDataFilteredByFleet(vesselTypeIds, vesselStatusIds, getMmsisFromFleet(optionalRegisteredUser));
+    }
+    return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds);
+  }
+
+  private static List<String> getMmsisFromFleet(Optional<RegisteredUser> optionalRegisteredUser) {
+    return optionalRegisteredUser.map(RegisteredUser::getVessels)
+        .map(vessels -> vessels.stream().map(Vessel::getMmsi).toList())
+        .orElse(null);
+  }
+
+  private static String getFilterFrom(Filters filters) {
+    return Optional.ofNullable(filters).map(Filters::getFilterFrom)
+        .orElse(FilterFromEnum.ALL.getDescription());
+  }
+
+  private List<Long> getVesselStatusIds(Filters filters) {
     List<VesselStatus> vesselStatuses = Optional.ofNullable(filters)
         .map(Filters::getVesselStatuses)
         .filter(list -> !list.isEmpty())
         .orElseGet(vesselStatusService::findAllVesselStatuses);
-    List<Long> vesselTypeIds = vesselTypes.stream().map(VesselType::getId).toList();
-    List<Long> vesselStatusIds = vesselStatuses.stream().map(VesselStatus::getId).toList();
-    if (filterFrom.equals(FilterFromEnum.MY_FLEET.getDescription())) {
-      return filtersRepository.getVesselHistoryDataFilteredByFleet(vesselTypeIds, vesselStatusIds, mmsisFromFleet);
-    }
-    return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds);
+    return vesselStatuses.stream().map(VesselStatus::getId).toList();
+  }
+
+  private List<Long> getVesselTypeIds(Filters filters) {
+    List<VesselType> vesselTypes = Optional.ofNullable(filters)
+        .map(Filters::getVesselTypes)
+        .filter(list -> !list.isEmpty())
+        .orElseGet(vesselTypeService::findAllVesselTypes);
+    return vesselTypes.stream().map(VesselType::getId).toList();
+  }
+
+  private static Filters getFilters(Optional<RegisteredUser> optionalRegisteredUser) {
+    return optionalRegisteredUser
+        .map(RegisteredUser::getFilters)
+        .orElse(null);
   }
 
   private boolean compliesWithFilterFrom(String filterFrom, String mmsi, RegisteredUser registeredUser) {
