@@ -105,16 +105,16 @@ public class FiltersServiceImpl implements FiltersService {
     Filters filters = getFilters(optionalRegisteredUser);
     List<Long> vesselTypeIds = getVesselTypeIds(filters);
     List<Long> vesselStatusIds = getVesselStatusIds(filters);
-    if (getFilterFrom(filters).equals(FilterFromEnum.MY_FLEET.getDescription())) {
-      return filtersRepository.getVesselHistoryDataFilteredByFleet(vesselTypeIds, vesselStatusIds, getMmsisFromFleet(optionalRegisteredUser));
-    }
-    return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds);
+    List<String> mmsisFromFleet = getMmsisFromFleet(filters, optionalRegisteredUser);
+    return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds, mmsisFromFleet);
   }
 
-  private static List<String> getMmsisFromFleet(Optional<RegisteredUser> optionalRegisteredUser) {
-    return optionalRegisteredUser.map(RegisteredUser::getVessels)
-        .map(vessels -> vessels.stream().map(Vessel::getMmsi).toList())
-        .orElse(null);
+  private static List<String> getMmsisFromFleet(Filters filters, Optional<RegisteredUser> optionalRegisteredUser) {
+    return FilterFromEnum.MY_FLEET.getDescription().equals(getFilterFrom(filters))
+        ? optionalRegisteredUser.map(RegisteredUser::getVessels)
+                                .map(vessels -> vessels.stream().map(Vessel::getMmsi).toList())
+                                .orElse(null)
+        : null;
   }
 
   private static String getFilterFrom(Filters filters) {
