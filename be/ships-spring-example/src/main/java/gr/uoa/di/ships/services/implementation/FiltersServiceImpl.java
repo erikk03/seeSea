@@ -101,11 +101,11 @@ public class FiltersServiceImpl implements FiltersService {
   @Override
   public List<VesselHistoryData> getVesselHistoryDataFiltered(Filters filters, List<String> mmsisFromFleet) {
     String filterFrom = Objects.nonNull(filters) ? filters.getFilterFrom() : FilterFromEnum.ALL.getDescription();
-    List<VesselType> vesselTypes = Optional.of(filters)
+    List<VesselType> vesselTypes = Optional.ofNullable(filters)
         .map(Filters::getVesselTypes)
         .filter(list -> !list.isEmpty())
         .orElseGet(vesselTypeService::findAllVesselTypes);
-    List<VesselStatus> vesselStatuses = Optional.of(filters)
+    List<VesselStatus> vesselStatuses = Optional.ofNullable(filters)
         .map(Filters::getVesselStatuses)
         .filter(list -> !list.isEmpty())
         .orElseGet(vesselStatusService::findAllVesselStatuses);

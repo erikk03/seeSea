@@ -55,8 +55,8 @@ public class VesselHistoryDataMapperImpl implements VesselHistoryDataMapper {
         .speed(vesselHistoryData.getSpeed())
         .course(vesselHistoryData.getCourse())
         .heading(vesselHistoryData.getHeading())
-        .longitude(vesselHistoryData.getLongitude())
-        .latitude(vesselHistoryData.getLatitude())
+        .lon(vesselHistoryData.getLongitude())
+        .lat(vesselHistoryData.getLatitude())
         .timestamp(vesselHistoryData.getTimestamp())
         .build();
   }
