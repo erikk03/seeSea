@@ -13,23 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface FiltersRepository extends JpaRepository<Filters, Long> {
   Filters findByRegisteredUserId(Long registeredUserId);
 
-//  @Modifying
-//  @Query(value = """
-//      SELECT vhd.*
-//      FROM vessel_history_data vhd
-//      JOIN (
-//        SELECT vessel_mmsi, MAX(timestamp) AS latest_timestamp
-//        FROM vessel_history_data
-//        GROUP BY vessel_mmsi
-//      ) latest
-//        ON vhd.vessel_mmsi = latest.vessel_mmsi AND vhd.timestamp = latest.latest_timestamp
-//      JOIN vessel v ON v.mmsi = vhd.vessel_mmsi
-//      WHERE v.vessel_type_id in (:vesselTypeIds)
-//      AND vhd.vessel_status_id in (:vesselStatusIds)""",
-//      nativeQuery = true)
-//  List<VesselHistoryData> getVesselHistoryDataFiltered(@Param("vesselTypeIds") List<Long> vesselTypeIds,
-//                                                       @Param("vesselStatusIds") List<Long> vesselStatusIds);
-
   @Modifying
   @Query(value = """
     SELECT vhd.*
@@ -46,9 +29,8 @@ public interface FiltersRepository extends JpaRepository<Filters, Long> {
     ) t2 ON vhd.vessel_mmsi = t2.vessel_mmsi AND vhd.timestamp = t2.timestamp AND vhd.datetime_created = t2.max_created
     JOIN vessel v ON v.mmsi = vhd.vessel_mmsi
     WHERE v.vessel_type_id in (:vesselTypeIds)
-    AND vhd.vessel_status_id in (:vesselStatusIds)
-    """,
-      nativeQuery = true)
+    AND vhd.vessel_status_id in (:vesselStatusIds)""",
+    nativeQuery = true)
   List<VesselHistoryData> getVesselHistoryDataFiltered(@Param("vesselTypeIds") List<Long> vesselTypeIds,
                                                        @Param("vesselStatusIds") List<Long> vesselStatusIds);
 

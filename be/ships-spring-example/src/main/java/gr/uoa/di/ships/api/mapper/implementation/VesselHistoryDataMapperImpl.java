@@ -3,7 +3,6 @@ package gr.uoa.di.ships.api.mapper.implementation;
 import com.fasterxml.jackson.databind.JsonNode;
 import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
-import gr.uoa.di.ships.api.mapper.interfaces.VesselTypeMapper;
 import gr.uoa.di.ships.persistence.model.vessel.Vessel;
 import gr.uoa.di.ships.persistence.model.vessel.VesselHistoryData;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
