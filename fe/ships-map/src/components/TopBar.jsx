@@ -22,7 +22,6 @@ export default function TopBar({ onSignIn, onSignUp, token, onLogout }) {
         />
       </div>
 
-      {/* Right Side: Auth + Theme */}
       {/* Right Side: Theme + Auth/Profile */}
       <div className="flex gap-2 items-center">
         <ThemeSwitcher />
@@ -39,7 +38,7 @@ export default function TopBar({ onSignIn, onSignUp, token, onLogout }) {
         ) : (
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
-              <Avatar isBordered icon={<User />} className="cursor-pointer" />
+              <Avatar isBordered size='sm' icon={<User />} className="cursor-pointer" />
             </DropdownTrigger>
             <DropdownMenu aria-label="User Menu">
               <DropdownItem key="profile">Profile</DropdownItem>

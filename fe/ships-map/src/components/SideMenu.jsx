@@ -1,15 +1,17 @@
-import { Button } from "@heroui/react";
-import { Ship, Bell, Filter, HelpCircle } from "lucide-react";
 
-const menuItems = [
-  { label: "My Fleet", icon: Ship, requiresAuth: true },
-  { label: "Alerts", icon: Bell, requiresAuth: true },
-  { label: "Filters", icon: Filter, requiresAuth: true },
-];
+import React, { useState } from "react";
+import { Card, CardBody, Divider, Button } from "@heroui/react";
+import { Ship, Bell, Filter, HelpCircle, Pin } from "lucide-react";
 
 export default function SideMenu({ userRole = "guest", onProtectedClick }) {
+  const [isPinned, setIsPinned] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const isGuest = userRole === "guest";
+
+  const isExpanded = isHovered || isPinned;
+
   const handleClick = (label, requiresAuth) => {
-    if (requiresAuth && userRole === "guest") {
+    if (requiresAuth && isGuest) {
       onProtectedClick(label);
     } else {
       console.log(`Accessing ${label}`);
@@ -17,29 +19,100 @@ export default function SideMenu({ userRole = "guest", onProtectedClick }) {
   };
 
   return (
-    <div className="fixed left-4 top-1/2 -translate-y-1/2 z-[1100] flex flex-col justify-between w-[150px] h-[280px] bg-[#004368] text-white rounded-2xl shadow-xl p-4">
-      <div className="flex flex-col gap-2">
-        {menuItems.map(({ label, icon: Icon, requiresAuth }) => (
-          <Button
-            key={label}
-            variant="light"
-            onPress={() => handleClick(label, requiresAuth)}
-            className="flex items-center justify-start gap-2 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
-          >
-            <Icon size={18} />
-            <span className="text-sm">{label}</span>
-          </Button>
-        ))}
+  <Card
+    isBlurred
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
+    className={`
+      fixed left-4 top-1/2 -translate-y-1/2 z-[1100]
+      transition-all duration-600 ease-in-out overflow-hidden
+      ${isExpanded ? "w-[150px]" : "w-[60px]"}
+      bg-[#003350]/90 dark:bg-[#003350]/90
+      shadow-xl border-none
+    `}
+  >
+    <CardBody className="p-3 text-white h-[360px] flex flex-col items-center overflow-hidden">
+      {/* Top: Pin */}
+      <div className="w-full flex flex-col items-center gap-3">
+        <Button
+          isIconOnly={!isExpanded}
+          variant="light"
+          onPress={() => setIsPinned(!isPinned)}
+          className={`w-full flex items-center ${
+            isExpanded ? "justify-start" : "justify-center"
+          } text-white hover:bg-white/10`}
+        >
+          <Pin size={18} strokeWidth={isPinned ? 2.5 : 1.5} fill={isPinned ? "white" : "none"}/>
+          {isExpanded && (
+            <span className="text-sm ml-2">
+              {isPinned ? "Unpin" : "Pin"}
+            </span>
+          )}
+        </Button>
+        <Divider className="bg-white/20 w-full" />
       </div>
 
-      <Button
-        variant="light"
-        onPress={() => handleClick("Help", false)}
-        className="flex items-center justify-start gap-2 text-white hover:bg-white/10 px-3 py-2 rounded-lg"
-      >
-        <HelpCircle size={18} />
-        <span className="text-sm">Help</span>
-      </Button>
-    </div>
-  );
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Centered Menu Buttons */}
+      <div className="flex flex-col gap-3 items-center w-full">
+        <Button
+          isIconOnly={!isExpanded}
+          variant="light"
+          onPress={() => handleClick("My Fleet", true)}
+          className={`w-full flex items-center ${
+            isExpanded ? "justify-start" : "justify-center"
+          } text-white hover:bg-white/10`}
+        >
+          <Ship size={18} />
+          {isExpanded && <span className="text-sm ml-2">My Fleet</span>}
+        </Button>
+
+        <Button
+          isIconOnly={!isExpanded}
+          variant="light"
+          onPress={() => handleClick("Alerts", true)}
+          className={`w-full flex items-center ${
+            isExpanded ? "justify-start" : "justify-center"
+          } text-white hover:bg-white/10`}
+        >
+          <Bell size={18} />
+          {isExpanded && <span className="text-sm ml-2">Alerts</span>}
+        </Button>
+
+        <Button
+          isIconOnly={!isExpanded}
+          variant="light"
+          onPress={() => handleClick("Filters", true)}
+          className={`w-full flex items-center ${
+            isExpanded ? "justify-start" : "justify-center"
+          } text-white hover:bg-white/10`}
+        >
+          <Filter size={18} />
+          {isExpanded && <span className="text-sm ml-2">Filters</span>}
+        </Button>
+      </div>
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Bottom: Help */}
+      <div className="w-full">
+        <Divider className="bg-white/20 w-full mb-3" />
+        <Button
+          isIconOnly={!isExpanded}
+          variant="light"
+          onPress={() => handleClick("Help", false)}
+          className={`w-full flex items-center ${
+            isExpanded ? "justify-start" : "justify-center"
+          } text-white hover:bg-white/10`}
+        >
+          <HelpCircle size={18} />
+          {isExpanded && <span className="text-sm ml-2">Help</span>}
+        </Button>
+      </div>
+    </CardBody>
+  </Card>
+);
 }
