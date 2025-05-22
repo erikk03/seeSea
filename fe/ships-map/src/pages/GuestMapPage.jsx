@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import WebSocketMap from '../features/map/WebSocketMap';
 import SideMenu from '../components/SideMenu';
 import TopBar from '../components/TopBar';
-import { Input, Button } from '@heroui/react';
-import { Search } from 'lucide-react';
+import { Button } from '@heroui/react';
 
 export default function GuestMapPage() {
+  const navigate = useNavigate();
+  const [token, setToken] = useState(() => localStorage.getItem('token') || '');
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const handleProtectedClick = (label) => {
@@ -13,28 +15,43 @@ export default function GuestMapPage() {
     setShowLoginPrompt(true);
   };
 
+  // Redirect to signin page
+  const handleSignIn = () => {
+    navigate('/signin');
+  };
+
+  // Redirect to signup page
+  const handleSignUp = () => {
+    navigate('/signup');
+  };
+
+  // Clear token + optionally redirect
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken('');
+    navigate('/');
+  };
+
   return (
-    <div className="relative h-screen w-screen bg-white overflow-hidden">
-      {/* Top Bar */}
+    <div className="relative h-screen w-screen bg-white text-black dark:bg-black dark:text-white overflow-hidden">
       <TopBar
-        onSignIn={() => console.log('Sign In clicked')}
-        onSignUp={() => console.log('Sign Up clicked')}
+        token={token}
+        onSignIn={handleSignIn}
+        onSignUp={handleSignUp}
+        onLogout={handleLogout}
       />
 
-      {/* Sidebar */}
-      <SideMenu userRole="guest" onProtectedClick={handleProtectedClick} />
+      <SideMenu userRole={token ? 'user' : 'guest'} onProtectedClick={handleProtectedClick} />
 
-      {/* Map Container */}
       <div className="pt-[60px] h-full">
-        <WebSocketMap token="" />
+        <WebSocketMap token={token} />
       </div>
 
-      {/* Login Prompt */}
       {showLoginPrompt && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100]">
-          <div className="bg-white p-6 rounded-xl text-center">
+          <div className="bg-white text-black dark:bg-zinc-900 dark:text-white p-6 rounded-xl text-center shadow-lg">
             <p className="mb-4">This feature requires signing in.</p>
-            <Button onPress={() => setShowLoginPrompt(false)} color="primary">
+            <Button onClick={() => setShowLoginPrompt(false)} color="primary">
               Close
             </Button>
           </div>

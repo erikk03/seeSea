@@ -22,6 +22,7 @@ export default function App() {
 
   const handleLogout = () => {
     setToken('');
+    localStorage.removeItem('token');
   };
 
   return (
@@ -34,7 +35,7 @@ export default function App() {
         <Route
           path="/signin"
           element={
-            token ? <Navigate to="/map" /> : <Login onLogin={handleLogin} />
+            !!token ? <Navigate to="/map" /> : <Login onLogin={handleLogin} />
           }
         />
 
