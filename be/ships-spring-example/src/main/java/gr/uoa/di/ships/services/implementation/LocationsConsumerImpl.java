@@ -97,7 +97,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     VesselType vesselType = vesselService.getVesselByMMSI(mmsi)
         .orElseGet(() -> vesselService.saveVessel(new Vessel(mmsi, vesselTypeService.findVesselTypeByName(UNKNOWN))))
         .getVesselType();
-    ObjectNode tunedJsonNode = ((ObjectNode) jsonNode).deepCopy();
+    ObjectNode tunedJsonNode = jsonNode.deepCopy();
     tunedJsonNode.put("vesselType", Objects.nonNull(vesselType) ? vesselType.getName() : null);
     tunedJsonNode.put("status", vesselStatusService.getVesselStatusById(jsonNode.get("status").asLong()).getName());
     return tunedJsonNode;

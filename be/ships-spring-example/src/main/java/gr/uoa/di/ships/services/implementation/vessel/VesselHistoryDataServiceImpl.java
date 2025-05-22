@@ -6,8 +6,6 @@ import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
 import gr.uoa.di.ships.persistence.repository.vessel.VesselHistoryDataRepository;
 import gr.uoa.di.ships.services.interfaces.FiltersService;
-import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
-import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -24,19 +22,13 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
   private final VesselHistoryDataRepository vesselHistoryDataRepository;
   private final VesselHistoryDataMapper vesselHistoryDataMapper;
   private final FiltersService filtersService;
-  private final SeeSeaUserDetailsService seeSeaUserDetailsService;
-  private final RegisteredUserService registeredUserService;
 
   public VesselHistoryDataServiceImpl(VesselHistoryDataRepository vesselHistoryDataRepository,
                                       VesselHistoryDataMapper vesselHistoryDataMapper,
-                                      FiltersService filtersService,
-                                      SeeSeaUserDetailsService seeSeaUserDetailsService,
-                                      RegisteredUserService registeredUserService) {
+                                      FiltersService filtersService) {
     this.vesselHistoryDataRepository = vesselHistoryDataRepository;
     this.vesselHistoryDataMapper = vesselHistoryDataMapper;
     this.filtersService = filtersService;
-    this.seeSeaUserDetailsService = seeSeaUserDetailsService;
-    this.registeredUserService = registeredUserService;
   }
 
   @Override
