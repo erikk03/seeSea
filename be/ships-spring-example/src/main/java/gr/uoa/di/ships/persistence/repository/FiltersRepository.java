@@ -29,10 +29,8 @@ public interface FiltersRepository extends JpaRepository<Filters, Long> {
       ) t2 ON vhd.vessel_mmsi = t2.vessel_mmsi AND vhd.timestamp = t2.timestamp AND vhd.datetime_created = t2.max_created
       JOIN vessel v ON v.mmsi = vhd.vessel_mmsi
       WHERE v.vessel_type_id in (:vesselTypeIds)
-      AND vhd.vessel_status_id in (:vesselStatusIds)
-      AND (:mmsisFromFleet IS NULL OR v.mmsi IN (:mmsisFromFleet))""",
+      AND vhd.vessel_status_id in (:vesselStatusIds)""",
       nativeQuery = true)
   List<VesselHistoryData> getVesselHistoryDataFiltered(@Param("vesselTypeIds") List<Long> vesselTypeIds,
-                                                       @Param("vesselStatusIds") List<Long> vesselStatusIds,
-                                                       @Param("mmsisFromFleet") List<String> mmsisFromFleet);
+                                                       @Param("vesselStatusIds") List<Long> vesselStatusIds);
 }

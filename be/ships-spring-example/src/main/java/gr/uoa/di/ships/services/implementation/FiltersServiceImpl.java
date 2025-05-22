@@ -105,16 +105,18 @@ public class FiltersServiceImpl implements FiltersService {
     Filters filters = getFilters(optionalRegisteredUser);
     List<Long> vesselTypeIds = getVesselTypeIds(filters);
     List<Long> vesselStatusIds = getVesselStatusIds(filters);
-    List<String> mmsisFromFleet = getMmsisFromFleet(filters, optionalRegisteredUser);
-    return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds, mmsisFromFleet);
+    if (FilterFromEnum.MY_FLEET.getDescription().equals(getFilterFrom(filters))) {
+      List<String> mmsisFromFleet = getMmsisFromFleet(optionalRegisteredUser);
+      return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds)
+          .stream().filter(data -> mmsisFromFleet.contains(data.getVessel().getMmsi())).toList();
+    }
+    return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds);
   }
 
-  private static List<String> getMmsisFromFleet(Filters filters, Optional<RegisteredUser> optionalRegisteredUser) {
-    return FilterFromEnum.MY_FLEET.getDescription().equals(getFilterFrom(filters))
-        ? optionalRegisteredUser.map(RegisteredUser::getVessels)
-                                .map(vessels -> vessels.stream().map(Vessel::getMmsi).toList())
-                                .orElse(null)
-        : null;
+  private static List<String> getMmsisFromFleet(Optional<RegisteredUser> optionalRegisteredUser) {
+    return optionalRegisteredUser.map(RegisteredUser::getVessels)
+        .map(vessels -> vessels.stream().map(Vessel::getMmsi).toList())
+        .orElse(List.of());
   }
 
   private static String getFilterFrom(Filters filters) {
