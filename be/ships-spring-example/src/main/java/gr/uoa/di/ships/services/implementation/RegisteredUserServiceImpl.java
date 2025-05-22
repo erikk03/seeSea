@@ -99,9 +99,8 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   }
 
   @Override
-  public UserInfoDTO getUserInfo(Long id) {
-    return registeredUserRepository.findById(id).map(registeredUserMapper::toUserInfoDTO)
-        .orElseThrow(() -> new UserNotFoundException(id));
+  public UserInfoDTO getUserInfo() {
+    return registeredUserMapper.toUserInfoDTO(getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId()));
   }
 
   @Override

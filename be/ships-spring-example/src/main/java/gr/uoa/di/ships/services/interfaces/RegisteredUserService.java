@@ -12,7 +12,7 @@ public interface RegisteredUserService {
 
   JwtTokenDTO verify(UserAuthDTO userAuthDTO);
 
-  UserInfoDTO getUserInfo(Long id);
+  UserInfoDTO getUserInfo();
 
   void changePassword(String newPassword);
 
