@@ -7,6 +7,7 @@ import gr.uoa.di.ships.persistence.model.vessel.Vessel;
 import gr.uoa.di.ships.persistence.model.vessel.VesselHistoryData;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselStatusService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselTypeService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
@@ -17,19 +18,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional()
 public class VesselHistoryDataMapperImpl implements VesselHistoryDataMapper {
 
+  private static final String UNKNOWN = "unknown";
   private final VesselService vesselService;
   private final VesselStatusService vesselStatusService;
+  private final VesselTypeService vesselTypeService;
 
-  public VesselHistoryDataMapperImpl(VesselService vesselService, VesselStatusService vesselStatusService) {
+  public VesselHistoryDataMapperImpl(VesselService vesselService,
+                                     VesselStatusService vesselStatusService,
+                                     VesselTypeService vesselTypeService) {
     this.vesselService = vesselService;
     this.vesselStatusService = vesselStatusService;
+    this.vesselTypeService = vesselTypeService;
   }
 
   @Override
   public VesselHistoryData toVesselHistoryData(JsonNode vesselHistoryDataJsonNode) {
     String mmsi = vesselHistoryDataJsonNode.get("mmsi").asText();
     return VesselHistoryData.builder()
-        .vessel(vesselService.getVesselByMMSI(mmsi).orElseGet(() -> vesselService.saveVessel(new Vessel(mmsi))))
+        .vessel(vesselService.getVesselByMMSI(mmsi)
+                    .orElseGet(() -> vesselService.saveVessel(new Vessel(mmsi, vesselTypeService.findVesselTypeByName(UNKNOWN))))
+        )
         .vesselStatus(vesselStatusService.getVesselStatusById(vesselHistoryDataJsonNode.get("status").asLong()))
         .turn((float) vesselHistoryDataJsonNode.get("turn").asDouble())
         .speed((float) vesselHistoryDataJsonNode.get("speed").asDouble())
@@ -55,8 +63,8 @@ public class VesselHistoryDataMapperImpl implements VesselHistoryDataMapper {
         .speed(vesselHistoryData.getSpeed())
         .course(vesselHistoryData.getCourse())
         .heading(vesselHistoryData.getHeading())
-        .longitude(vesselHistoryData.getLongitude())
-        .latitude(vesselHistoryData.getLatitude())
+        .lon(vesselHistoryData.getLongitude())
+        .lat(vesselHistoryData.getLatitude())
         .timestamp(vesselHistoryData.getTimestamp())
         .build();
   }

@@ -21,7 +21,7 @@ public class VesselHistoryDataDTO {
   private Float speed;
   private Float course;
   private Integer heading;
-  private Double longitude;
-  private Double latitude;
+  private Double lon;
+  private Double lat;
   private Long timestamp;
 }

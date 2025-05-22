@@ -4,7 +4,6 @@ import gr.uoa.di.ships.api.dto.UserInfoDTO;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +20,10 @@ public class RegisteredUserController {
     this.registeredUserService = registeredUserService;
   }
 
-  @GetMapping("/get-user-info/{id}")
+  @GetMapping("/get-user-info")
   @ResponseStatus(HttpStatus.OK)
-  public UserInfoDTO getUserInfo(@PathVariable Long id) {
-    return registeredUserService.getUserInfo(id);
+  public UserInfoDTO getUserInfo() {
+    return registeredUserService.getUserInfo();
   }
 
   @PutMapping("/change-password")
