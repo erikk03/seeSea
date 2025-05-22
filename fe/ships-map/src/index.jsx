@@ -9,7 +9,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <HeroUIProvider>
-      <App />
+      <main>
+        <App />
+      </main>
     </HeroUIProvider>
   </React.StrictMode>
 );
