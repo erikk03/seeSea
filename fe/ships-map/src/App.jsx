@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import WelcomePage from './pages/WelcomePage';
 import Login from './features/auth/Login';
 import GuestMapPage from './pages/GuestMapPage';
+import Signup from './features/auth/SignUp';
 
 export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token') || '');
@@ -36,6 +37,13 @@ export default function App() {
           path="/signin"
           element={
             !!token ? <Navigate to="/map" /> : <Login onLogin={handleLogin} />
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            !!token ? <Navigate to="/map" /> : <Signup onLogin={handleLogin} />
           }
         />
 
