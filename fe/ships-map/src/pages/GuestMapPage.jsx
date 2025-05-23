@@ -23,7 +23,7 @@ export default function GuestMapPage() {
 
   // Redirect to signup page
   const handleSignUp = () => {
-    navigate('/signup');
+    navigate('/register');
   };
 
   // Clear token + optionally redirect
