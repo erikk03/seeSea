@@ -17,12 +17,7 @@ export default function GuestMapPage({ token, onLogout }) {
 
   // Redirect to signin and signup pages
   const handleSignIn = () => navigate('/signin');
-  const handleSignUp = () => navigate('/signup');
-
-  // Redirect to signup page
-  const handleSignUp = () => {
-    navigate('/register');
-  };
+  const handleSignUp = () => navigate('/register');
 
   // Clear token + optionally redirect
   const handleLogout = () => {
