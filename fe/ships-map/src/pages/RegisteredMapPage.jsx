@@ -5,7 +5,7 @@ import SideMenu from '../components/SideMenu';
 import TopBar from '../components/TopBar';
 import { Button } from '@heroui/react';
 
-export default function GuestMapPage({ token, onLogout }) {
+export default function RegisteredMapPage({ token, onLogout }) {
   const navigate = useNavigate();
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
@@ -14,11 +14,11 @@ export default function GuestMapPage({ token, onLogout }) {
     setShowLoginPrompt(true);
   };
 
-  // Redirect to signin and signup pages
+  // Redirect to signin page and signup page
   const handleSignIn = () => navigate('/signin');
   const handleSignUp = () => navigate('/signup');
 
-  const handleLogout = () => {
+    const handleLogout = () => {
     navigate('/');
     onLogout();
   }
