@@ -4,9 +4,8 @@ import WebSocketMap from '../features/map/WebSocketMap';
 import SideMenu from '../components/SideMenu';
 import TopBar from '../components/TopBar';
 import { Button } from '@heroui/react';
-import LoginModal from '../features/auth/LoginModal';
 
-export default function GuestMapPage({ token, onLogout }) {
+export default function RegisteredMapPage({ token, onLogout }) {
   const navigate = useNavigate();
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
@@ -15,17 +14,11 @@ export default function GuestMapPage({ token, onLogout }) {
     setShowLoginPrompt(true);
   };
 
-  // Redirect to signin and signup pages
+  // Redirect to signin page and signup page
   const handleSignIn = () => navigate('/signin');
   const handleSignUp = () => navigate('/signup');
 
-  // Redirect to signup page
-  const handleSignUp = () => {
-    navigate('/register');
-  };
-
-  // Clear token + optionally redirect
-  const handleLogout = () => {
+    const handleLogout = () => {
     navigate('/');
     onLogout();
   }
@@ -45,15 +38,16 @@ export default function GuestMapPage({ token, onLogout }) {
         <WebSocketMap token={token} />
       </div>
 
-      <LoginModal
-        isOpen={showLoginPrompt}
-        onClose={() => setShowLoginPrompt(false)}
-        onLogin={(token) => {
-          localStorage.setItem('token', token);
-          setToken(token);
-          setShowLoginPrompt(false);
-        }}
-      />
+      {showLoginPrompt && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100]">
+          <div className="bg-white text-black dark:bg-zinc-900 dark:text-white p-6 rounded-xl text-center shadow-lg">
+            <p className="mb-4">This feature requires signing in.</p>
+            <Button onClick={() => setShowLoginPrompt(false)} color="primary">
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

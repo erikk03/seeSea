@@ -5,6 +5,7 @@ import WelcomePage from './pages/WelcomePage';
 import Login from './features/auth/Login';
 import GuestMapPage from './pages/GuestMapPage';
 import Signup from './features/auth/SignUp';
+import RegisteredMapPage from './pages/RegisteredMapPage';
 
 export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem('token') || '');
@@ -48,7 +49,18 @@ export default function App() {
         />
 
         {/* Map Route */}
-        <Route path="/map" element={<GuestMapPage />}/>
+       <Route
+          path="/map"
+          element={
+            token && token.trim() !== ''
+              ? <Navigate to="/registeredmap" />
+              : <GuestMapPage token={token} onLogout={handleLogout} />
+          }
+        />
+
+        <Route path="/registeredmap" 
+          element={ 
+            !token ? <Navigate to ="/" /> : <RegisteredMapPage token={token} onLogout={handleLogout} />} />
 
         {/* Redirect unknown routes to welcome */}
         <Route path="*" element={<Navigate to="/" />} />
