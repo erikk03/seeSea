@@ -6,7 +6,7 @@ export default function TopBar({ onSignIn, onSignUp, token, onLogout }) {
   const isGuest = !token;
   
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-white px-3 py-3 shadow-md h-[60px] dark:bg-black">
+    <div className="fixed top-0 left-0 right-0 z-[1100] flex items-center justify-between bg-white px-3 py-3 shadow-md h-[60px] dark:bg-black">
       {/* Logo */}
       <div className="flex gap-2 items-center">
         <img src="/logo.png" alt="logo" className="h-[160px] w-auto" />

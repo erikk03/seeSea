@@ -87,6 +87,7 @@ export default function WebSocketMap({ token, onLogout }) {
         center={[37.9838, 23.7275]}
         zoom={6}
         zoomControl={false}
+        className='z-0'
         style={{ height: '80vh', width: '100%' }}
         attributionControl={false}
       >

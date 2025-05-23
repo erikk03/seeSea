@@ -4,6 +4,7 @@ import WebSocketMap from '../features/map/WebSocketMap';
 import SideMenu from '../components/SideMenu';
 import TopBar from '../components/TopBar';
 import { Button } from '@heroui/react';
+import LoginModal from '../features/auth/LoginModal';
 
 export default function GuestMapPage() {
   const navigate = useNavigate();
@@ -47,16 +48,15 @@ export default function GuestMapPage() {
         <WebSocketMap token={token} />
       </div>
 
-      {showLoginPrompt && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100]">
-          <div className="bg-white text-black dark:bg-zinc-900 dark:text-white p-6 rounded-xl text-center shadow-lg">
-            <p className="mb-4">This feature requires signing in.</p>
-            <Button onClick={() => setShowLoginPrompt(false)} color="primary">
-              Close
-            </Button>
-          </div>
-        </div>
-      )}
+      <LoginModal
+        isOpen={showLoginPrompt}
+        onClose={() => setShowLoginPrompt(false)}
+        onLogin={(token) => {
+          localStorage.setItem('token', token);
+          setToken(token);
+          setShowLoginPrompt(false);
+        }}
+      />    
     </div>
   );
 }
