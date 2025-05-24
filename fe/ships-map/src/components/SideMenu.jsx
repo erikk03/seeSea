@@ -3,18 +3,18 @@ import React, { useState } from "react";
 import { Card, CardBody, Divider, Button } from "@heroui/react";
 import { Ship, Bell, Filter, HelpCircle, Pin } from "lucide-react";
 
-export default function SideMenu({ userRole = "guest", onProtectedClick }) {
+export default function SideMenu({ userRole = "guest", activeMenu, onToggleMenu , onProtectedClick}) {
   const [isPinned, setIsPinned] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const isGuest = userRole === "guest";
 
   const isExpanded = isHovered || isPinned;
 
-  const handleClick = (label, requiresAuth) => {
+  const handleClick = (key, requiresAuth) => {
     if (requiresAuth && isGuest) {
-      onProtectedClick(label);
+      onProtectedClick(key);
     } else {
-      console.log(`Accessing ${label}`);
+      onToggleMenu(key);
     }
   };
 
@@ -27,7 +27,7 @@ export default function SideMenu({ userRole = "guest", onProtectedClick }) {
       fixed left-4 top-1/2 -translate-y-1/2 z-[1100]
       transition-all duration-600 ease-in-out overflow-hidden
       ${isExpanded ? "w-[150px]" : "w-[60px]"}
-      bg-[#003350]/90 dark:bg-[#003350]/90
+      bg-[#003350]/90 dark:bg-black/90
       shadow-xl border-none
     `}
   >
@@ -61,9 +61,11 @@ export default function SideMenu({ userRole = "guest", onProtectedClick }) {
           isIconOnly={!isExpanded}
           variant="light"
           onPress={() => handleClick("My Fleet", true)}
-          className={`w-full flex items-center ${
-            isExpanded ? "justify-start" : "justify-center"
-          } text-white hover:bg-white/10`}
+          className={`
+            w-full flex items-center text-white hover:bg-white/10 
+            ${isExpanded ? "justify-start" : "justify-center"}
+            ${activeMenu === "My Fleet" ? "bg-white/10" : "" }
+          `}
         >
           <Ship size={18} />
           {isExpanded && <span className="text-sm ml-2">My Fleet</span>}
@@ -73,9 +75,11 @@ export default function SideMenu({ userRole = "guest", onProtectedClick }) {
           isIconOnly={!isExpanded}
           variant="light"
           onPress={() => handleClick("Alerts", true)}
-          className={`w-full flex items-center ${
-            isExpanded ? "justify-start" : "justify-center"
-          } text-white hover:bg-white/10`}
+          className={`
+            w-full flex items-center text-white hover:bg-white/10 
+            ${isExpanded ? "justify-start" : "justify-center"}
+            ${activeMenu === "Alerts" ? "bg-white/10" : "" }
+          `}
         >
           <Bell size={18} />
           {isExpanded && <span className="text-sm ml-2">Alerts</span>}
@@ -85,9 +89,11 @@ export default function SideMenu({ userRole = "guest", onProtectedClick }) {
           isIconOnly={!isExpanded}
           variant="light"
           onPress={() => handleClick("Filters", true)}
-          className={`w-full flex items-center ${
-            isExpanded ? "justify-start" : "justify-center"
-          } text-white hover:bg-white/10`}
+          className={`
+            w-full flex items-center text-white hover:bg-white/10 
+            ${isExpanded ? "justify-start" : "justify-center"}
+            ${activeMenu === "Filters" ? "bg-white/10" : "" }
+          `}
         >
           <Filter size={18} />
           {isExpanded && <span className="text-sm ml-2">Filters</span>}
