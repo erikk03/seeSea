@@ -23,19 +23,22 @@ const shipTypes = [
   "Unspecified",
 ];
 
-export default function FiltersMenu() {
+export default function FiltersMenu({onFiltersChange, onClearFilters}) {
   const [selectedShipTypes, setSelectedShipTypes] = useState([]);
 
   const toggleShipType = (type) => {
-    setSelectedShipTypes((prev) =>
-      prev.includes(type)
-        ? prev.filter((t) => t !== type)
-        : [...prev, type]
-    );
+    const updated = selectedShipTypes.includes(type)
+      ? selectedShipTypes.filter((t) => t !== type)
+      : [...selectedShipTypes, type];
+
+    setSelectedShipTypes(updated);
+    onFiltersChange?.(updated.length > 0);
   };
 
   const clearFilters = () => {
     setSelectedShipTypes([]);
+    onClearFilters?.(); // Notify parent component to clear filters
+    onFiltersChange?.(false); // Notify parent that no filters are active
     // clear other filters if added
   };
 
