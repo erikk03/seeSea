@@ -88,7 +88,7 @@ export default function WebSocketMap({ token, onLogout }) {
         zoom={6}
         zoomControl={false}
         className='z-0'
-        style={{ height: '80vh', width: '100%' }}
+        style={{ height: '90vh', width: '100%' }}
         attributionControl={false}
       >
         {/* Custom zoom control */}
