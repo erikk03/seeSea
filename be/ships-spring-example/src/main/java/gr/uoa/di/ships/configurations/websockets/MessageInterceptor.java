@@ -37,10 +37,19 @@ public class MessageInterceptor implements ChannelInterceptor {
   public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
     StompHeaderAccessor accessor = getStompHeaderAccessor(message);
     if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-      String authHeader = getAuthHeader(accessor);
-      processWebSocketConnectRequest(authHeader, accessor);
+      List<String> authHeaderList = accessor.getNativeHeader("Authorization");
+      handleAuthorizationHeader(authHeaderList, accessor);
     }
     return message;
+  }
+
+  private void handleAuthorizationHeader(List<String> authHeaderList, StompHeaderAccessor accessor) {
+    if (Objects.nonNull(authHeaderList) && !authHeaderList.isEmpty()) {
+      String authHeader = authHeaderList.getFirst();
+      processWebSocketConnectRequest(authHeader, accessor);
+    } else {
+      log.debug("No WS auth header; allowing anonymous STOMP CONNECT");
+    }
   }
 
   private void processWebSocketConnectRequest(String authHeader, StompHeaderAccessor accessor) {
@@ -56,15 +65,6 @@ public class MessageInterceptor implements ChannelInterceptor {
     } else {
       log.info("Authorization header not present");
     }
-  }
-
-  private static String getAuthHeader(StompHeaderAccessor accessor) {
-    List<String> authHeaderList =  accessor.getNativeHeader("Authorization");
-    log.info("authHeader: {}", authHeaderList);
-    if (Objects.isNull(authHeaderList)) {
-      throw new IllegalStateException("NativeHeader authHeaderList, could not be retrieved from the accessor.");
-    }
-    return authHeaderList.getFirst();
   }
 
   private static StompHeaderAccessor getStompHeaderAccessor(Message<?> message) {

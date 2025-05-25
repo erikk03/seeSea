@@ -42,14 +42,14 @@ public class SecurityConfig {
     return http.csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
         .authorizeHttpRequests(request -> request
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // let the browser send OPTIONS to any URL (including /ws/info)
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // let the browser send OPTIONS to any URL (including /socket/info)
             .requestMatchers("/auth/login", "/auth/register").permitAll()
             .requestMatchers("/admin", "/admin/**").hasAuthority(RoleEnum.ADMINISTRATOR.name())
             .requestMatchers("/migration", "/migration/**").hasAuthority(RoleEnum.ADMINISTRATOR.name())
             .requestMatchers("/registered-user", "/registered-user/**").hasAnyAuthority(RoleEnum.ADMINISTRATOR.name(), RoleEnum.REGISTERED_USER.name())
             .requestMatchers("/vessel", "/vessel/**").permitAll()
             .requestMatchers("/filters", "/filters/**").permitAll()
-            .requestMatchers("/ws/**", "/topic/**", "/app/**").permitAll() // allow SockJS/WebSocket handshakes
+            .requestMatchers("/socket/**", "/topic/**", "/app/**").permitAll() // allow SockJS/WebSocket handshakes
             .anyRequest()
             .authenticated()
         )
