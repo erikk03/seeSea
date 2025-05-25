@@ -41,7 +41,7 @@ export default function WebSocketMap({ token, onLogout }) {
           stompClient.subscribe(`/user/queue/locations`, message => {
             try {
               const newShip = JSON.parse(message.body);
-              console.log("Received WebSocket Data:", newShip);
+              // console.log("Received WebSocket Data:", newShip);
               setShips(prev => ({
                 ...prev,
                 [newShip.mmsi]: newShip // Store ships using MMSI as key
