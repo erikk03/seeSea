@@ -22,7 +22,7 @@ const createShipIcon = heading =>
     popupAnchor: [0, -10],
   });
 
-export default function WebSocketMap({ token, onLogout }) {
+export default function WebSocketMap({ token, vessels = null }) {
   const [ships, setShips] = useState({});
   
   useEffect(() => {
@@ -101,7 +101,7 @@ export default function WebSocketMap({ token, onLogout }) {
           opacity={0.8}
         />
 
-        {Object.values(ships).map(ship => (
+        {Object.values(vessels || ships).map(ship => (
           <Marker
             key={ship.mmsi}
             position={[ship.lat, ship.lon]}

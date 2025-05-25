@@ -18,7 +18,7 @@ export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
   const [availableFilters, setAvailableFilters] = useState(null);
   const [selectedVesselTypeIds, setSelectedVesselTypeIds] = useState([]);
   const [selectedStatusIds, setSelectedStatusIds] = useState([]);
-  const [filterFrom, setFilterFrom] = useState("all");
+  const [filterFrom, setFilterFrom] = useState("All");
 
   useEffect(() => {
     const fetchFilters = async () => {
@@ -47,7 +47,11 @@ export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
       : [...selectedVesselTypeIds, id];
 
     setSelectedVesselTypeIds(updated);
-    onFiltersChange?.(updated.length > 0 || selectedStatusIds.length > 0);
+    onFiltersChange?.({
+      filterFrom,
+      vesselTypeIds: updated,
+      vesselStatusIds: selectedStatusIds,
+    });
   };
 
   const toggleStatus = (id) => {
@@ -56,15 +60,34 @@ export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
       : [...selectedStatusIds, id];
 
     setSelectedStatusIds(updated);
-    onFiltersChange?.(selectedVesselTypeIds.length > 0 || updated.length > 0);
+    onFiltersChange?.({
+      filterFrom,
+      vesselTypeIds: selectedVesselTypeIds,
+      vesselStatusIds: updated,
+    });
+
+  };
+
+  const handleFilterFromChange = (keys) => {
+    const selected = [...keys][0];
+    setFilterFrom(selected);
+    onFiltersChange?.({
+      filterFrom: selected,
+      vesselTypeIds: selectedVesselTypeIds,
+      vesselStatusIds: selectedStatusIds,
+    });
   };
 
   const clearFilters = () => {
     setSelectedVesselTypeIds([]);
     setSelectedStatusIds([]);
-    setFilterFrom("all");
+    setFilterFrom("All");
     onClearFilters?.();
-    onFiltersChange?.(false);
+    onFiltersChange?.({
+      filterFrom: "All",
+      vesselTypeIds: [],
+      vesselStatusIds: [],
+    });
   };
 
   return (
@@ -90,10 +113,10 @@ export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
             size="sm"
             aria-label="Filter from"
             selectedKeys={[filterFrom]}
-            onSelectionChange={(keys) => setFilterFrom([...keys][0])}
+            onSelectionChange={handleFilterFromChange}
           >
-            <SelectItem key="all" value="all">All</SelectItem>
-            <SelectItem key="myfleet" value="myfleet">My Fleet</SelectItem>
+            <SelectItem key="All" value="All">All</SelectItem>
+            <SelectItem key="MyFleet" value="MyFleet">My Fleet</SelectItem>
           </Select>
         </div>
 

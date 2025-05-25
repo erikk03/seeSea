@@ -10,6 +10,8 @@ export default function RegisteredMapPage({ token, onLogout }) {
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState(null);
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
+  const [filteredShips, setFilteredShips] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState(null);
 
   const handleProtectedClick = (label) => {
     console.log(`"${label}" clicked, but guest access. Prompting login.`);
@@ -21,8 +23,46 @@ export default function RegisteredMapPage({ token, onLogout }) {
 
   const clearFilters = () => {
     setHasActiveFilters(false);
-    // Logic to clear filters in the map can be added here
+    setFilteredShips(null);
+    setSelectedFilters(null);
   }
+
+  const handleFiltersChange = async (filters) => {
+    const hasFilters =
+      filters.vesselTypeIds?.length > 0 ||
+      filters.vesselStatusIds?.length > 0 ||
+      (filters.filterFrom && filters.filterFrom !== "All");
+
+    setHasActiveFilters(hasFilters);
+    setSelectedFilters(filters);
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("https://localhost:8443/vessel/set-filters-and-get-map", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          filterFrom: filters.filterFrom,
+          vesselStatusIds: filters.vesselStatusIds || [],
+          vesselTypeIds: filters.vesselTypeIds || [],
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch filtered ships");
+
+      const data = await res.json();
+      setFilteredShips(data); // Update your map data
+    } catch (err) {
+      console.error("Error fetching filtered vessels:", err);
+    }
+  };
+
+
+    
 
   // Redirect to signin page and signup page
   const handleSignIn = () => navigate('/signin');
@@ -49,12 +89,12 @@ export default function RegisteredMapPage({ token, onLogout }) {
       />
 
       <div className="pt-[60px] h-full relative">
-        <WebSocketMap token={token} />
+        <WebSocketMap token={token} vessels={filteredShips} />
       </div>
 
       {activeMenu === 'Filters' && (
         <FiltersMenu
-          onFiltersChange={setHasActiveFilters}
+          onFiltersChange={handleFiltersChange}
           onClearFilters={clearFilters}
         />
       )}
