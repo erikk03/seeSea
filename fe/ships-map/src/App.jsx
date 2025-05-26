@@ -37,28 +37,28 @@ export default function App() {
         <Route
           path="/signin"
           element={
-            !!token ? <Navigate to="/map" /> : <Login onLogin={handleLogin} />
+            !!token ? <Navigate to="/guest-map" /> : <Login onLogin={handleLogin} />
           }
         />
 
         <Route
           path="/register"
           element={
-            !!token ? <Navigate to="/map" /> : <Signup onLogin={handleLogin} />
+            !!token ? <Navigate to="/guest-map" /> : <Signup onLogin={handleLogin} />
           }
         />
 
         {/* Map Route */}
        <Route
-          path="/map"
+          path="/guest-map"
           element={
             token && token.trim() !== ''
-              ? <Navigate to="/registeredmap" />
+              ? <Navigate to="/registered-map" />
               : <GuestMapPage token={token} onLogout={handleLogout} />
           }
         />
 
-        <Route path="/registeredmap" 
+        <Route path="/registered-map" 
           element={ 
             !token ? <Navigate to ="/" /> : <RegisteredMapPage token={token} onLogout={handleLogout} />} />
 
