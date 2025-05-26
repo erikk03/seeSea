@@ -77,7 +77,7 @@ export default function WebSocketMap({ token, vessels = null }) {
   return (
     <div>
       <MapContainer
-        center={[37.9838, 23.7275]}
+        center={[48.30915, -4.91719]}
         zoom={6}
         zoomControl={false}
         className='z-0'

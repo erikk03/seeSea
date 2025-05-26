@@ -1,13 +1,15 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardBody, Divider, Button } from "@heroui/react";
 import { Ship, Bell, Filter, HelpCircle, Pin } from "lucide-react";
 
 export default function SideMenu({ userRole = "guest", activeMenu, onToggleMenu , onProtectedClick}) {
   const [isPinned, setIsPinned] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const isGuest = userRole === "guest";
+  const navigate = useNavigate();
 
+  const isGuest = userRole === "guest";
   const isExpanded = isHovered || isPinned;
 
   const handleClick = (key, requiresAuth) => {
@@ -16,6 +18,11 @@ export default function SideMenu({ userRole = "guest", activeMenu, onToggleMenu 
     } else {
       onToggleMenu(key);
     }
+  };
+
+  // Handle click for Help button
+  const handleHelpClick = () => {
+    navigate("/help");
   };
 
   return (
@@ -109,7 +116,7 @@ export default function SideMenu({ userRole = "guest", activeMenu, onToggleMenu 
         <Button
           isIconOnly={!isExpanded}
           variant="light"
-          onPress={() => handleClick("Help", false)}
+          onPress={handleHelpClick} // ⬅️ Navigates to /help
           className={`w-full flex items-center ${
             isExpanded ? "justify-start" : "justify-center"
           } text-white hover:bg-white/10`}
