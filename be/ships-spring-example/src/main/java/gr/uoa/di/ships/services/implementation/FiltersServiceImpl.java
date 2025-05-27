@@ -2,6 +2,7 @@ package gr.uoa.di.ships.services.implementation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gr.uoa.di.ships.api.dto.AvailableFiltersDTO;
+import gr.uoa.di.ships.api.dto.CurrentFiltersDTO;
 import gr.uoa.di.ships.api.dto.FiltersDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselStatusMapper;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselTypeMapper;
@@ -165,6 +166,42 @@ public class FiltersServiceImpl implements FiltersService {
         .map(filterVesselTypes::contains)
         .orElse(false);
   }
+
+  @Override
+  public CurrentFiltersDTO getCurrentFilters() {
+
+    Long userId = seeSeaUserDetailsService.getUserDetails().getId();
+    Filters filters = filtersRepository.findByRegisteredUserId(userId);
+
+    if (filters == null) {
+      return CurrentFiltersDTO.builder()
+              .filterFrom(List.of())
+              .vesselTypeIds(List.of())
+              .vesselStatusIds(List.of())
+              .build();
+    }
+
+    String filterFrom = filters.getFilterFrom();
+
+    List<Long> vesselTypeIds = Optional.ofNullable(filters.getVesselTypes())
+            .orElse(List.of())
+            .stream()
+            .map(VesselType::getId)
+            .toList();
+
+    List<Long> vesselStatusIds = Optional.ofNullable(filters.getVesselStatuses())
+            .orElse(List.of())
+            .stream()
+            .map(vesselStatus -> vesselStatus.getId())
+            .toList();
+
+    return CurrentFiltersDTO.builder()
+            .filterFrom(List.of(filterFrom))
+            .vesselTypeIds(vesselTypeIds)
+            .vesselStatusIds(vesselStatusIds)
+            .build();
+  }
+
 
   private boolean compliesWithVesselStatuses(List<VesselStatus> filterVesselStatuses, Long statusId) {
     return filterVesselStatuses.isEmpty()
