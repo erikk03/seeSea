@@ -23,6 +23,7 @@ public class FiltersController {
   }
 
   @GetMapping("/get-current-filters")
-  CurrentFiltersDTO getCurrentFilters() { return filtersService.getCurrentFilters(); }
-
+    CurrentFiltersDTO getCurrentFilters() {
+    return filtersService.getCurrentFilters();
+  }
 }

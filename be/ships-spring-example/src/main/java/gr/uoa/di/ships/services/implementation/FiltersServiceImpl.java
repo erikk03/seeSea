@@ -114,6 +114,27 @@ public class FiltersServiceImpl implements FiltersService {
     return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds);
   }
 
+  @Override
+  public CurrentFiltersDTO getCurrentFilters() {
+    Filters filters = filtersRepository.findByRegisteredUserId(seeSeaUserDetailsService.getUserDetails().getId());
+    if (Objects.isNull(filters)) {
+      return CurrentFiltersDTO.builder()
+                              .filterFrom(FilterFromEnum.ALL.getDescription())
+                              .vesselTypeIds(List.of())
+                              .vesselStatusIds(List.of())
+                              .build();
+    }
+    return CurrentFiltersDTO.builder()
+                            .filterFrom(filters.getFilterFrom())
+                            .vesselTypeIds(Optional.ofNullable(filters.getVesselTypes())
+                                                   .orElse(List.of())
+                                                   .stream().map(VesselType::getId).toList())
+                            .vesselStatusIds(Optional.ofNullable(filters.getVesselStatuses())
+                                                     .orElse(List.of())
+                                                     .stream().map(VesselStatus::getId).toList())
+                            .build();
+  }
+
   private static List<String> getMmsisFromFleet(Optional<RegisteredUser> optionalRegisteredUser) {
     return optionalRegisteredUser.map(RegisteredUser::getVessels)
         .map(vessels -> vessels.stream().map(Vessel::getMmsi).toList())
@@ -166,42 +187,6 @@ public class FiltersServiceImpl implements FiltersService {
         .map(filterVesselTypes::contains)
         .orElse(false);
   }
-
-  @Override
-  public CurrentFiltersDTO getCurrentFilters() {
-
-    Long userId = seeSeaUserDetailsService.getUserDetails().getId();
-    Filters filters = filtersRepository.findByRegisteredUserId(userId);
-
-    if (filters == null) {
-      return CurrentFiltersDTO.builder()
-              .filterFrom(List.of())
-              .vesselTypeIds(List.of())
-              .vesselStatusIds(List.of())
-              .build();
-    }
-
-    String filterFrom = filters.getFilterFrom();
-
-    List<Long> vesselTypeIds = Optional.ofNullable(filters.getVesselTypes())
-            .orElse(List.of())
-            .stream()
-            .map(VesselType::getId)
-            .toList();
-
-    List<Long> vesselStatusIds = Optional.ofNullable(filters.getVesselStatuses())
-            .orElse(List.of())
-            .stream()
-            .map(vesselStatus -> vesselStatus.getId())
-            .toList();
-
-    return CurrentFiltersDTO.builder()
-            .filterFrom(List.of(filterFrom))
-            .vesselTypeIds(vesselTypeIds)
-            .vesselStatusIds(vesselStatusIds)
-            .build();
-  }
-
 
   private boolean compliesWithVesselStatuses(List<VesselStatus> filterVesselStatuses, Long statusId) {
     return filterVesselStatuses.isEmpty()

@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 
 public class CurrentFiltersDTO {
-    private List<String> filterFrom;
-    private List<Long> vesselTypeIds;
-    private List<Long> vesselStatusIds;
+  private String filterFrom;
+  private List<Long> vesselTypeIds;
+  private List<Long> vesselStatusIds;
 }
