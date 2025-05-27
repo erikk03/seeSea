@@ -1,6 +1,8 @@
 package gr.uoa.di.ships.controllers;
 
+import gr.uoa.di.ships.api.dto.MyFleetDTO;
 import gr.uoa.di.ships.api.dto.UserInfoDTO;
+import gr.uoa.di.ships.services.interfaces.MyFleetService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class RegisteredUserController {
 
   private final RegisteredUserService registeredUserService;
+  private final MyFleetService myFleetService;
 
-  public RegisteredUserController(RegisteredUserService registeredUserService) {
+  public RegisteredUserController(RegisteredUserService registeredUserService,
+                                  MyFleetService myFleetService) {
     this.registeredUserService = registeredUserService;
+    this.myFleetService = myFleetService;
   }
 
   @GetMapping("/get-user-info")
@@ -32,15 +37,21 @@ public class RegisteredUserController {
     registeredUserService.changePassword(newPassword);
   }
 
+  @GetMapping("/get-my-fleet")
+  @ResponseStatus(HttpStatus.OK)
+  public MyFleetDTO getMyFleet() {
+    return myFleetService.getMyFleet();
+  }
+
   @PutMapping("/add-vessel-to-fleet")
   @ResponseStatus(HttpStatus.OK)
   public void addVesselToFleet(@RequestBody String mmsi) {
-    registeredUserService.addVesselToFleet(mmsi);
+    myFleetService.addVesselToFleet(mmsi);
   }
 
   @PutMapping("/remove-vessel-from-fleet")
   @ResponseStatus(HttpStatus.OK)
   public void removeVesselFromFleet(@RequestBody String mmsi) {
-    registeredUserService.removeVesselFromFleet(mmsi);
+    myFleetService.removeVesselFromFleet(mmsi);
   }
 }
