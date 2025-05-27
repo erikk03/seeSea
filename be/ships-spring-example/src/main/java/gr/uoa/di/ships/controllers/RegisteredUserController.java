@@ -1,5 +1,6 @@
 package gr.uoa.di.ships.controllers;
 
+import gr.uoa.di.ships.api.dto.ChangePasswordDTO;
 import gr.uoa.di.ships.api.dto.MyFleetDTO;
 import gr.uoa.di.ships.api.dto.UserInfoDTO;
 import gr.uoa.di.ships.services.interfaces.MyFleetService;
@@ -33,8 +34,8 @@ public class RegisteredUserController {
 
   @PutMapping("/change-password")
   @ResponseStatus(HttpStatus.OK)
-  public void changePassword(@RequestBody String newPassword) {
-    registeredUserService.changePassword(newPassword);
+  public void changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+    registeredUserService.changePassword(changePasswordDTO);
   }
 
   @GetMapping("/get-my-fleet")
