@@ -1,5 +1,6 @@
 package gr.uoa.di.ships.services.implementation;
 
+import gr.uoa.di.ships.api.dto.ChangePasswordDTO;
 import gr.uoa.di.ships.api.dto.JwtTokenDTO;
 import gr.uoa.di.ships.api.dto.UserAuthDTO;
 import gr.uoa.di.ships.api.dto.UserInfoDTO;
@@ -76,7 +77,7 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
       Authentication authentication = authManager.authenticate(
           new UsernamePasswordAuthenticationToken(username, userAuthDTO.getPassword()));
       if (authentication.isAuthenticated()) {
-        log.info("User with email {} logged in successfully.", userAuthDTO.getEmail());
+        log.info("User with email {} authenticated successfully.", userAuthDTO.getEmail());
         return JwtTokenDTO.builder()
             .token(jwtService.generateToken(username))
             .build();
@@ -94,10 +95,16 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   }
 
   @Override
-  public void changePassword(String newPassword) {
+  public void changePassword(ChangePasswordDTO changePasswordDTO) {
     RegisteredUser registeredUser = getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId());
-    registeredUser.setPassword(securityConfig.encoder().encode(newPassword));
+    verify(UserAuthDTO.builder()
+               .email(registeredUser.getEmail())
+               .password(changePasswordDTO.getOldPassword())
+               .username(registeredUser.getUsername())
+               .build());
+    registeredUser.setPassword(securityConfig.encoder().encode(changePasswordDTO.getNewPassword()));
     registeredUserRepository.save(registeredUser);
+    log.info("Password changed successfully for user: {}", registeredUser.getUsername());
   }
 
   @Override

@@ -2,6 +2,7 @@ package gr.uoa.di.ships.persistence.repository.vessel;
 
 import gr.uoa.di.ships.persistence.model.vessel.VesselHistoryData;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,4 +30,6 @@ public interface VesselHistoryDataRepository extends JpaRepository<VesselHistory
       WHERE vhd.vessel_mmsi = :mmsi""",
       nativeQuery = true)
   Optional<VesselHistoryData> findLastVesselHistoryDataForMmsi(@Param("mmsi") String mmsi);
+
+  List<VesselHistoryData> findVesselHistoryDataByVessel_Mmsi(String mmsi);
 }
