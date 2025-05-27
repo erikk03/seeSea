@@ -24,15 +24,33 @@ export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
     const fetchFilters = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("https://localhost:8443/filters/get-available-filters", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
 
-        if (!res.ok) throw new Error(`HTTP ${res.status} - ${res.statusText}`);
-        const data = await res.json();
-        setAvailableFilters(data);
+        const [filtersRes, currentFiltersRes] = await Promise.all([
+          fetch("https://localhost:8443/filters/get-available-filters", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("https://localhost:8443/filters/get-current-filters", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        if (!filtersRes.ok || !currentFiltersRes.ok)
+          throw new Error("Failed to fetch filters");
+
+        const available = await filtersRes.json();
+        const current = await currentFiltersRes.json();
+
+        setAvailableFilters(available);
+        setSelectedVesselTypeIds(current.vesselTypeIds || []);
+        setSelectedStatusIds(current.vesselStatusIds || []);
+        setFilterFrom(current.filterFrom || "All");
+
+        // Notify parent on initial load
+        onFiltersChange?.({
+          filterFrom: current.filterFrom || "All",
+          vesselTypeIds: current.vesselTypeIds || [],
+          vesselStatusIds: current.vesselStatusIds || [],
+        });
       } catch (err) {
         console.error("Failed to fetch filters", err);
       }
@@ -40,6 +58,7 @@ export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
 
     fetchFilters();
   }, []);
+
 
   const toggleVesselType = (id) => {
     const updated = selectedVesselTypeIds.includes(id)
