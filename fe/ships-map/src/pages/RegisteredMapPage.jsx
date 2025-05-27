@@ -5,6 +5,7 @@ import SideMenu from '../components/SideMenu';
 import TopBar from '../components/TopBar';
 import { Button } from '@heroui/react';
 import FiltersMenu from '../components/FiltersMenu';
+import MyVessels from '../components/MyVessels';
 
 export default function RegisteredMapPage({ token, onLogout }) {
   const navigate = useNavigate();
@@ -12,20 +13,47 @@ export default function RegisteredMapPage({ token, onLogout }) {
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
   const [filteredShips, setFilteredShips] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState(null);
+  const [previousFilters, setPreviousFilters] = useState(null);
+
 
   const handleProtectedClick = (label) => {
     console.log(`"${label}" clicked, but guest access. Prompting login.`);
   };
 
-  const toggleMenu = (menuKey) => {
-    setActiveMenu(prev => (prev === menuKey ? null : menuKey));
-  }
+  const toggleMenu = async (menuKey) => {
+    setActiveMenu(prev => {
+      const next = prev === menuKey ? null : menuKey;
+
+      // Leaving My Fleet → restore previous filters
+      if (prev === "My Fleet" && next !== "My Fleet") {
+        if (previousFilters) {
+          handleFiltersChange(previousFilters);
+        } else {
+          clearFilters();
+        }
+      }
+
+      // Entering My Fleet → save filters & load fleet
+      if (next === "My Fleet") {
+        setPreviousFilters(selectedFilters); // Save current filters
+
+        handleFiltersChange({
+          filterFrom: "MyFleet",
+          vesselStatusIds: [],
+          vesselTypeIds: [],
+        });
+      }
+
+      return next;
+    });
+  };
+
 
   const clearFilters = () => {
     setHasActiveFilters(false);
     setFilteredShips(null);
     setSelectedFilters(null);
-  }
+  };
 
   const handleFiltersChange = async (filters) => {
     const hasFilters =
@@ -55,22 +83,18 @@ export default function RegisteredMapPage({ token, onLogout }) {
       if (!res.ok) throw new Error("Failed to fetch filtered ships");
 
       const data = await res.json();
-      setFilteredShips(data); // Update your map data
+      setFilteredShips(data); // Update map data
     } catch (err) {
       console.error("Error fetching filtered vessels:", err);
     }
   };
 
-
-    
-
-  // Redirect to signin page and signup page
   const handleSignIn = () => navigate('/signin');
   const handleSignUp = () => navigate('/signup');
   const handleLogout = () => {
     navigate('/');
     onLogout();
-  }
+  };
 
   return (
     <div className="relative h-screen w-screen bg-white text-black dark:bg-black dark:text-white overflow-hidden">
@@ -88,9 +112,9 @@ export default function RegisteredMapPage({ token, onLogout }) {
         onProtectedClick={handleProtectedClick}
       />
 
-      <div className="pt-[60px] h-full relative">
-        <WebSocketMap token={token} vessels={filteredShips} />
-      </div>
+      {activeMenu === 'My Fleet' && (
+        <MyVessels />
+      )}
 
       {activeMenu === 'Filters' && (
         <FiltersMenu
@@ -99,20 +123,24 @@ export default function RegisteredMapPage({ token, onLogout }) {
         />
       )}
 
-      {hasActiveFilters && (
-      <div className="fixed top-1/2 translate-y-48 left-4 z-[1200]">
-        <div className="flex items-center bg-black text-white text-sm px-3 py-1 rounded-lg shadow-md gap-2">
-          <span>Filters</span>
-          <button
-            onClick={clearFilters}
-            className="hover:text-red-400 text-white font-bold"
-          >
-            ×
-          </button>
+      {/* Show filters tag only when filters menu is active and filters are enabled */}
+      {hasActiveFilters && activeMenu !== "My Fleet" && (
+        <div className="fixed top-1/2 translate-y-48 left-4 z-[1200]">
+          <div className="flex items-center bg-black text-white text-sm px-3 py-1 rounded-lg shadow-md gap-2">
+            <span>Filters</span>
+            <button
+              onClick={clearFilters}
+              className="hover:text-red-400 text-white font-bold"
+            >
+              ×
+            </button>
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
+      <div className="pt-[60px] h-full relative">
+        <WebSocketMap token={token} vessels={filteredShips} />
+      </div>
     </div>
   );
 }
