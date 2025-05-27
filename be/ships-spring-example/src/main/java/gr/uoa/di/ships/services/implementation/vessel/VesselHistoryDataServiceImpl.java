@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import gr.uoa.di.ships.api.dto.FiltersDTO;
 import gr.uoa.di.ships.api.dto.VesselHistoryDataDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselHistoryDataMapper;
+import gr.uoa.di.ships.persistence.model.vessel.VesselHistoryData;
 import gr.uoa.di.ships.persistence.repository.vessel.VesselHistoryDataRepository;
 import gr.uoa.di.ships.services.interfaces.FiltersService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,5 +59,10 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
   public void deleteOldVesselHistoryData() {
     LocalDateTime datetimeNow = LocalDateTime.now(ZoneOffset.UTC);
     vesselHistoryDataRepository.deleteByDatetimeCreatedBefore(datetimeNow.minusHours(12));
+  }
+
+  @Override
+  public Optional<VesselHistoryData> getLastVesselHistoryData(String mmsi) {
+    return vesselHistoryDataRepository.findLastVesselHistoryDataForMmsi(mmsi);
   }
 }
