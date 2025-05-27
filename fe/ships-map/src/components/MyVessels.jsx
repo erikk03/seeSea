@@ -48,12 +48,12 @@ export default function MyVessels({ onLoadFleet }) {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch("https://localhost:8443/registered-user/remove-vessel-from-fleet", {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ mmsi }),
+        body: mmsi,
       });
 
       if (!res.ok) throw new Error("Failed to remove vessel");
