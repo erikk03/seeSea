@@ -2,6 +2,7 @@ package gr.uoa.di.ships.services.implementation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gr.uoa.di.ships.api.dto.AvailableFiltersDTO;
+import gr.uoa.di.ships.api.dto.CurrentFiltersDTO;
 import gr.uoa.di.ships.api.dto.FiltersDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselStatusMapper;
 import gr.uoa.di.ships.api.mapper.interfaces.VesselTypeMapper;
@@ -111,6 +112,27 @@ public class FiltersServiceImpl implements FiltersService {
           .stream().filter(data -> mmsisFromFleet.contains(data.getVessel().getMmsi())).toList();
     }
     return filtersRepository.getVesselHistoryDataFiltered(vesselTypeIds, vesselStatusIds);
+  }
+
+  @Override
+  public CurrentFiltersDTO getCurrentFilters() {
+    Filters filters = filtersRepository.findByRegisteredUserId(seeSeaUserDetailsService.getUserDetails().getId());
+    if (Objects.isNull(filters)) {
+      return CurrentFiltersDTO.builder()
+                              .filterFrom(FilterFromEnum.ALL.getDescription())
+                              .vesselTypeIds(List.of())
+                              .vesselStatusIds(List.of())
+                              .build();
+    }
+    return CurrentFiltersDTO.builder()
+                            .filterFrom(filters.getFilterFrom())
+                            .vesselTypeIds(Optional.ofNullable(filters.getVesselTypes())
+                                                   .orElse(List.of())
+                                                   .stream().map(VesselType::getId).toList())
+                            .vesselStatusIds(Optional.ofNullable(filters.getVesselStatuses())
+                                                     .orElse(List.of())
+                                                     .stream().map(VesselStatus::getId).toList())
+                            .build();
   }
 
   private static List<String> getMmsisFromFleet(Optional<RegisteredUser> optionalRegisteredUser) {
