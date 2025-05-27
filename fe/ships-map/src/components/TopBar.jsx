@@ -1,9 +1,16 @@
 import { Input, Button, Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
 import { Search, User } from 'lucide-react';
 import ThemeSwitcher from './ThemeSwitcher';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function TopBar({ onSignIn, onSignUp, token, onLogout }) {
+  const navigate = useNavigate();
   const isGuest = !token;
+
+  const onUserProfile = () => {
+    navigate('/profile');
+  };
   
   return (
     <div className="fixed top-0 left-0 right-0 z-[1100] flex items-center justify-between bg-white px-3 py-3 shadow-md h-[60px] dark:bg-black">
@@ -41,7 +48,7 @@ export default function TopBar({ onSignIn, onSignUp, token, onLogout }) {
               <Avatar isBordered size='sm' icon={<User />} className="cursor-pointer" />
             </DropdownTrigger>
             <DropdownMenu aria-label="User Menu">
-              <DropdownItem key="profile">Profile</DropdownItem>
+              <DropdownItem key="profile" onClick={onUserProfile}>Profile</DropdownItem>
               <DropdownItem key="logout" onClick={onLogout} className="text-danger">
                 Log Out
               </DropdownItem>

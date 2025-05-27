@@ -65,7 +65,7 @@ export default function MyVessels({ onLoadFleet }) {
 			addToast({
         title: `Vessel ${mmsi} removed`,
         description: "Successfully removed from fleet.",
-				// timeout: 4000,
+				timeout: 3000,
 				shouldShowTimeoutProgress: true,
 				variant: "bordered",
       });
@@ -83,7 +83,7 @@ export default function MyVessels({ onLoadFleet }) {
 			addToast({
         title: "Failed to remove vessel",
         description: err.message,
-        timeout: 4000,
+        timeout: 3000,
 				shouldShowTimeoutProgress: true,
 				color: "danger",
 				variant: "bordered",

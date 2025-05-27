@@ -89,8 +89,6 @@ export default function RegisteredMapPage({ token, onLogout }) {
     }
   };
 
-  const handleSignIn = () => navigate('/signin');
-  const handleSignUp = () => navigate('/signup');
   const handleLogout = () => {
     navigate('/');
     onLogout();
@@ -100,8 +98,6 @@ export default function RegisteredMapPage({ token, onLogout }) {
     <div className="relative h-screen w-screen bg-white text-black dark:bg-black dark:text-white overflow-hidden">
       <TopBar
         token={token}
-        onSignIn={handleSignIn}
-        onSignUp={handleSignUp}
         onLogout={handleLogout}
       />
 
