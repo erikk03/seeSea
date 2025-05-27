@@ -55,7 +55,7 @@ export default function App() {
           element={
             token && token.trim() !== ''
               ? <Navigate to="/registered-map" />
-              : <GuestMapPage token={token} onLogout={handleLogout} />
+              : <GuestMapPage token={token} onLogout={handleLogout} onLogin={handleLogin} />
           }
         />
 
