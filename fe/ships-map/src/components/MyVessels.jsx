@@ -73,13 +73,38 @@ export default function MyVessels({ onLoadFleet }) {
   };
 
   const getColorByStatus = (status) => {
-		if (!status) return "#A1A1AA"; // gray-400
-		const s = status.toLowerCase();
-		if (s.includes("under way")) return "#22c55e"; // green-500
-		if (s.includes("moored") || s.includes("at anchor")) return "#facc15"; // yellow-400
-		if (s.includes("not defined") || s.includes("unknown")) return "#A1A1AA"; // gray-400
-		return "#ef4444"; // red-500
+		if (!status) return "#A1A1AA"; // default gray
+
+		const normalized = status.toLowerCase();
+
+		switch (normalized) {
+			case "under way using engine":
+			case "under way sailing":
+			case "engaged in fishing":
+				return "#22c55e"; // green-500
+
+			case "moored":
+			case "at anchor":
+				return "#facc15"; // yellow-400
+
+			case "not under command":
+			case "restricted manoeuvrability":
+			case "constrained by her draught":
+			case "aground":
+				return "#ef4444"; // red-500 (warning or danger)
+
+			case "not defined = default (also used by ais-sart under test)":
+			case "ais-sart (active)":
+			case "reserved for future amendment of navigational status for ships carrying dg":
+			case "reserved for future amendment of navigational status for ships carrying dangerous goods (dg)":
+			case "reserved for future use":
+				return "#a1a1aa"; // gray-400
+
+			default:
+				return "#a1a1aa"; // fallback to gray
+		}
 	};
+
 
 
   const filteredFleet = fleet.filter(v =>
