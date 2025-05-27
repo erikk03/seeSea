@@ -65,4 +65,12 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
   public Optional<VesselHistoryData> getLastVesselHistoryData(String mmsi) {
     return vesselHistoryDataRepository.findLastVesselHistoryDataForMmsi(mmsi);
   }
+
+  @Override
+  public List<VesselHistoryDataDTO> getVesselHistoryForTwelveHours(String mmsi) {
+    return vesselHistoryDataRepository.findVesselHistoryDataByVessel_Mmsi(mmsi).stream()
+        .filter(vhd -> vhd.getDatetimeCreated().isAfter(LocalDateTime.now().minusHours(12)))
+        .map(vesselHistoryDataMapper::toVesselHistoryDataDTO)
+        .toList();
+  }
 }
