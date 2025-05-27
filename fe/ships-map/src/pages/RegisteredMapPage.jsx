@@ -50,9 +50,18 @@ export default function RegisteredMapPage({ token, onLogout }) {
 
 
   const clearFilters = () => {
+    // Clear filters and reset state
+    const cleared = {
+      filterFrom: "All",
+      vesselStatusIds: [],
+      vesselTypeIds: [],
+    }
+
     setHasActiveFilters(false);
     setFilteredShips(null);
     setSelectedFilters(null);
+
+    handleFiltersChange(cleared);
   };
 
   const handleFiltersChange = async (filters) => {
