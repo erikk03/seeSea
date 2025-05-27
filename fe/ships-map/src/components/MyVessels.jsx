@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { addToast } from "@heroui/react";
 import {
   Card,
   CardHeader,
@@ -7,7 +8,6 @@ import {
   Input,
   Listbox,
   ListboxItem,
-  Chip,
   Button,
 } from "@heroui/react";
 import { Trash2 } from "lucide-react";
@@ -61,6 +61,15 @@ export default function MyVessels({ onLoadFleet }) {
       const updated = fleet.filter(v => v.mmsi !== mmsi);
       setFleet(updated);
 
+			// Show success toast
+			addToast({
+        title: `Vessel ${mmsi} removed`,
+        description: "Successfully removed from fleet.",
+				// timeout: 4000,
+				shouldShowTimeoutProgress: true,
+				variant: "bordered",
+      });
+
       // Update map based on remaining vessels (still filterFrom = MyFleet)
       onLoadFleet?.({
         filterFrom: "MyFleet",
@@ -69,6 +78,16 @@ export default function MyVessels({ onLoadFleet }) {
       });
     } catch (err) {
       console.error("Remove failed:", err);
+
+			// Show error toast
+			addToast({
+        title: "Failed to remove vessel",
+        description: err.message,
+        timeout: 4000,
+				shouldShowTimeoutProgress: true,
+				color: "danger",
+				variant: "bordered",
+      });
     }
   };
 

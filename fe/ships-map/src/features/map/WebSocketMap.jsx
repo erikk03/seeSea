@@ -24,7 +24,28 @@ const createShipIcon = heading =>
 
 export default function WebSocketMap({ token, vessels = null }) {
   const [ships, setShips] = useState({});
-  
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Detect Tailwind "dark" class on <html>
+  useEffect(() => {
+    const checkDarkMode = () =>
+      document.documentElement.classList.contains('dark');
+
+    setIsDarkMode(checkDarkMode());
+
+    const observer = new MutationObserver(() => {
+      setIsDarkMode(checkDarkMode());
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+
   useEffect(() => {
     const brokerURL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/socket/websocket`;
 
@@ -73,6 +94,10 @@ export default function WebSocketMap({ token, vessels = null }) {
     stompClient.activate();
     return () => stompClient.deactivate();
   }, [token]);
+
+  const tileUrl = isDarkMode
+    ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+    : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
   
   return (
     <div>
@@ -91,15 +116,7 @@ export default function WebSocketMap({ token, vessels = null }) {
         <MouseCoordinates />
         
         {/* Base: Carto Light */}
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        />
-
-        {/* OpenSeaMap overlay (marine layer) */}
-        <TileLayer
-          url="https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"
-          opacity={0.8}
-        />
+        <TileLayer url={tileUrl} />
 
         {Object.values(vessels || ships).map(ship => (
           <Marker
