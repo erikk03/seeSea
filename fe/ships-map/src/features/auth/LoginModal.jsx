@@ -47,7 +47,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
               ) : (
                 <>
                   <SignUpForm
-                    onSignUp={(token) => {
+                    onLogin={(token) => {
                       handleSuccess(token);
                       onCloseModal();
                     }}

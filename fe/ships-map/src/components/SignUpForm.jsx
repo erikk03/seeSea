@@ -20,8 +20,24 @@ export default function SignupForm({ onLogin }) {
         const body = await res.json();
         throw new Error(body.message || res.statusText);
       }
-      const { token } = await res.json();
-      onLogin(token);
+
+      try {
+          const res = await fetch('https://localhost:8443/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        if (!res.ok) {
+          const body = await res.json();
+          throw new Error(body.message || res.statusText);
+        }
+        const { token } = await res.json();
+        onLogin(token);
+      }
+      catch (err) { 
+        setError(err.message);
+      }
+      
     } catch (err) {
       setError(err.message);
     }

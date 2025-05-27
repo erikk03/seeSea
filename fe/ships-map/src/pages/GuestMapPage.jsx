@@ -6,7 +6,7 @@ import TopBar from '../components/TopBar';
 import { Button } from '@heroui/react';
 import LoginModal from '../features/auth/LoginModal';
 
-export default function GuestMapPage({ token, onLogout }) {
+export default function GuestMapPage({ token, onLogout, onLogin }) {
   const navigate = useNavigate();
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
@@ -44,10 +44,10 @@ export default function GuestMapPage({ token, onLogout }) {
         isOpen={showLoginPrompt}
         onClose={() => setShowLoginPrompt(false)}
         onLogin={(token) => {
-          localStorage.setItem('token', token);
-          setToken(token);
-          setShowLoginPrompt(false);
-        }}
+        onLogin(token);
+        setShowLoginPrompt(false);
+      }}
+
       />
     </div>
   );
