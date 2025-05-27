@@ -5,7 +5,6 @@ import gr.uoa.di.ships.api.mapper.interfaces.VesselMapper;
 import gr.uoa.di.ships.configurations.exceptions.vessel.VesselNotFoundException;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.persistence.model.vessel.Vessel;
-import gr.uoa.di.ships.persistence.repository.RegisteredUserRepository;
 import gr.uoa.di.ships.services.interfaces.MyFleetService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
@@ -30,8 +29,7 @@ public class MyFleetServiceImpl implements MyFleetService {
   private final VesselMapper vesselMapper;
   private final RegisteredUserService registeredUserService;
 
-  public MyFleetServiceImpl(RegisteredUserRepository registeredUserRepository,
-                            SeeSeaUserDetailsService seeSeaUserDetailsService,
+  public MyFleetServiceImpl(SeeSeaUserDetailsService seeSeaUserDetailsService,
                             VesselService vesselService,
                             VesselMapper vesselMapper,
                             RegisteredUserService registeredUserService) {
