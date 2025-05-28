@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.Collection;
@@ -69,6 +70,9 @@ public class RegisteredUser implements UserDetails {
   @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "filters_id")
   private Filters filters;
+
+  @OneToMany(mappedBy = "registeredUser")
+  private Set<Notification> notifications;
 
   @Override
   public String toString() {
