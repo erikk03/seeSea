@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import WebSocketMap from '../features/map/WebSocketMap';
+import Map from '../features/map/Map';
 import SideMenu from '../components/SideMenu';
 import TopBar from '../components/TopBar';
 import { Button } from '@heroui/react';
@@ -37,7 +37,7 @@ export default function GuestMapPage({ token, onLogout, onLogin }) {
       <SideMenu userRole={token ? 'user' : 'guest'} onProtectedClick={handleProtectedClick} />
 
       <div className="pt-[60px] h-full">
-        <WebSocketMap token={token} />
+        <Map token={token} />
       </div>
 
       <LoginModal

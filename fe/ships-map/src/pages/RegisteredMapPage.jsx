@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import WebSocketMap from '../features/map/WebSocketMap';
+import Map from '../features/map/Map';
 import SideMenu from '../components/SideMenu';
 import TopBar from '../components/TopBar';
 import { Button } from '@heroui/react';
@@ -144,7 +144,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
       )}
 
       <div className="pt-[60px] h-full relative">
-        <WebSocketMap token={token} vessels={filteredShips} />
+        <Map token={token} vessels={filteredShips} />
       </div>
     </div>
   );

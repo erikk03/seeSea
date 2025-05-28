@@ -22,7 +22,7 @@ const createShipIcon = heading =>
     popupAnchor: [0, -10],
   });
 
-export default function WebSocketMap({ token, vessels = null }) {
+export default function Map({ token, vessels = null }) {
   const [ships, setShips] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -45,7 +45,47 @@ export default function WebSocketMap({ token, vessels = null }) {
     return () => observer.disconnect();
   }, []);
 
+  // Endpoint to fetch vessels based on filters
+  useEffect(() => {
+    if (!vessels) {
+      const headers = token
+        ? { Authorization: `Bearer ${token}` }
+        : {};
 
+      fetch('https://localhost:8443/vessel/get-map', {
+        headers
+      })
+        .then(res => res.json())
+        .then(data => {
+          const defaultShips = {};
+          data.forEach(ship => {
+            defaultShips[ship.mmsi] = ship;
+          });
+          setShips(defaultShips); // Replace with default or filtered vessels
+        })
+        .catch(err => {
+          console.error("Failed to fetch vessels from /vessel/get-map:", err);
+        });
+    }
+  }, [vessels, token]);
+
+
+  // Replace ships entirely when new filtered vessels come in
+  useEffect(() => {
+    if (vessels && vessels.length > 0) {
+      const initialShips = {};
+      vessels.forEach(v => {
+        initialShips[v.mmsi] = v;
+      });
+      setShips(initialShips); // Replace entirely
+    } else if (vessels && vessels.length === 0) {
+      // If the filters returned nothing, clear the map
+      setShips({});
+    }
+  }, [vessels]);
+
+
+  // WebSocket connection for real-time updates
   useEffect(() => {
     const brokerURL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/socket/websocket`;
 
@@ -118,7 +158,7 @@ export default function WebSocketMap({ token, vessels = null }) {
         {/* Base: Carto Light */}
         <TileLayer url={tileUrl} />
 
-        {Object.values(vessels || ships).map(ship => (
+        {Object.values(ships).map(ship => (
           <Marker
             key={ship.mmsi}
             position={[ship.lat, ship.lon]}
