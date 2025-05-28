@@ -1,12 +1,61 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@heroui/react';
-import { Trash2, Clock } from 'lucide-react';
+import { Trash2, Clock, Plus } from 'lucide-react';
 import { getColorByStatus } from '../utils/statusColor';
 
 export default function VesselInfo({ ship }) {
+	const [inFleet, setInFleet] = useState(false);
+
+
   if (!ship) return null;
 
 	const statusColor = getColorByStatus(ship.status);
+
+	useEffect(() => {
+    const fetchFleet = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('https://localhost:8443/registered-user/get-my-fleet', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error('Failed to fetch fleet');
+        const data = await res.json();
+        const isInFleet = data.myFleet.some(v => v.mmsi === ship.mmsi);
+        setInFleet(isInFleet);
+      } catch (err) {
+        console.error('Error fetching fleet:', err);
+      }
+    };
+
+    fetchFleet();
+  }, [ship.mmsi]);
+
+	const handleFleetToggle = async () => {
+    const token = localStorage.getItem('token');
+    const url = inFleet
+      ? 'https://localhost:8443/registered-user/remove-vessel-from-fleet'
+      : 'https://localhost:8443/registered-user/add-vessel-to-fleet';
+
+    try {
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'text/plain',
+          Authorization: `Bearer ${token}`,
+        },
+        body: ship.mmsi,
+      });
+
+      if (!res.ok) throw new Error(`Failed to ${inFleet ? 'remove' : 'add'} vessel`);
+
+      setInFleet(!inFleet);
+    } catch (err) {
+      console.error(err.message);
+      // You could show a toast here if you want
+    }
+  };
 
   return (
     <div className="flex flex-col items-center bg-white dark:bg-zinc-900 p-4 rounded-xl shadow-md text-sm w-[350px]">
@@ -38,9 +87,24 @@ export default function VesselInfo({ ship }) {
 
       {/* Action Buttons */}
       <div className="flex gap-2 w-full">
-        <Button size="sm" color="danger" variant='ghost' className="w-full">
-          <Trash2 className="w-4 h-4 mr-1 inline-block" />
-          Remove from fleet
+        <Button
+          size="sm"
+          variant="ghost"
+          color={inFleet ? 'danger' : 'success'}
+          onClick={handleFleetToggle}
+          className="w-full"
+        >
+          {inFleet ? (
+            <>
+              <Trash2 className="w-4 h-4 mr-1 inline-block" />
+              Remove from fleet
+            </>
+          ) : (
+            <>
+              <Plus className="w-4 h-4 mr-1 inline-block" />
+              Add to fleet
+            </>
+          )}
         </Button>
         <Button size="sm" color="default" variant="ghost" className="w-full">
           <Clock className="w-4 h-4 mr-1 inline-block" />
