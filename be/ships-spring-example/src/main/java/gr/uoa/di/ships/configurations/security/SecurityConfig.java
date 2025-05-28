@@ -47,6 +47,7 @@ public class SecurityConfig {
             .requestMatchers("/admin", "/admin/**").hasAuthority(RoleEnum.ADMINISTRATOR.name())
             .requestMatchers("/migration", "/migration/**").hasAuthority(RoleEnum.ADMINISTRATOR.name())
             .requestMatchers("/registered-user", "/registered-user/**").hasAnyAuthority(RoleEnum.ADMINISTRATOR.name(), RoleEnum.REGISTERED_USER.name())
+            .requestMatchers("/notification", "/notification/**").hasAnyAuthority(RoleEnum.ADMINISTRATOR.name(), RoleEnum.REGISTERED_USER.name())
             .requestMatchers("/vessel", "/vessel/**").permitAll()
             .requestMatchers("/filters", "/filters/**").permitAll()
             .requestMatchers("/socket/**", "/topic/**", "/app/**").permitAll() // allow SockJS/WebSocket handshakes
