@@ -74,6 +74,10 @@ public class RegisteredUser implements UserDetails {
   @OneToMany(mappedBy = "registeredUser")
   private Set<Notification> notifications;
 
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "zone_of_interest_id")
+  private ZoneOfInterest zoneOfInterest;
+
   @Override
   public String toString() {
     return "Users{"

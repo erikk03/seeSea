@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
-  public static final String NOTIFICATION_S_DOES_NOT_BELONG_TO_THE_USER_WITH_ID_S = "Notification %s does not belong to the user with id %s";
+  private static final String NOTIFICATION_S_DOES_NOT_BELONG_TO_THE_USER_WITH_ID_S = "Notification %s does not belong to the user with id %s";
   private final NotificationRepository notificationRepository;
   private final SeeSeaUserDetailsService seeSeaUserDetailsService;
   private final NotificationMapper notificationMapper;
@@ -53,6 +53,5 @@ public class NotificationServiceImpl implements NotificationService {
           userId, notificationId);
       throw new RuntimeException(NOTIFICATION_S_DOES_NOT_BELONG_TO_THE_USER_WITH_ID_S.formatted(notificationId, userId));
     }
-
   }
 }
