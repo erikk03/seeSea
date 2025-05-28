@@ -20,7 +20,7 @@ export default function TopBar({ onSignIn, onSignUp, token, onLogout }) {
       </div>
 
       {/* Search */}
-      <div className="w-[300px]">
+      <div className="w-[300px] flex items-center justify-center">
         <Input
           size='sm'
           radius="full"

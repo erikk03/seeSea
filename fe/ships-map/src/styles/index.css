@@ -24,3 +24,19 @@ body {
 html, #root {
   height: 100%;
 }
+
+/* Remove default Leaflet popup background & pointer */
+.leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.leaflet-popup-tip {
+  display: none !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}

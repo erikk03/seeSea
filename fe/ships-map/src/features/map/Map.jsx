@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import { Client } from '@stomp/stompjs';
 import L from 'leaflet';
 import MouseCoordinates from './MouseCoordinates';
+import VesselInfo from '../../components/VesselInfo';
 
 // Ensure Leaflet's default icon assets are set up correctly
 import cargoIcon from '../../assets/shipArrows/ship-cargo.png';
@@ -213,18 +214,8 @@ export default function Map({ token, vessels = null }) {
             position={[ship.lat, ship.lon]}
             icon={createShipIcon((ship.heading || ship.course || 0), ship.vesselType)}
           >
-            <Popup>
-              <div>
-                <div><strong>MMSI:</strong> {ship.mmsi}</div>
-                <div><strong>Status:</strong> {ship.status}</div>
-                <div><strong>Speed:</strong> {ship.speed} kn</div>
-                <div><strong>Course:</strong> {ship.course}°</div>
-                <div><strong>Heading:</strong> {ship.heading}°</div>
-                <div>
-                  <strong>Time:</strong>{' '}
-                  {new Date(ship.timestamp * 1000).toLocaleString()}
-                </div>
-              </div>
+            <Popup className="leaflet-custom-popup" closeButton={false}>
+              <VesselInfo ship={ship} />
             </Popup>
           </Marker>
         ))}
