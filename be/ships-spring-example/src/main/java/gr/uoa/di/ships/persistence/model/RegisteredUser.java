@@ -78,6 +78,10 @@ public class RegisteredUser implements UserDetails {
   @JoinColumn(name = "zone_of_interest_id")
   private ZoneOfInterest zoneOfInterest;
 
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "zone_of_interest_options_id")
+  private ZoneOfInterestOptions zoneOfInterestOptions;
+
   @Override
   public String toString() {
     return "Users{"

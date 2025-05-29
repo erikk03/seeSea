@@ -1,7 +1,9 @@
 package gr.uoa.di.ships.controllers;
 
 import gr.uoa.di.ships.api.dto.GetZoneOfInterestDTO;
+import gr.uoa.di.ships.api.dto.GetZoneOfInterestOptionsDTO;
 import gr.uoa.di.ships.api.dto.SetZoneOfInterestDTO;
+import gr.uoa.di.ships.api.dto.SetZoneOfInterestOptionsDTO;
 import gr.uoa.di.ships.services.interfaces.ZoneOfInterestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,5 +41,17 @@ public class ZoneOfInterestController {
   @ResponseStatus(HttpStatus.OK)
   public void removeZoneOfInterest(@RequestParam Long id) {
     zoneOfInterestService.deleteZoneOfInterest(id);
+  }
+
+  @GetMapping("/get-zone-options")
+  @ResponseStatus(HttpStatus.OK)
+  public GetZoneOfInterestOptionsDTO getZoneOfInterestOptions() {
+    return zoneOfInterestService.getZoneOfInterestOptions();
+  }
+
+  @PostMapping("/set-zone-options")
+  @ResponseStatus(HttpStatus.OK)
+  public void setZoneOfInterestOptions(@RequestBody SetZoneOfInterestOptionsDTO setZoneOfInterestOptionsDTO) {
+    zoneOfInterestService.setZoneOfInterestOptions(setZoneOfInterestOptionsDTO);
   }
 }
