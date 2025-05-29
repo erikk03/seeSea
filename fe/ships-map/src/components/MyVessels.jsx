@@ -100,7 +100,7 @@ export default function MyVessels({ onLoadFleet }) {
     <Card
       isBlurred
       className="fixed right-4 top-1/2 -translate-y-1/2 z-[1100]
-      w-[220px] bg-white/90 dark:bg-black/90 shadow-xl border-none"
+      w-[220px] bg-white/90 dark:bg-black/30 shadow-xl border-none"
     >
       <CardHeader className="text-lg font-bold px-4 pt-4 pb-2 text-center flex items-center justify-center">
         My Vessels
