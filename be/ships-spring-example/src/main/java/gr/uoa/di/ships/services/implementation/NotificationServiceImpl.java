@@ -1,13 +1,19 @@
 package gr.uoa.di.ships.services.implementation;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import gr.uoa.di.ships.api.dto.NotificationDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.NotificationMapper;
 import gr.uoa.di.ships.configurations.exceptions.NotificationNotFoundException;
 import gr.uoa.di.ships.persistence.model.Notification;
+import gr.uoa.di.ships.persistence.model.RegisteredUser;
+import gr.uoa.di.ships.persistence.model.vessel.VesselHistoryData;
 import gr.uoa.di.ships.persistence.repository.NotificationRepository;
 import gr.uoa.di.ships.services.interfaces.NotificationService;
+import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +27,16 @@ public class NotificationServiceImpl implements NotificationService {
   private final NotificationRepository notificationRepository;
   private final SeeSeaUserDetailsService seeSeaUserDetailsService;
   private final NotificationMapper notificationMapper;
+  private final RegisteredUserService registeredUserService;
 
   public NotificationServiceImpl(NotificationRepository notificationRepository,
                                  SeeSeaUserDetailsService seeSeaUserDetailsService,
-                                 NotificationMapper notificationMapper) {
+                                 NotificationMapper notificationMapper,
+                                 RegisteredUserService registeredUserService) {
     this.notificationRepository = notificationRepository;
     this.seeSeaUserDetailsService = seeSeaUserDetailsService;
     this.notificationMapper = notificationMapper;
+    this.registeredUserService = registeredUserService;
   }
 
   @Override
@@ -43,6 +52,72 @@ public class NotificationServiceImpl implements NotificationService {
     validateDeletion(id, seeSeaUserDetailsService.getUserDetails().getId());
     notificationRepository.deleteById(id);
     log.info("Notification with id {} deleted successfully", id);
+  }
+
+  @Override
+  public void saveNotification(String description, RegisteredUser user) {
+    Set<Notification> notifications = user.getNotifications();
+    notifications.add(
+        notificationRepository.save(
+            Notification.builder()
+                .description(description)
+                .registeredUser(user)
+                .build()));
+    user.setNotifications(notifications);
+    registeredUserService.updateRegisteredUser(user);
+  }
+
+  @Override
+  public boolean violatesMaxSpeed(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData) {
+    double currentDistance = getDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
+    if (user.getZoneOfInterest().getRadius() < currentDistance) {
+      return false;
+    }
+    Double currentVesselSpeed = jsonNodeToBeSent.get("speed").asDouble();
+    Float maxSpeed = user.getZoneOfInterestOptions().getMaxSpeed();
+    if (Objects.isNull(previousVesselData)
+        || previousVesselData.getDatetimeCreated().isBefore(user.getZoneOfInterest().getDatetimeCreated())
+        || previousVesselData.getSpeed() < maxSpeed) {
+      return maxSpeed < currentVesselSpeed;
+    }
+    return false;
+  }
+
+  @Override
+  public boolean entersZone(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData) {
+    if (!user.getZoneOfInterestOptions().isEntersZone()) {
+      return false;
+    }
+    double currentDistance = getDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
+    double radius = user.getZoneOfInterest().getRadius();
+    if (Objects.isNull(previousVesselData)) {
+      return currentDistance <= radius;
+    } else {
+      double previousDistance = getDistance(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
+      return previousDistance > radius && currentDistance <= radius;
+    }
+  }
+
+  @Override
+  public boolean exitsZone(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData) {
+    if (!user.getZoneOfInterestOptions().isExitsZone()) {
+      return false;
+    }
+    double currentDistance = getDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
+    double radius = user.getZoneOfInterest().getRadius();
+    if (Objects.isNull(previousVesselData)) {
+      return false;
+    } else {
+      double previousDistance = getDistance(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
+      return previousDistance <= radius && currentDistance > radius;
+    }
+  }
+
+  private static double getDistance(RegisteredUser user, double vesselLatitude, double vesselLongitude) {
+    double centerPointLatitude = user.getZoneOfInterest().getCenterPointLatitude();
+    double centerPointLongitude = user.getZoneOfInterest().getCenterPointLongitude();
+    return Math.sqrt(Math.pow(vesselLatitude - centerPointLatitude, 2)
+                         + Math.pow(vesselLongitude - centerPointLongitude, 2));
   }
 
   private void validateDeletion(Long notificationId, Long userId) {

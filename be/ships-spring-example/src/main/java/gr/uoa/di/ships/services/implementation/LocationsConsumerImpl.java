@@ -3,10 +3,14 @@ package gr.uoa.di.ships.services.implementation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import gr.uoa.di.ships.api.dto.AlertDTO;
+import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.persistence.model.vessel.Vessel;
+import gr.uoa.di.ships.persistence.model.vessel.VesselHistoryData;
 import gr.uoa.di.ships.persistence.model.vessel.VesselType;
 import gr.uoa.di.ships.services.interfaces.FiltersService;
 import gr.uoa.di.ships.services.interfaces.LocationsConsumer;
+import gr.uoa.di.ships.services.interfaces.NotificationService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
@@ -30,6 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class LocationsConsumerImpl implements LocationsConsumer {
 
   private static final String UNKNOWN = "unknown";
+  private static final String SPEED_ALERT_DESCRIPTION = "Speed Alert: The vessel [speed: %s] is exceeding the maximum speed limit of %s.";
+  private static final String ENTERS_ZONE_DESCRIPTION = "Enter Zone Alert: The vessel [mmsi: %s] has entered the zone of interest.";
+  private static final String EXITS_ZONE_DESCRIPTION = "Exit Zone Alert: The vessel [mmsi: %s] has exited the zone of interest.";
   private final ObjectMapper objectMapper;
   private final List<JsonNode> buffer = Collections.synchronizedList(new ArrayList<>());
   private final AtomicInteger batchCount = new AtomicInteger(0);
@@ -41,6 +48,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private final VesselStatusService vesselStatusService;
   private final VesselService vesselService;
   private final VesselTypeService vesselTypeService;
+  private final NotificationService notificationService;
 
   public LocationsConsumerImpl(ObjectMapper objectMapper,
                                SimpMessagingTemplate template,
@@ -49,7 +57,8 @@ public class LocationsConsumerImpl implements LocationsConsumer {
                                FiltersService filtersService,
                                VesselStatusService vesselStatusService,
                                VesselService vesselService,
-                               VesselTypeService vesselTypeService) {
+                               VesselTypeService vesselTypeService,
+                               NotificationService notificationService) {
     this.objectMapper = objectMapper;
     this.template = template;
     this.vesselHistoryDataService = vesselHistoryDataService;
@@ -58,6 +67,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     this.vesselStatusService = vesselStatusService;
     this.vesselService = vesselService;
     this.vesselTypeService = vesselTypeService;
+    this.notificationService = notificationService;
   }
 
   @KafkaListener(topics = "${kafka.topic}")
@@ -66,6 +76,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     try {
       JsonNode jsonNode = objectMapper.readTree(message);
       ObjectNode jsonNodeToBeSent = getTunedJsonNode(jsonNode);
+      sendAlerts(jsonNodeToBeSent);
       sentToAnonymousUsers(jsonNodeToBeSent);
       sendToFilterCompliantRegisteredUsers(jsonNode, jsonNodeToBeSent);
       System.out.println("Sent message: " + jsonNodeToBeSent.toPrettyString());
@@ -74,6 +85,46 @@ public class LocationsConsumerImpl implements LocationsConsumer {
       System.err.println(e.getMessage());
       log.error("Error while consuming Kafka message: {}", e.getMessage(), e);
     }
+  }
+
+  private void sendAlerts(ObjectNode jsonNodeToBeSent) {
+    registeredUserService.getAllRegisteredUsers().stream()
+        .filter(user -> Objects.nonNull(user.getZoneOfInterest()))
+        .forEach(user -> {
+          List<String> alertDescriptions = getAlertDescriptions(user, jsonNodeToBeSent);
+          if (!alertDescriptions.isEmpty()) {
+            template.convertAndSendToUser(
+                user.getId().toString(),
+                "/queue/alerts",
+                createZoneViolations(user, jsonNodeToBeSent, alertDescriptions)
+            );
+          }
+        });
+  }
+
+  private AlertDTO createZoneViolations(RegisteredUser user, ObjectNode jsonNodeToBeSent, List<String> alertDescriptions) {
+    alertDescriptions.forEach(alertDescription -> notificationService.saveNotification(alertDescription, user));
+    return AlertDTO.builder()
+        .userId(user.getId())
+        .vesselMmsi(jsonNodeToBeSent.get("mmsi").asText())
+        .alertDescriptions(alertDescriptions)
+        .build();
+  }
+
+  private List<String> getAlertDescriptions(RegisteredUser user, ObjectNode jsonNodeToBeSent) {
+    List<String> alertDescriptions = new ArrayList<>();
+    VesselHistoryData previousVesselData = vesselHistoryDataService.getLastVesselHistoryData(jsonNodeToBeSent.get("mmsi").asText())
+        .orElse(null);
+    if (notificationService.violatesMaxSpeed(user, jsonNodeToBeSent, previousVesselData)) {
+      alertDescriptions.add(SPEED_ALERT_DESCRIPTION.formatted(user.getZoneOfInterestOptions().getMaxSpeed(), jsonNodeToBeSent.get("speed").asDouble()));
+    }
+    if (notificationService.entersZone(user, jsonNodeToBeSent, previousVesselData)) {
+      alertDescriptions.add(ENTERS_ZONE_DESCRIPTION.formatted(jsonNodeToBeSent.get("mmsi").asText()));
+    }
+    if (notificationService.exitsZone(user, jsonNodeToBeSent, previousVesselData)) {
+      alertDescriptions.add(EXITS_ZONE_DESCRIPTION.formatted(jsonNodeToBeSent.get("mmsi").asText()));
+    }
+    return alertDescriptions;
   }
 
   private void sentToAnonymousUsers(JsonNode jsonNode) {
