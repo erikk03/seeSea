@@ -103,9 +103,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   }
 
   private AlertDTO createZoneViolations(RegisteredUser user, ObjectNode jsonNodeToBeSent, List<String> alertDescriptions) {
-    alertDescriptions.forEach(alertDescription -> {
-      notificationService.saveNotification(alertDescription, user);
-    });
+    alertDescriptions.forEach(alertDescription -> notificationService.saveNotification(alertDescription, user));
     return AlertDTO.builder()
         .userId(user.getId())
         .vesselMmsi(jsonNodeToBeSent.get("mmsi").asText())

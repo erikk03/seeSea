@@ -8,7 +8,6 @@ import gr.uoa.di.ships.persistence.model.Notification;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.persistence.model.vessel.VesselHistoryData;
 import gr.uoa.di.ships.persistence.repository.NotificationRepository;
-import gr.uoa.di.ships.services.implementation.vessel.VesselHistoryDataServiceImpl;
 import gr.uoa.di.ships.services.interfaces.NotificationService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
@@ -28,17 +27,15 @@ public class NotificationServiceImpl implements NotificationService {
   private final NotificationRepository notificationRepository;
   private final SeeSeaUserDetailsService seeSeaUserDetailsService;
   private final NotificationMapper notificationMapper;
-  private final VesselHistoryDataServiceImpl vesselHistoryDataService;
   private final RegisteredUserService registeredUserService;
 
   public NotificationServiceImpl(NotificationRepository notificationRepository,
                                  SeeSeaUserDetailsService seeSeaUserDetailsService,
                                  NotificationMapper notificationMapper,
-                                 VesselHistoryDataServiceImpl vesselHistoryDataService, final RegisteredUserService registeredUserService) {
+                                 RegisteredUserService registeredUserService) {
     this.notificationRepository = notificationRepository;
     this.seeSeaUserDetailsService = seeSeaUserDetailsService;
     this.notificationMapper = notificationMapper;
-    this.vesselHistoryDataService = vesselHistoryDataService;
     this.registeredUserService = registeredUserService;
   }
 
