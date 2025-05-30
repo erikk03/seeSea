@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Client } from '@stomp/stompjs';
-import L from 'leaflet';
+import L, { map } from 'leaflet';
 import MouseCoordinates from './MouseCoordinates';
 import VesselInfo from '../../components/VesselInfo';
+import MapCenterOnOpen from './MapCenterOnOpen';
 
 // Ensure Leaflet's default icon assets are set up correctly
 import cargoIcon from '../../assets/shipArrows/ship-cargo.png';
@@ -75,6 +76,8 @@ const createShipIcon = (heading, type) =>
 export default function Map({ token, vessels = null }) {
   const [ships, setShips] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [mapCenter, setMapCenter] = useState([48.30915, -4.91719]);
+
 
   // Detect Tailwind "dark" class on <html>
   useEffect(() => {
@@ -192,7 +195,7 @@ export default function Map({ token, vessels = null }) {
   return (
     <div>
       <MapContainer
-        center={[48.30915, -4.91719]}
+        center={mapCenter}
         zoom={6}
         zoomControl={false}
         className='z-0'
@@ -213,12 +216,22 @@ export default function Map({ token, vessels = null }) {
             key={ship.mmsi}
             position={[ship.lat, ship.lon]}
             icon={createShipIcon((ship.heading || ship.course || 0), ship.vesselType)}
+            eventHandlers={{
+              click: () => {
+                setMapCenter([ship.lat, ship.lon]);
+              }
+            }}
           >
             <Popup className="leaflet-custom-popup" closeButton={false}>
               <VesselInfo ship={ship} />
             </Popup>
           </Marker>
         ))}
+
+        {/* Center on Open */}
+        <MapCenterOnOpen position={mapCenter} />
+
+
       </MapContainer>
     </div>
   );
