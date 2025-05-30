@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,4 +38,7 @@ public class ZoneOfInterest {
 
   @OneToOne(mappedBy = "zoneOfInterest")
   private RegisteredUser registeredUser;
+
+  @Column(name = "datetime_created")
+  private LocalDateTime datetimeCreated;
 }

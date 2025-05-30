@@ -14,6 +14,8 @@ import gr.uoa.di.ships.persistence.repository.ZoneOfInterestRepository;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
 import gr.uoa.di.ships.services.interfaces.ZoneOfInterestService;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -58,6 +60,7 @@ public class ZoneOfInterestServiceImpl implements ZoneOfInterestService {
             .centerPointLatitude(setZoneOfInterestDTO.getCenterPointLatitude())
             .centerPointLongitude(setZoneOfInterestDTO.getCenterPointLongitude())
             .registeredUser(registeredUser)
+            .datetimeCreated(LocalDateTime.now(ZoneOffset.UTC))
             .build()
     );
     registeredUser.setZoneOfInterest(zoneOfInterest);
@@ -86,7 +89,17 @@ public class ZoneOfInterestServiceImpl implements ZoneOfInterestService {
       zoneOfInterestOptions.setEntersZone(setZoneOfInterestOptionsDTO.isEntersZone());
       zoneOfInterestOptions.setExitsZone(setZoneOfInterestOptionsDTO.isExitsZone());
     }
+    resetZoneOfInterestDateTimeCreated(registeredUser);
     registeredUserService.updateRegisteredUser(registeredUser);
+  }
+
+  private void resetZoneOfInterestDateTimeCreated(RegisteredUser registeredUser) {
+    ZoneOfInterest zoneOfInterest = registeredUser.getZoneOfInterest();
+    if (Objects.nonNull(zoneOfInterest)) {
+      zoneOfInterest.setDatetimeCreated(LocalDateTime.now(ZoneOffset.UTC));
+      zoneOfInterest = zoneOfInterestRepository.save(zoneOfInterest);
+      registeredUser.setZoneOfInterest(zoneOfInterest);
+    }
   }
 
   @Override

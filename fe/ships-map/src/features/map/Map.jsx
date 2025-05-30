@@ -138,7 +138,7 @@ export default function Map({ token, vessels = null }) {
   }, [vessels]);
 
 
-  // WebSocket connection for real-time updates
+  // WebSocket connection for real-time vessel updates
   useEffect(() => {
     const brokerURL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/socket/websocket`;
 
@@ -164,13 +164,22 @@ export default function Map({ token, vessels = null }) {
               console.error("Error parsing personalized WebSocket message:", error);
             }
           });
+          stompClient.subscribe(`/user/queue/alerts`, message => {
+            try {
+              const alert = JSON.parse(message.body);
+              // TODO: Show this alert to the user somehow
+              console.log("🚨 Alert received:", alert);
+            } catch (error) {
+              console.error("Error parsing alert WebSocket message:", error);
+            }
+          });
         } else {
           // Anonymous users: subscribe only to broadcast messages
           console.log("Anonymous user detected. Subscribing to broadcast messages.");
           stompClient.subscribe('/topic/locations', message => {
             try {
               const newShip = JSON.parse(message.body);
-              console.log("Received WebSocket Data:", newShip);
+              // console.log("Received WebSocket Data:", newShip);
               setShips(prev => ({
                 ...prev,
                 [newShip.mmsi]: newShip // Store ships using MMSI as key

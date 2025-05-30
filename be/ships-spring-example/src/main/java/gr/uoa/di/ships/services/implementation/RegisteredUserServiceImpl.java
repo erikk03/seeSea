@@ -15,8 +15,10 @@ import gr.uoa.di.ships.persistence.repository.RegisteredUserRepository;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.RoleService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -126,6 +128,11 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
         .stream()
         .map(RegisteredUser::getId)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public Set<RegisteredUser> getAllRegisteredUsers() {
+    return new HashSet<>(registeredUserRepository.findAll());
   }
 
   @Override

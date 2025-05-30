@@ -7,6 +7,7 @@ import gr.uoa.di.ships.api.dto.UserInfoDTO;
 import gr.uoa.di.ships.api.dto.UserRegisterDTO;
 import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import java.util.List;
+import java.util.Set;
 
 public interface RegisteredUserService {
   void register(UserRegisterDTO userDTO);
@@ -22,6 +23,8 @@ public interface RegisteredUserService {
   void updateRegisteredUser(RegisteredUser registeredUser);
 
   List<Long> getAllUsersIds();
+
+  Set<RegisteredUser> getAllRegisteredUsers();
 
   void saveRegisteredUser(RegisteredUser registeredUser);
 }
