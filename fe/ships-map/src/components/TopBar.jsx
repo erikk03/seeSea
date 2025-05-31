@@ -11,15 +11,27 @@ export default function TopBar({ onSignIn, onSignUp, token, onLogout, ships= [],
   const onUserProfile = () => {
     navigate('/profile');
   };
+
+  const onLogoClick = () => {
+    if (token) {
+      navigate('/registered-map');
+    } else {
+      navigate('/guest-map');
+    }
+  }
   
   return (
     <div className="fixed top-0 left-0 right-0 z-[1100] flex items-center justify-between bg-white px-3 py-3 shadow-md h-[60px] dark:bg-black">
-      {/* Logo */}
-      <div className="flex gap-2 items-center">
-        <img src="/logo.png" alt="logo" className="h-[160px] w-auto" />
-      </div>
+        <div className="flex gap-2 items-center">
+          <img
+            src="/logo.png"
+            alt="logo"
+            className="h-[160px] w-auto cursor-pointer"
+            onClick={onLogoClick}
+          />
+        </div>
 
-      {/* Search */}
+        {/* Search */}
       <div className="w-[300px] flex items-center justify-center">
         <Autocomplete
           size="sm"

@@ -13,6 +13,8 @@ export default function VesselInfo({ ship, onShowTrack }) {
 	const token = localStorage.getItem('token');
 
 	useEffect(() => {
+    if (!token) return; // For guest users, skip fleet check 
+
     const fetchFleet = async () => {
       try {
         const res = await fetch('https://localhost:8443/registered-user/get-my-fleet', {
@@ -33,6 +35,8 @@ export default function VesselInfo({ ship, onShowTrack }) {
   }, [ship.mmsi]);
 
 	const handleFleetToggle = async () => {
+    if (!token) return; // For guest users, do nothing
+
     const url = inFleet
       ? 'https://localhost:8443/registered-user/remove-vessel-from-fleet'
       : 'https://localhost:8443/registered-user/add-vessel-to-fleet';
