@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Client } from '@stomp/stompjs';
@@ -74,7 +74,7 @@ const createShipIcon = (heading, type) =>
     popupAnchor: [0, -10],
   });
 
-export default function Map({ token, vessels = null }) {
+export default function Map({ token, vessels = null, onVesselSelect, onShipsUpdate }) {
   const [ships, setShips] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mapCenter, setMapCenter] = useState([48.30915, -4.91719]);
@@ -82,6 +82,7 @@ export default function Map({ token, vessels = null }) {
   const [trackData, setTrackData] = useState([]);
   const [showTrackFor, setShowTrackFor] = useState(null); //mmsi of the ship to show track for
   const [activeTrackIndex, setActiveTrackIndex] = useState(0);
+  const markerRefs = useRef({});
 
 
   // Detect Tailwind "dark" class on <html>
@@ -120,6 +121,7 @@ export default function Map({ token, vessels = null }) {
             defaultShips[ship.mmsi] = ship;
           });
           setShips(defaultShips); // Replace with default or filtered vessels
+          onShipsUpdate?.(Object.values(defaultShips)); // Notify parent of new ships
         })
         .catch(err => {
           console.error("Failed to fetch vessels from /vessel/get-map:", err);
@@ -227,6 +229,23 @@ export default function Map({ token, vessels = null }) {
     }
   };
 
+  useEffect(() => {
+    if (onVesselSelect) {
+      onVesselSelect({
+        focusAndOpenPopup: (mmsi) => {
+          const ship = ships[mmsi];
+          if (!ship) return;
+          setMapCenter([ship.lat, ship.lon]);
+
+          setTimeout(() => {
+            const marker = markerRefs.current[mmsi];
+            if (marker) marker.openPopup();
+          }, 100); // delay ensures map has moved before popup opens
+        }
+      });
+    }
+  }, [ships, onVesselSelect]);
+
   
   return (
     <div>
@@ -252,11 +271,13 @@ export default function Map({ token, vessels = null }) {
             key={ship.mmsi}
             position={[ship.lat, ship.lon]}
             icon={createShipIcon((ship.heading || ship.course || 0), ship.vesselType)}
+            ref={(ref) => { if (ref) markerRefs.current[ship.mmsi] = ref; }}
             eventHandlers={{
               click: () => {
-                setMapCenter([ship.lat, ship.lon]);
+                setMapCenter([ship.lat, ship.lon]); // ← Focus
               }
             }}
+            
           >
             <Popup className="leaflet-custom-popup" closeButton={false}>
               <VesselInfo ship={ship} onShowTrack={handleShowTrack}/>

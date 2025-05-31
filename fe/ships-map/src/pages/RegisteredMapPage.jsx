@@ -14,6 +14,8 @@ export default function RegisteredMapPage({ token, onLogout }) {
   const [filteredShips, setFilteredShips] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState(null);
   const [previousFilters, setPreviousFilters] = useState(null);
+  const [shipList, setShipList] = useState([]);
+  const [mapApi, setMapApi] = useState(null);
 
 
   const handleProtectedClick = (label) => {
@@ -108,6 +110,8 @@ export default function RegisteredMapPage({ token, onLogout }) {
       <TopBar
         token={token}
         onLogout={handleLogout}
+        ships={shipList}
+        onShipSelect={(ship) => mapApi?.focusAndOpenPopup(ship.mmsi)}
       />
 
       <SideMenu
@@ -144,7 +148,12 @@ export default function RegisteredMapPage({ token, onLogout }) {
       )}
 
       <div className="pt-[60px] h-full relative">
-        <Map token={token} vessels={filteredShips} />
+        <Map
+          token={token}
+          vessels={filteredShips}
+          onVesselSelect={setMapApi}
+          onShipsUpdate={setShipList}
+        />
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
-import { Input, Button, Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
-import { Search, User } from 'lucide-react';
+import { Button, Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Autocomplete, AutocompleteItem } from '@heroui/react';
+import { User, SearchIcon } from 'lucide-react';
 import ThemeSwitcher from './ThemeSwitcher';
 import { useNavigate } from 'react-router-dom';
 
 
-export default function TopBar({ onSignIn, onSignUp, token, onLogout }) {
+export default function TopBar({ onSignIn, onSignUp, token, onLogout, ships= [], onShipSelect }) {
   const navigate = useNavigate();
   const isGuest = !token;
 
@@ -21,12 +21,27 @@ export default function TopBar({ onSignIn, onSignUp, token, onLogout }) {
 
       {/* Search */}
       <div className="w-[300px] flex items-center justify-center">
-        <Input
-          size='sm'
+        <Autocomplete
+          size="sm"
           radius="full"
-          placeholder="Search"
-          endContent={<Search className="text-default-400" size={16} />}
-        />
+          variant='bordered'
+          aria-label='Search vessels by MMSI'
+          placeholder="Search vessel by MMSI"
+          className="w-[300px]"
+          startContent={<SearchIcon className="text-gray-500" />}
+          onSelectionChange={(mmsi) => {
+            const selected = ships.find(s => s.mmsi === mmsi);
+            if (selected) {
+              onShipSelect?.(selected); // Notify map for popup
+            }
+          }}
+        >
+          {ships.map((ship) => (
+            <AutocompleteItem key={ship.mmsi} textValue={ship.mmsi}>
+              MMSI: {ship.mmsi} — {ship.vesselType || 'Unknown'}
+            </AutocompleteItem>
+          ))}
+        </Autocomplete>
       </div>
 
       {/* Right Side: Theme + Auth/Profile */}
