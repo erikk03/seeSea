@@ -267,7 +267,7 @@ export default function Map({ token, vessels = null }) {
         {/* Center on Open */}
         <MapCenterOnOpen position={mapCenter} />
 
-        {trackData.length > 1 && showTrackFor && (
+        {trackData.length >= 1 && showTrackFor && (
           <>
             <Polyline
               positions={trackData.map(p => [p.lat, p.lon])}
@@ -329,6 +329,27 @@ export default function Map({ token, vessels = null }) {
         </div>
       )}
 
+      {trackData.length <= 1 && showTrackFor && (
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-[1000] w-[420px] bg-white/90 dark:bg-black/30 p-2 rounded-2xl flex flex-col items-center gap-1">
+          <div className="text-xs font-medium text-center">
+            No track data available for MMSI: {showTrackFor}
+          </div>
+
+          <Button
+            size="sm"
+            radius='full'
+            variant='ghost'
+            color='default'
+            onClick={() => {
+              setTrackData([]);
+              setShowTrackFor(null);
+              setActiveTrackIndex(0);
+            }}
+          >
+            RETURN
+          </Button>
+        </div>
+      )}
 
     </div>
   );
