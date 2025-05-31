@@ -3,7 +3,7 @@ import { Button, addToast } from '@heroui/react';
 import { Trash2, Clock, Plus } from 'lucide-react';
 import { getColorByStatus } from '../utils/statusColor';
 
-export default function VesselInfo({ ship }) {
+export default function VesselInfo({ ship, onShowTrack }) {
 	const [inFleet, setInFleet] = useState(false);
 
 
@@ -123,7 +123,7 @@ export default function VesselInfo({ ship }) {
 							</>
 						)}
 					</Button>
-					<Button size="sm" color="default" variant="ghost" className="w-full">
+					<Button size="sm" color="default" variant="ghost" className="w-full" onClick={() => onShowTrack?.(ship.mmsi)} >
 						<Clock className="w-4 h-4 mr-1 inline-block" />
 						Show past track
 					</Button>

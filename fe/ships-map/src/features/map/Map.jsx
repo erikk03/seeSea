@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Client } from '@stomp/stompjs';
 import L, { map } from 'leaflet';
 import MouseCoordinates from './MouseCoordinates';
 import VesselInfo from '../../components/VesselInfo';
 import MapCenterOnOpen from './MapCenterOnOpen';
+import {Slider, Button} from '@heroui/react';
 
 // Ensure Leaflet's default icon assets are set up correctly
 import cargoIcon from '../../assets/shipArrows/ship-cargo.png';
@@ -77,6 +78,10 @@ export default function Map({ token, vessels = null }) {
   const [ships, setShips] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mapCenter, setMapCenter] = useState([48.30915, -4.91719]);
+
+  const [trackData, setTrackData] = useState([]);
+  const [showTrackFor, setShowTrackFor] = useState(null); //mmsi of the ship to show track for
+  const [activeTrackIndex, setActiveTrackIndex] = useState(0);
 
 
   // Detect Tailwind "dark" class on <html>
@@ -200,6 +205,28 @@ export default function Map({ token, vessels = null }) {
   const tileUrl = isDarkMode
     ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
     : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+
+  const handleShowTrack = async (mmsi) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`https://localhost:8443/vessel/get-vessel-history?mmsi=${mmsi}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch track");
+
+      const data = await res.json();
+      if (data.length === 0) return;
+
+      setTrackData(data);
+      setShowTrackFor(mmsi);
+      setActiveTrackIndex(data.length - 1); // Start at latest point
+      setMapCenter([data[data.length - 1].lat, data[data.length - 1].lon]);
+    } catch (err) {
+      console.error("Track fetch error:", err);
+    }
+  };
+
   
   return (
     <div>
@@ -220,7 +247,7 @@ export default function Map({ token, vessels = null }) {
         {/* Base: Carto Light */}
         <TileLayer url={tileUrl} />
 
-        {Object.values(ships).map(ship => (
+        {!showTrackFor && Object.values(ships).map(ship => (
           <Marker
             key={ship.mmsi}
             position={[ship.lat, ship.lon]}
@@ -232,7 +259,7 @@ export default function Map({ token, vessels = null }) {
             }}
           >
             <Popup className="leaflet-custom-popup" closeButton={false}>
-              <VesselInfo ship={ship} />
+              <VesselInfo ship={ship} onShowTrack={handleShowTrack}/>
             </Popup>
           </Marker>
         ))}
@@ -240,8 +267,69 @@ export default function Map({ token, vessels = null }) {
         {/* Center on Open */}
         <MapCenterOnOpen position={mapCenter} />
 
+        {trackData.length > 1 && showTrackFor && (
+          <>
+            <Polyline
+              positions={trackData.map(p => [p.lat, p.lon])}
+              pathOptions={{ color: 'red', weight: 3 }}
+            />
+            <Marker
+              position={[trackData[activeTrackIndex].lat, trackData[activeTrackIndex].lon]}
+              icon={createShipIcon(trackData[activeTrackIndex].heading || 0, trackData[activeTrackIndex].vesselType)}
+            />
+          </>
+        )}
 
       </MapContainer>
+
+      {trackData.length > 1 && showTrackFor && (
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-[1000] w-[420px] bg-white/90 dark:bg-black/30 p-2 rounded-2xl flex flex-col items-center gap-1">
+          
+          <div className="text-xs font-medium text-center">
+            {new Date(trackData[activeTrackIndex].timestamp * 1000).toLocaleString()}
+          </div>
+
+          <Slider
+            size="md"
+            color='foreground'
+            step={1}
+            showSteps={true}
+            maxValue={trackData.length - 1}
+            defaultValue={trackData.length - 1}
+            value={activeTrackIndex}
+            onChange={(val) => setActiveTrackIndex(val)}
+            className="w-full"
+            aria-label="Playback track"
+            endContent={
+              <Button
+                isIconOnly
+                size="sm"
+                radius='lg'
+                onClick={() => setActiveTrackIndex(trackData.length - 1)}
+                className="ml-1"
+              >
+                now
+              </Button>
+            }
+          />
+
+          <Button
+            size="sm"
+            radius='full'
+            variant='ghost'
+            color="danger"
+            onClick={() => {
+              setTrackData([]);
+              setShowTrackFor(null);
+              setActiveTrackIndex(0);
+            }}
+          >
+            close
+          </Button>
+        </div>
+      )}
+
+
     </div>
   );
 }
