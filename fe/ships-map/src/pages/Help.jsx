@@ -25,7 +25,7 @@ export default function Help() {
   }
 
   return (
-    <div className="relative min-h-screen bg-white text-black dark:bg-gray-800 dark:text-white flex justify-center items-start p-6">
+    <div className="relative min-h-screen bg-neutral-200 text-black dark:bg-gray-800 dark:text-white flex justify-center items-start p-6">
       <Button
         isIconOnly
         variant="light"
@@ -92,7 +92,7 @@ export default function Help() {
               </AccordionItem>
 
               <AccordionItem key="12" title="Can I disable alerts?">
-                Not yet. In the future, you'll be able to customize or disable alert types from the Settings page.
+                Alerts are applied by the user based on the zone of interest selected. They can be turned on and off.
               </AccordionItem>
 
               <AccordionItem key="13" title="How do I change my password?">

@@ -101,7 +101,7 @@ export default function MyVessels({ onLoadFleet }) {
       isBlurred
       className="fixed right-4 top-1/2 -translate-y-1/2 z-[1100]
       transition-all duration-600 ease-in-out overflow-hidden
-      w-[220px] bg-white/90 dark:bg-neutral-900/50 shadow-xl border-none"
+      w-[220px] bg-neutral-100/50 dark:bg-neutral-900/50 shadow-xl border-none"
     >
       <CardHeader className="text-lg font-bold px-4 pt-4 pb-2 text-center flex items-center justify-center">
         My Vessels

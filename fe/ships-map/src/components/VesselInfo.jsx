@@ -78,7 +78,7 @@ export default function VesselInfo({ ship, onShowTrack }) {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-black/30 p-4 rounded-xl shadow-md text-sm w-[350px]">
+    <div className="flex flex-col items-center bg-white/70 dark:bg-black/30 p-4 rounded-xl shadow-md text-sm w-[350px]">
       {/* MMSI and Vessel Type */}
       <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
         MMSI: {ship.mmsi}

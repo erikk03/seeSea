@@ -77,7 +77,7 @@ export default function UserProfile({token, onLogout}) {
   };
 
   return (
-    <div className="relative min-h-screen bg-white text-black dark:bg-gray-800 dark:text-white flex justify-center items-start p-6">
+    <div className="relative min-h-screen bg-neutral-200 text-black dark:bg-gray-800 dark:text-white flex justify-center items-start p-6">
       <TopBar
         token={token}
         onLogout={onLogout}

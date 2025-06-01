@@ -248,7 +248,7 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
 
   
   return (
-    <div>
+    <div>    
       <MapContainer
         center={mapCenter}
         zoom={6}
@@ -256,6 +256,14 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
         className='z-0'
         style={{ height: '90vh', width: '100%' }}
         attributionControl={false}
+        maxBounds={[
+          [-85, -180], // Southwest corner
+          [85, 180]    // Northeast corner
+        ]}
+        maxBoundsViscosity={1.0}
+        worldCopyJump={false}
+        noWrap={true}
+        minZoom={3}
       >
         {/* Custom zoom control */}
         {/* <CustomZoomControl /> */}
@@ -304,7 +312,7 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
       </MapContainer>
 
       {trackData.length > 1 && showTrackFor && (
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-[1000] w-[420px] bg-white/90 dark:bg-black/30 p-2 rounded-2xl flex flex-col items-center gap-1">
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-[1000] w-[420px] bg-white/70 dark:bg-black/30 p-2 rounded-2xl flex flex-col items-center gap-1">
           
           <div className="text-xs font-medium text-center">
             {new Date(trackData[activeTrackIndex].timestamp * 1000).toLocaleString()}
@@ -351,7 +359,7 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
       )}
 
       {trackData.length <= 1 && showTrackFor && (
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-[1000] w-[420px] bg-white/90 dark:bg-black/30 p-2 rounded-2xl flex flex-col items-center gap-1">
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-[1000] w-[420px] bg-white/70 dark:bg-black/30 p-2 rounded-2xl flex flex-col items-center gap-1">
           <div className="text-xs font-medium text-center">
             No track data available for MMSI: {showTrackFor}
           </div>

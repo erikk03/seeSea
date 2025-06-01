@@ -114,7 +114,7 @@ export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
       isBlurred
       className="fixed right-4 top-1/2 -translate-y-1/2 z-[1100]
       transition-all duration-600 ease-in-out overflow-hidden
-      w-[200px] bg-white/90 dark:bg-neutral-900/50 shadow-xl border-none"
+      w-[200px] bg-neutral-100/50 dark:bg-neutral-900/50 shadow-xl border-none"
     >
       <CardHeader className="text-lg font-bold px-4 pt-4 flex items-center justify-center">
         Filters

@@ -21,7 +21,7 @@ export default function TopBar({ onSignIn, onSignUp, token, onLogout, ships= [],
   }
   
   return (
-    <div className="fixed top-0 left-0 right-0 z-[1100] flex items-center justify-between bg-white px-3 py-3 shadow-md h-[60px] dark:bg-neutral-950 transition-colors duration-300">
+    <div className="fixed top-0 left-0 right-0 z-[1100] flex items-center justify-between bg-neutral-100 px-3 py-3 shadow-md h-[60px] dark:bg-neutral-950 transition-colors duration-300">
         <div className="flex gap-2 items-center">
           <img
             src="/logo.png"
