@@ -6,6 +6,8 @@ import TopBar from '../components/TopBar';
 import { Button } from '@heroui/react';
 import FiltersMenu from '../components/FiltersMenu';
 import MyVessels from '../components/MyVessels';
+import AlertsMenu from '../components/AlertsMenu';
+import { useEffect } from 'react';
 
 export default function RegisteredMapPage({ token, onLogout }) {
   const navigate = useNavigate();
@@ -14,6 +16,120 @@ export default function RegisteredMapPage({ token, onLogout }) {
   const [filteredShips, setFilteredShips] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState(null);
   const [previousFilters, setPreviousFilters] = useState(null);
+  const [alerts, setAlerts] = useState({
+    speedThreshold: "",
+    enterZoneEnabled: false,
+    exitZoneEnabled: false,
+  });
+  const [zoneDrawing, setZoneDrawing] = useState(false);
+  const [zone, setZone] = useState(null);
+  const [zoneRefreshToggle, setZoneRefreshToggle] = useState(false);
+
+
+
+  useEffect(() => {
+    const fetchZone = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("https://localhost:8443/zone-of-interest/get-zone", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch zone data.");
+
+        const data = await res.json();
+
+        if (data && data.centerPointLongitude && data.centerPointLatitude && data.radius) {
+          setZone({
+            id: data.id,
+            center: { lat: data.centerPointLatitude, lng: data.centerPointLongitude },
+            radius: data.radius,
+          });
+          console.log("Zone loaded successfully!", data);
+        } else {
+          // setZone(null);
+          console.log("No zone data found or incomplete response.");
+        }
+      } catch (err) {
+        console.error("Error fetching zone data:", err);
+      }
+    };
+
+    fetchZone();
+  }, [zoneRefreshToggle]);
+
+
+  const handleStartZoneSelection = () => {
+    setZoneDrawing(true);
+    console.log("Zone drawing started. Click on map to set center.");
+  };
+
+  const handleCancelZoneDrawing = () => {
+    setZoneDrawing(false);
+    console.log("Zone drawing canceled.");
+  };
+
+
+  const handleZoneDrawComplete = async ({ center, radius }) => {
+    console.log("Zone completed:", center, radius);
+    setZoneDrawing(false);
+    setZone({ center, radius });
+    
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("https://localhost:8443/zone-of-interest/set-zone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          centerPointLatitude: center.lat,
+          centerPointLongitude: center.lng,
+          radius
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to save zone.");
+
+      setZoneRefreshToggle(prev => !prev);
+      console.log(" Zone saved successfully!");
+    } catch (err) {
+      console.error(" Error saving zone:", err);
+    }
+  };
+
+  const handleRemoveZone = async () => {
+    try {
+      if (!zone || !zone.id) {
+        console.warn("No zone to delete.");
+        return;
+      }
+      const token = localStorage.getItem("token");
+      const res = await fetch(`https://localhost:8443/zone-of-interest/remove-zone?id=${zone.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to delete zone.");
+      setZone(null);
+      setZoneRefreshToggle(prev => !prev);
+      console.log(" Zone deleted successfully!");
+    } catch (err) {
+      console.error(" Error deleting zone:", err);
+    }
+  };
+
+
+
+
+
 
 
   const handleProtectedClick = (label) => {
@@ -103,6 +219,34 @@ export default function RegisteredMapPage({ token, onLogout }) {
     onLogout();
   };
 
+  const handleAlertsChange = async (alertsConfig) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      // Save alerts to backend
+      const res = await fetch("https://localhost:8443/zone-of-interest/set-zone-options", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          maxSpeed: Number(alertsConfig.speedThreshold),
+          entersZone: alertsConfig.enterZoneEnabled,
+          exitsZone: alertsConfig.exitZoneEnabled,
+        }),
+      });
+
+      setAlerts(alertsConfig); // Update local state
+
+      if (!res.ok) throw new Error("Failed to save alerts configuration");
+
+      console.log("Alerts saved successfully:", alertsConfig);
+    } catch (err) {
+      console.error("Error saving alerts configuration:", err);
+    }
+  };
+
   return (
     <div className="relative h-screen w-screen bg-white text-black dark:bg-black dark:text-white overflow-hidden">
       <TopBar
@@ -128,6 +272,20 @@ export default function RegisteredMapPage({ token, onLogout }) {
         />
       )}
 
+      {activeMenu === 'Alerts' && (
+        <AlertsMenu
+          alerts={alerts}
+          onAlertsChange={(alertConfig) => {
+            handleAlertsChange(alertConfig);
+          }}
+          onStartZoneSelection={handleStartZoneSelection}
+          onRemoveZone={handleRemoveZone}  
+          zone={zone}  
+          onCancelZoneDrawing={handleCancelZoneDrawing}
+          zoneDrawing={zoneDrawing} 
+        />
+      )}
+
       {/* Show filters tag only when filters menu is active and filters are enabled */}
       {hasActiveFilters && activeMenu !== "My Fleet" && (
         <div className="fixed top-1/2 translate-y-48 left-4 z-[1200]">
@@ -144,7 +302,8 @@ export default function RegisteredMapPage({ token, onLogout }) {
       )}
 
       <div className="pt-[60px] h-full relative">
-        <Map token={token} vessels={filteredShips} />
+        {/* <Map token={token} vessels={filteredShips} /> */}
+        <Map token={token} vessels={filteredShips} zoneDrawing={zoneDrawing} onZoneDrawComplete={handleZoneDrawComplete}  zone={zone} />
       </div>
     </div>
   );
