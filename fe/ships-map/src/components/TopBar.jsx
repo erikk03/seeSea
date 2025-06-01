@@ -1,5 +1,5 @@
 import { Button, Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Autocomplete, AutocompleteItem } from '@heroui/react';
-import { User, SearchIcon } from 'lucide-react';
+import { User, SearchIcon, UserCog, LogOut } from 'lucide-react';
 import ThemeSwitcher from './ThemeSwitcher';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,12 +21,12 @@ export default function TopBar({ onSignIn, onSignUp, token, onLogout, ships= [],
   }
   
   return (
-    <div className="fixed top-0 left-0 right-0 z-[1100] flex items-center justify-between bg-white px-3 py-3 shadow-md h-[60px] dark:bg-black">
+    <div className="fixed top-0 left-0 right-0 z-[1100] flex items-center justify-between bg-white px-3 py-3 shadow-md h-[60px] dark:bg-neutral-950 transition-colors duration-300">
         <div className="flex gap-2 items-center">
           <img
             src="/logo.png"
             alt="logo"
-            className="h-[160px] w-auto cursor-pointer"
+            className="h-[30px] w-auto cursor-pointer overflow-hidden"
             onClick={onLogoClick}
           />
         </div>
@@ -75,8 +75,10 @@ export default function TopBar({ onSignIn, onSignUp, token, onLogout, ships= [],
               <Avatar isBordered size='sm' icon={<User />} className="cursor-pointer" />
             </DropdownTrigger>
             <DropdownMenu aria-label="User Menu">
-              <DropdownItem key="profile" onClick={onUserProfile}>Profile</DropdownItem>
-              <DropdownItem key="logout" onClick={onLogout} className="text-danger">
+              <DropdownItem key="profile" onClick={onUserProfile} endContent={<UserCog className="text-gray-500 size-5" />}>
+                Profile
+              </DropdownItem>
+              <DropdownItem key="logout" onClick={onLogout} className="text-danger" endContent={<LogOut className="text-danger size-5" />}>
                 Log Out
               </DropdownItem>
             </DropdownMenu>

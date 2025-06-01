@@ -7,6 +7,8 @@ import {
   Button,
   Avatar,
 } from '@heroui/react';
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import TopBar from '../components/TopBar';
 
@@ -15,6 +17,15 @@ export default function UserProfile({token, onLogout}) {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [status, setStatus] = useState({ success: null, message: '' });
+  
+  const navigate = useNavigate();
+  const onLeftArrowClick = () => {
+    if (token) {
+      navigate('/registered-map');
+    } else {
+      navigate('/map');
+    }
+  };
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -66,15 +77,25 @@ export default function UserProfile({token, onLogout}) {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black dark:bg-gray-800 dark:text-white flex justify-center items-start p-6">
+    <div className="relative min-h-screen bg-white text-black dark:bg-gray-800 dark:text-white flex justify-center items-start p-6">
       <TopBar
         token={token}
         onLogout={onLogout}
       />
 
-      <Card className='w-full max-w-2xl mt-20'>
+      <Button
+        isIconOnly
+        variant="light"
+        onClick={onLeftArrowClick}
+        className="absolute top-20 left-4 z-10"
+        aria-label="Back to map"
+      >
+        <ArrowLeft />
+      </Button>
+
+      <Card className='w-full max-w-2xl mt-16'>
         <CardHeader className="flex items-center gap-4">
-          <Avatar name={userInfo?.username} className="h-16 w-16 text-base" />
+          <Avatar showFallback src="https://images.unsplash.com/broken" isBordered className="h-16 w-16 text-base" />
           <div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               {userInfo?.username || 'Loading...'}
