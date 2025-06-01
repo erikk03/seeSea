@@ -2,77 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Client } from '@stomp/stompjs';
-import L, { map } from 'leaflet';
 import MouseCoordinates from './MouseCoordinates';
 import VesselInfo from '../../components/VesselInfo';
 import MapCenterOnOpen from './MapCenterOnOpen';
 import {Slider, Button} from '@heroui/react';
-
-// Ensure Leaflet's default icon assets are set up correctly
-import cargoIcon from '../../assets/shipArrows/ship-cargo.png';
-import fishingIcon from '../../assets/shipArrows/ship-fishing.png';
-import leisureIcon from '../../assets/shipArrows/ship-leisure.png';
-import securityIcon from '../../assets/shipArrows/ship-security.png';
-import serviceIcon from '../../assets/shipArrows/ship-service.png';
-import unknownIcon from '../../assets/shipArrows/ship-unknown.png';
-
-// Define ship type to icon URL mapping
-const typeToIconUrl = {
-  // Cargo ships
-  "tanker-hazarda(major)": cargoIcon,
-  "cargo": cargoIcon,
-  "cargo-hazarda(major)": cargoIcon,
-  "tanker": cargoIcon,
-  "cargo-hazardb": cargoIcon,
-  "tanker-hazardb": cargoIcon,
-  "cargo-hazardd(recognizable)": cargoIcon,
-  "tanker-hazardd(recognizable)": cargoIcon,
-  "tanker-hazardc(minor)": cargoIcon,
-  "cargo-hazardc(minor)": cargoIcon,
-
-  // Fishing vessels
-  "fishing": fishingIcon,
-  "dredger": fishingIcon,
-
-  // Leisure and pleasure craft
-  "sailingvessel": leisureIcon,
-  "pleasurecraft": leisureIcon,
-
-  // Security and law enforcement
-  "militaryops": securityIcon,
-  "sar": securityIcon,
-  "pilotvessel": securityIcon,
-  "localvessel": securityIcon,
-  "divevessel": securityIcon,
-  "high-speedcraft": securityIcon,
-  "wingingrnd": securityIcon,
-  "lawenforce": securityIcon,
-
-  // Service and support vessels
-  "anti-pollution": serviceIcon,
-  "tug": serviceIcon,
-  "specialcraft": serviceIcon,
-
-  // Other types
-  "unknown": unknownIcon,
-  "other": unknownIcon,
-};
-
-// rotateable ship icon factory
-const createShipIcon = (heading, type) =>
-  L.divIcon({
-    className: 'ship-icon',
-    html: `<div style="
-      transform: rotate(${heading}deg);
-      width: 20px;
-      height: 20px;
-      background: url('${typeToIconUrl[type]}') no-repeat center;
-      background-size: contain;
-    "></div>`,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
-    popupAnchor: [0, -10],
-  });
+import { createShipIcon } from '../../utils/shipIcons';
 
 export default function Map({ token, vessels = null, onVesselSelect, onShipsUpdate }) {
   const [ships, setShips] = useState({});
