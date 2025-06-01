@@ -7,8 +7,61 @@ import VesselInfo from '../../components/VesselInfo';
 import MapCenterOnOpen from './MapCenterOnOpen';
 import {Slider, Button} from '@heroui/react';
 import { createShipIcon } from '../../utils/shipIcons';
+import { useMapEvent } from 'react-leaflet';
+import { Circle } from 'react-leaflet';
 
-export default function Map({ token, vessels = null, onVesselSelect, onShipsUpdate }) {
+
+// Ensure Leaflet's default icon assets are set up correctly
+import cargoIcon from '../../assets/shipArrows/ship-cargo.png';
+import fishingIcon from '../../assets/shipArrows/ship-fishing.png';
+import leisureIcon from '../../assets/shipArrows/ship-leisure.png';
+import securityIcon from '../../assets/shipArrows/ship-security.png';
+import serviceIcon from '../../assets/shipArrows/ship-service.png';
+import unknownIcon from '../../assets/shipArrows/ship-unknown.png';
+
+// Define ship type to icon URL mapping
+const typeToIconUrl = {
+  // Cargo ships
+  "tanker-hazarda(major)": cargoIcon,
+  "cargo": cargoIcon,
+  "cargo-hazarda(major)": cargoIcon,
+  "tanker": cargoIcon,
+  "cargo-hazardb": cargoIcon,
+  "tanker-hazardb": cargoIcon,
+  "cargo-hazardd(recognizable)": cargoIcon,
+  "tanker-hazardd(recognizable)": cargoIcon,
+  "tanker-hazardc(minor)": cargoIcon,
+  "cargo-hazardc(minor)": cargoIcon,
+
+  // Fishing vessels
+  "fishing": fishingIcon,
+  "dredger": fishingIcon,
+
+  // Leisure and pleasure craft
+  "sailingvessel": leisureIcon,
+  "pleasurecraft": leisureIcon,
+
+  // Security and law enforcement
+  "militaryops": securityIcon,
+  "sar": securityIcon,
+  "pilotvessel": securityIcon,
+  "localvessel": securityIcon,
+  "divevessel": securityIcon,
+  "high-speedcraft": securityIcon,
+  "wingingrnd": securityIcon,
+  "lawenforce": securityIcon,
+
+  // Service and support vessels
+  "anti-pollution": serviceIcon,
+  "tug": serviceIcon,
+  "specialcraft": serviceIcon,
+
+  // Other types
+  "unknown": unknownIcon,
+  "other": unknownIcon,
+};
+
+export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComplete, zone, onVesselSelect, onShipsUpdate }) {
   const [ships, setShips] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mapCenter, setMapCenter] = useState([48.30915, -4.91719]);
@@ -16,6 +69,59 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
   const [trackData, setTrackData] = useState([]);
   const [showTrackFor, setShowTrackFor] = useState(null); //mmsi of the ship to show track for
   const [activeTrackIndex, setActiveTrackIndex] = useState(0);
+  const [zoneCenter, setZoneCenter] = useState(null);
+  const [zoneRadius, setZoneRadius] = useState(null);
+
+
+
+  function ZoneClickHandler({
+    zoneDrawing,
+    zoneCenter,
+    onZoneDrawComplete,
+    setZoneCenter,
+    setZoneRadius
+  }) {
+    const calculateDistance = (center, edge) => {
+      const R = 6371000; // Earth radius in meters
+      const lat1 = (center.lat * Math.PI) / 180;
+      const lat2 = (edge.lat * Math.PI) / 180;
+      const deltaLat = lat2 - lat1;
+      const deltaLon = ((edge.lng - center.lng) * Math.PI) / 180;
+
+      const a =
+        Math.sin(deltaLat / 2) ** 2 +
+        Math.cos(lat1) * Math.cos(lat2) *
+        Math.sin(deltaLon / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      return R * c;
+    };
+
+    // Handle click to set center and finalize radius
+    useMapEvent('click', (e) => {
+      if (!zoneDrawing) return;
+      if (!zoneCenter) {
+        setZoneCenter(e.latlng);
+        console.log("🟢 Center selected at:", e.latlng);
+      } else {
+        const radius = calculateDistance(zoneCenter, e.latlng);
+        setZoneRadius(radius);
+        console.log("🔵 Radius finalized:", radius);
+        onZoneDrawComplete?.({ center: zoneCenter, radius });
+        setZoneCenter(null);
+        setZoneRadius(null);
+      }
+    });
+
+    // Handle mouse move to preview radius
+    useMapEvent('mousemove', (e) => {
+      if (!zoneDrawing || !zoneCenter) return;
+      const radius = calculateDistance(zoneCenter, e.latlng);
+      setZoneRadius(radius);
+    });
+
+    return null;
+  }
   const markerRefs = useRef({});
 
 
@@ -180,9 +286,9 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
     }
   }, [ships, onVesselSelect]);
 
-  
+
   return (
-    <div>    
+    <div>
       <MapContainer
         center={mapCenter}
         zoom={6}
@@ -216,10 +322,10 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
             ref={(ref) => { if (ref) markerRefs.current[ship.mmsi] = ref; }}
             eventHandlers={{
               click: () => {
-                setMapCenter([ship.lat, ship.lon]); // ← Focus
+                setMapCenter([ship.lat, ship.lon]);
               }
             }}
-            
+
           >
             <Popup className="leaflet-custom-popup" closeButton={false}>
               <VesselInfo ship={ship} onShowTrack={handleShowTrack}/>
@@ -241,6 +347,31 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
               icon={createShipIcon(trackData[activeTrackIndex].heading || 0, trackData[activeTrackIndex].vesselType)}
             />
           </>
+        )}
+
+        {/* Zone Drawing */}
+        <ZoneClickHandler
+          zoneDrawing={zoneDrawing}
+          zoneCenter={zoneCenter}
+          onZoneDrawComplete={onZoneDrawComplete}
+          setZoneCenter={setZoneCenter}
+          setZoneRadius={setZoneRadius}
+        />
+
+        {/* {zoneCenter && (
+          <Circle
+            center={zoneCenter}
+            radius={zoneRadius}
+            pathOptions={{ color: 'blue', dashArray: zoneRadius ? null : '4' }}
+          />
+        )} */}
+
+        {(zone || zoneCenter) && (
+          <Circle
+            center={zone ? zone.center : zoneCenter}
+            radius={zone ? zone.radius : zoneRadius}
+            pathOptions={{ color: 'blue' }}
+          />
         )}
 
       </MapContainer>
