@@ -13,6 +13,8 @@ export default function VesselInfo({ ship, onShowTrack }) {
 	const token = localStorage.getItem('token');
 
 	useEffect(() => {
+    if (!token) return; // For guest users, skip fleet check 
+
     const fetchFleet = async () => {
       try {
         const res = await fetch('https://localhost:8443/registered-user/get-my-fleet', {
@@ -33,6 +35,8 @@ export default function VesselInfo({ ship, onShowTrack }) {
   }, [ship.mmsi]);
 
 	const handleFleetToggle = async () => {
+    if (!token) return; // For guest users, do nothing
+
     const url = inFleet
       ? 'https://localhost:8443/registered-user/remove-vessel-from-fleet'
       : 'https://localhost:8443/registered-user/add-vessel-to-fleet';
@@ -74,7 +78,7 @@ export default function VesselInfo({ ship, onShowTrack }) {
   };
 
   return (
-    <div className="flex flex-col items-center bg-white dark:bg-black/30 p-4 rounded-xl shadow-md text-sm w-[350px]">
+    <div className="flex flex-col items-center bg-white/70 dark:bg-black/30 p-4 rounded-xl shadow-md text-sm w-[350px]">
       {/* MMSI and Vessel Type */}
       <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
         MMSI: {ship.mmsi}

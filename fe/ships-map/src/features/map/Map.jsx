@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Client } from '@stomp/stompjs';
-import L, { map } from 'leaflet';
 import MouseCoordinates from './MouseCoordinates';
 import VesselInfo from '../../components/VesselInfo';
 import MapCenterOnOpen from './MapCenterOnOpen';
 import {Slider, Button} from '@heroui/react';
+import { createShipIcon } from '../../utils/shipIcons';
 import { useMapEvent } from 'react-leaflet';
 import { Circle } from 'react-leaflet';
 
@@ -61,23 +61,7 @@ const typeToIconUrl = {
   "other": unknownIcon,
 };
 
-// rotateable ship icon factory
-const createShipIcon = (heading, type) =>
-  L.divIcon({
-    className: 'ship-icon',
-    html: `<div style="
-      transform: rotate(${heading}deg);
-      width: 20px;
-      height: 20px;
-      background: url('${typeToIconUrl[type]}') no-repeat center;
-      background-size: contain;
-    "></div>`,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
-    popupAnchor: [0, -10],
-  });
-
-export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComplete, zone }) {
+export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComplete, zone, onVesselSelect, onShipsUpdate }) {
   const [ships, setShips] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mapCenter, setMapCenter] = useState([48.30915, -4.91719]);
@@ -138,6 +122,7 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
 
     return null;
   }
+  const markerRefs = useRef({});
 
 
   // Detect Tailwind "dark" class on <html>
@@ -176,6 +161,7 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
             defaultShips[ship.mmsi] = ship;
           });
           setShips(defaultShips); // Replace with default or filtered vessels
+          onShipsUpdate?.(Object.values(defaultShips)); // Notify parent of new ships
         })
         .catch(err => {
           console.error("Failed to fetch vessels from /vessel/get-map:", err);
@@ -283,7 +269,24 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
     }
   };
 
-  
+  useEffect(() => {
+    if (onVesselSelect) {
+      onVesselSelect({
+        focusAndOpenPopup: (mmsi) => {
+          const ship = ships[mmsi];
+          if (!ship) return;
+          setMapCenter([ship.lat, ship.lon]);
+
+          setTimeout(() => {
+            const marker = markerRefs.current[mmsi];
+            if (marker) marker.openPopup();
+          }, 100); // delay ensures map has moved before popup opens
+        }
+      });
+    }
+  }, [ships, onVesselSelect]);
+
+
   return (
     <div>
       <MapContainer
@@ -293,6 +296,14 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
         className='z-0'
         style={{ height: '90vh', width: '100%' }}
         attributionControl={false}
+        maxBounds={[
+          [-85, -180], // Southwest corner
+          [85, 180]    // Northeast corner
+        ]}
+        maxBoundsViscosity={1.0}
+        worldCopyJump={false}
+        noWrap={true}
+        minZoom={3}
       >
         {/* Custom zoom control */}
         {/* <CustomZoomControl /> */}
@@ -308,11 +319,13 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
             key={ship.mmsi}
             position={[ship.lat, ship.lon]}
             icon={createShipIcon((ship.heading || ship.course || 0), ship.vesselType)}
+            ref={(ref) => { if (ref) markerRefs.current[ship.mmsi] = ref; }}
             eventHandlers={{
               click: () => {
                 setMapCenter([ship.lat, ship.lon]);
               }
             }}
+
           >
             <Popup className="leaflet-custom-popup" closeButton={false}>
               <VesselInfo ship={ship} onShowTrack={handleShowTrack}/>
@@ -323,7 +336,7 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
         {/* Center on Open */}
         <MapCenterOnOpen position={mapCenter} />
 
-        {trackData.length > 1 && showTrackFor && (
+        {trackData.length >= 1 && showTrackFor && (
           <>
             <Polyline
               positions={trackData.map(p => [p.lat, p.lon])}
@@ -364,7 +377,7 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
       </MapContainer>
 
       {trackData.length > 1 && showTrackFor && (
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-[1000] w-[420px] bg-white/90 dark:bg-black/30 p-2 rounded-2xl flex flex-col items-center gap-1">
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-[1000] w-[420px] bg-white/70 dark:bg-black/30 p-2 rounded-2xl flex flex-col items-center gap-1">
           
           <div className="text-xs font-medium text-center">
             {new Date(trackData[activeTrackIndex].timestamp * 1000).toLocaleString()}
@@ -410,6 +423,27 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
         </div>
       )}
 
+      {trackData.length <= 1 && showTrackFor && (
+        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-[1000] w-[420px] bg-white/70 dark:bg-black/30 p-2 rounded-2xl flex flex-col items-center gap-1">
+          <div className="text-xs font-medium text-center">
+            No track data available for MMSI: {showTrackFor}
+          </div>
+
+          <Button
+            size="sm"
+            radius='full'
+            variant='ghost'
+            color='default'
+            onClick={() => {
+              setTrackData([]);
+              setShowTrackFor(null);
+              setActiveTrackIndex(0);
+            }}
+          >
+            RETURN
+          </Button>
+        </div>
+      )}
 
     </div>
   );

@@ -9,6 +9,8 @@ import LoginModal from '../features/auth/LoginModal';
 export default function GuestMapPage({ token, onLogout, onLogin }) {
   const navigate = useNavigate();
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+    const [shipList, setShipList] = useState([]);
+    const [mapApi, setMapApi] = useState(null);
 
   const handleProtectedClick = (label) => {
     console.log(`"${label}" clicked, but guest access. Prompting login.`);
@@ -32,12 +34,18 @@ export default function GuestMapPage({ token, onLogout, onLogin }) {
         onSignIn={handleSignIn}
         onSignUp={handleSignUp}
         onLogout={handleLogout}
+        ships={shipList}
+        onShipSelect={(ship) => mapApi?.focusAndOpenPopup(ship.mmsi)}
       />
 
       <SideMenu userRole={token ? 'user' : 'guest'} onProtectedClick={handleProtectedClick} />
 
       <div className="pt-[60px] h-full">
-        <Map token={token} />
+        <Map
+        token={token}
+        onVesselSelect={setMapApi}
+        onShipsUpdate={setShipList}
+        />
       </div>
 
       <LoginModal

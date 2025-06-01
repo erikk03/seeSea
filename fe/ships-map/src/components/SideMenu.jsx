@@ -34,7 +34,7 @@ export default function SideMenu({ userRole = "guest", activeMenu, onToggleMenu 
       fixed left-4 top-1/2 -translate-y-1/2 z-[1100]
       transition-all duration-600 ease-in-out overflow-hidden
       ${isExpanded ? "w-[150px]" : "w-[60px]"}
-      bg-[#003350]/90 dark:bg-black/30
+      bg-[#08203e]/90 dark:bg-neutral-950/50
       shadow-xl border-none
     `}
   >

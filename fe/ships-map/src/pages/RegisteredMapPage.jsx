@@ -16,6 +16,8 @@ export default function RegisteredMapPage({ token, onLogout }) {
   const [filteredShips, setFilteredShips] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState(null);
   const [previousFilters, setPreviousFilters] = useState(null);
+  const [shipList, setShipList] = useState([]);
+  const [mapApi, setMapApi] = useState(null);
   const [alerts, setAlerts] = useState({
     speedThreshold: "",
     enterZoneEnabled: false,
@@ -77,7 +79,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
     console.log("Zone completed:", center, radius);
     setZoneDrawing(false);
     setZone({ center, radius });
-    
+
 
     try {
       const token = localStorage.getItem("token");
@@ -252,6 +254,8 @@ export default function RegisteredMapPage({ token, onLogout }) {
       <TopBar
         token={token}
         onLogout={handleLogout}
+        ships={shipList}
+        onShipSelect={(ship) => mapApi?.focusAndOpenPopup(ship.mmsi)}
       />
 
       <SideMenu
@@ -279,10 +283,10 @@ export default function RegisteredMapPage({ token, onLogout }) {
             handleAlertsChange(alertConfig);
           }}
           onStartZoneSelection={handleStartZoneSelection}
-          onRemoveZone={handleRemoveZone}  
-          zone={zone}  
+          onRemoveZone={handleRemoveZone}
+          zone={zone}
           onCancelZoneDrawing={handleCancelZoneDrawing}
-          zoneDrawing={zoneDrawing} 
+          zoneDrawing={zoneDrawing}
         />
       )}
 
@@ -302,8 +306,15 @@ export default function RegisteredMapPage({ token, onLogout }) {
       )}
 
       <div className="pt-[60px] h-full relative">
-        {/* <Map token={token} vessels={filteredShips} /> */}
-        <Map token={token} vessels={filteredShips} zoneDrawing={zoneDrawing} onZoneDrawComplete={handleZoneDrawComplete}  zone={zone} />
+        <Map
+          token={token}
+          vessels={filteredShips}
+          zoneDrawing={zoneDrawing}
+          onZoneDrawComplete={handleZoneDrawComplete}
+          zone={zone}
+          onVesselSelect={setMapApi}
+          onShipsUpdate={setShipList}
+        />
       </div>
     </div>
   );
