@@ -116,7 +116,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     VesselHistoryData previousVesselData = vesselHistoryDataService.getLastVesselHistoryData(jsonNodeToBeSent.get("mmsi").asText())
         .orElse(null);
     if (notificationService.violatesMaxSpeed(user, jsonNodeToBeSent, previousVesselData)) {
-      alertDescriptions.add(SPEED_ALERT_DESCRIPTION.formatted(user.getZoneOfInterestOptions().getMaxSpeed(), jsonNodeToBeSent.get("speed").asDouble()));
+      alertDescriptions.add(SPEED_ALERT_DESCRIPTION.formatted(jsonNodeToBeSent.get("speed").asDouble(), user.getZoneOfInterestOptions().getMaxSpeed()));
     }
     if (notificationService.entersZone(user, jsonNodeToBeSent, previousVesselData)) {
       alertDescriptions.add(ENTERS_ZONE_DESCRIPTION.formatted(jsonNodeToBeSent.get("mmsi").asText()));

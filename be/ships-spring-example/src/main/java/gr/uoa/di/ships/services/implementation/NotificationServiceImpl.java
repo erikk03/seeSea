@@ -70,7 +70,7 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   public boolean violatesMaxSpeed(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData) {
     double currentDistance = getHaversineDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
-    if (user.getZoneOfInterest().getRadius() < currentDistance) {
+    if (user.getZoneOfInterest().getRadius() < currentDistance || Objects.isNull(user.getZoneOfInterestOptions().getMaxSpeed())) {
       return false;
     }
     Double currentVesselSpeed = jsonNodeToBeSent.get("speed").asDouble();
