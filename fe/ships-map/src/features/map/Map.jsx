@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMapEvent } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Client } from '@stomp/stompjs';
 import MouseCoordinates from './MouseCoordinates';
 import VesselInfo from '../../components/VesselInfo';
 import MapCenterOnOpen from './MapCenterOnOpen';
-import {Slider, Button} from '@heroui/react';
+import {Slider, Button, addToast} from '@heroui/react';
 import { createShipIcon } from '../../utils/shipIcons';
-import { useMapEvent } from 'react-leaflet';
-import { Circle } from 'react-leaflet';
+import { color } from 'framer-motion';
 
 export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComplete, zone, onVesselSelect, onShipsUpdate }) {
   const [ships, setShips] = useState({});
@@ -165,6 +164,14 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
               const alert = JSON.parse(message.body);
               // TODO: Show this alert to the user somehow
               console.log("🚨 Alert received:", alert);
+              addToast({
+                title: `Alert received for MMSI: ${alert.vesselMmsi}`,
+                description: `${alert.alertDescriptions[0]}`,
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                variant: "bordered",
+                color: "danger",
+              });
             } catch (error) {
               console.error("Error parsing alert WebSocket message:", error);
             }
