@@ -66,9 +66,6 @@ public class LocationsConsumerImplTest {
   private VesselService vesselService;
 
   @Mock
-  private VesselTypeService vesselTypeService;
-
-  @Mock
   private NotificationService notificationService;
 
   @Test
