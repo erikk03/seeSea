@@ -7,15 +7,70 @@ import VesselInfo from '../../components/VesselInfo';
 import MapCenterOnOpen from './MapCenterOnOpen';
 import {Slider, Button} from '@heroui/react';
 import { createShipIcon } from '../../utils/shipIcons';
+import { useMapEvent } from 'react-leaflet';
+import { Circle } from 'react-leaflet';
 
-export default function Map({ token, vessels = null, onVesselSelect, onShipsUpdate }) {
+export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComplete, zone, onVesselSelect, onShipsUpdate }) {
   const [ships, setShips] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mapCenter, setMapCenter] = useState([48.30915, -4.91719]);
 
   const [trackData, setTrackData] = useState([]);
-  const [showTrackFor, setShowTrackFor] = useState(null); //mmsi of the ship to show track for
+  const [showTrackFor, setShowTrackFor] = useState(null);
   const [activeTrackIndex, setActiveTrackIndex] = useState(0);
+  const [zoneCenter, setZoneCenter] = useState(null);
+  const [zoneRadius, setZoneRadius] = useState(null);
+
+
+
+  function ZoneClickHandler({
+    zoneDrawing,
+    zoneCenter,
+    onZoneDrawComplete,
+    setZoneCenter,
+    setZoneRadius
+  }) {
+    const calculateDistance = (center, edge) => {
+      const R = 6371000; // Earth radius in meters
+      const lat1 = (center.lat * Math.PI) / 180;
+      const lat2 = (edge.lat * Math.PI) / 180;
+      const deltaLat = lat2 - lat1;
+      const deltaLon = ((edge.lng - center.lng) * Math.PI) / 180;
+
+      const a =
+        Math.sin(deltaLat / 2) ** 2 +
+        Math.cos(lat1) * Math.cos(lat2) *
+        Math.sin(deltaLon / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      return R * c;
+    };
+
+    // Handle click to set center and finalize radius
+    useMapEvent('click', (e) => {
+      if (!zoneDrawing) return;
+      if (!zoneCenter) {
+        setZoneCenter(e.latlng);
+        console.log("🟢 Center selected at:", e.latlng);
+      } else {
+        const radius = calculateDistance(zoneCenter, e.latlng);
+        setZoneRadius(radius);
+        console.log("🔵 Radius finalized:", radius);
+        onZoneDrawComplete?.({ center: zoneCenter, radius });
+        setZoneCenter(null);
+        setZoneRadius(null);
+      }
+    });
+
+    // Handle mouse move to preview radius
+    useMapEvent('mousemove', (e) => {
+      if (!zoneDrawing || !zoneCenter) return;
+      const radius = calculateDistance(zoneCenter, e.latlng);
+      setZoneRadius(radius);
+    });
+
+    return null;
+  }
   const markerRefs = useRef({});
 
 
@@ -180,9 +235,9 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
     }
   }, [ships, onVesselSelect]);
 
-  
+
   return (
-    <div>    
+    <div>
       <MapContainer
         center={mapCenter}
         zoom={6}
@@ -198,6 +253,10 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
         worldCopyJump={false}
         noWrap={true}
         minZoom={3}
+        zoomAnimation={true}
+        zoomAnimationThreshold={2}
+        zoomSnap={0.1}
+        zoomDelta={0.05}
       >
         {/* Custom zoom control */}
         {/* <CustomZoomControl /> */}
@@ -216,10 +275,10 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
             ref={(ref) => { if (ref) markerRefs.current[ship.mmsi] = ref; }}
             eventHandlers={{
               click: () => {
-                setMapCenter([ship.lat, ship.lon]); // ← Focus
+                setMapCenter([ship.lat, ship.lon]);
               }
             }}
-            
+
           >
             <Popup className="leaflet-custom-popup" closeButton={false}>
               <VesselInfo ship={ship} onShowTrack={handleShowTrack}/>
@@ -241,6 +300,23 @@ export default function Map({ token, vessels = null, onVesselSelect, onShipsUpda
               icon={createShipIcon(trackData[activeTrackIndex].heading || 0, trackData[activeTrackIndex].vesselType)}
             />
           </>
+        )}
+
+        {/* Zone Drawing */}
+        <ZoneClickHandler
+          zoneDrawing={zoneDrawing}
+          zoneCenter={zoneCenter}
+          onZoneDrawComplete={onZoneDrawComplete}
+          setZoneCenter={setZoneCenter}
+          setZoneRadius={setZoneRadius}
+        />
+
+        {(zone || zoneCenter) && (
+          <Circle
+            center={zone ? zone.center : zoneCenter}
+            radius={zone ? zone.radius : zoneRadius}
+            pathOptions={{ color: 'red' }}
+          />
         )}
 
       </MapContainer>
