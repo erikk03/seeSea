@@ -10,64 +10,13 @@ import { createShipIcon } from '../../utils/shipIcons';
 import { useMapEvent } from 'react-leaflet';
 import { Circle } from 'react-leaflet';
 
-
-// Ensure Leaflet's default icon assets are set up correctly
-import cargoIcon from '../../assets/shipArrows/ship-cargo.png';
-import fishingIcon from '../../assets/shipArrows/ship-fishing.png';
-import leisureIcon from '../../assets/shipArrows/ship-leisure.png';
-import securityIcon from '../../assets/shipArrows/ship-security.png';
-import serviceIcon from '../../assets/shipArrows/ship-service.png';
-import unknownIcon from '../../assets/shipArrows/ship-unknown.png';
-
-// Define ship type to icon URL mapping
-const typeToIconUrl = {
-  // Cargo ships
-  "tanker-hazarda(major)": cargoIcon,
-  "cargo": cargoIcon,
-  "cargo-hazarda(major)": cargoIcon,
-  "tanker": cargoIcon,
-  "cargo-hazardb": cargoIcon,
-  "tanker-hazardb": cargoIcon,
-  "cargo-hazardd(recognizable)": cargoIcon,
-  "tanker-hazardd(recognizable)": cargoIcon,
-  "tanker-hazardc(minor)": cargoIcon,
-  "cargo-hazardc(minor)": cargoIcon,
-
-  // Fishing vessels
-  "fishing": fishingIcon,
-  "dredger": fishingIcon,
-
-  // Leisure and pleasure craft
-  "sailingvessel": leisureIcon,
-  "pleasurecraft": leisureIcon,
-
-  // Security and law enforcement
-  "militaryops": securityIcon,
-  "sar": securityIcon,
-  "pilotvessel": securityIcon,
-  "localvessel": securityIcon,
-  "divevessel": securityIcon,
-  "high-speedcraft": securityIcon,
-  "wingingrnd": securityIcon,
-  "lawenforce": securityIcon,
-
-  // Service and support vessels
-  "anti-pollution": serviceIcon,
-  "tug": serviceIcon,
-  "specialcraft": serviceIcon,
-
-  // Other types
-  "unknown": unknownIcon,
-  "other": unknownIcon,
-};
-
 export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComplete, zone, onVesselSelect, onShipsUpdate }) {
   const [ships, setShips] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mapCenter, setMapCenter] = useState([48.30915, -4.91719]);
 
   const [trackData, setTrackData] = useState([]);
-  const [showTrackFor, setShowTrackFor] = useState(null); //mmsi of the ship to show track for
+  const [showTrackFor, setShowTrackFor] = useState(null);
   const [activeTrackIndex, setActiveTrackIndex] = useState(0);
   const [zoneCenter, setZoneCenter] = useState(null);
   const [zoneRadius, setZoneRadius] = useState(null);
@@ -304,6 +253,10 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
         worldCopyJump={false}
         noWrap={true}
         minZoom={3}
+        zoomAnimation={true}
+        zoomAnimationThreshold={2}
+        zoomSnap={0.1}
+        zoomDelta={0.05}
       >
         {/* Custom zoom control */}
         {/* <CustomZoomControl /> */}
@@ -358,19 +311,11 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
           setZoneRadius={setZoneRadius}
         />
 
-        {/* {zoneCenter && (
-          <Circle
-            center={zoneCenter}
-            radius={zoneRadius}
-            pathOptions={{ color: 'blue', dashArray: zoneRadius ? null : '4' }}
-          />
-        )} */}
-
         {(zone || zoneCenter) && (
           <Circle
             center={zone ? zone.center : zoneCenter}
             radius={zone ? zone.radius : zoneRadius}
-            pathOptions={{ color: 'blue' }}
+            pathOptions={{ color: 'red' }}
           />
         )}
 
