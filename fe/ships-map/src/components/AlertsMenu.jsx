@@ -122,14 +122,13 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
 
         <div className="flex flex-col gap-2">
           <NumberInput
-            formatOptions={{ style: "decimal", minimumFractionDigits: 1, maximumFractionDigits: 1 }}
             step={0.1}
             size="sm"
             label="Speed Threshold (knots)"
             placeholder="Enter speed threshold"
             labelPlacement="outside"
             value={speedThreshold}
-            onChange={handleSpeedChange}
+            onValueChange={handleSpeedChange}
           />
         </div>
 
