@@ -26,7 +26,6 @@ import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselStatusService;
-import gr.uoa.di.ships.services.interfaces.vessel.VesselTypeService;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
