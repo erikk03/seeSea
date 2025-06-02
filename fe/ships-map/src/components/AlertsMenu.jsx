@@ -52,6 +52,11 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
 
   const handleSpeedChange = (value) => {
     const parsedValue = value === "" || value === undefined || isNaN(value) ? null : value;
+    // Manual validation: allow null, but block negatives
+    if (parsedValue !== null && parsedValue < 0) {
+      return; // Ignore invalid input
+    }
+
     setSpeedThreshold(parsedValue);
     onAlertsChange?.({ speedThreshold: parsedValue, enterZoneEnabled, exitZoneEnabled });
   };
@@ -119,12 +124,11 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
           <NumberInput
             formatOptions={{ style: "decimal", minimumFractionDigits: 1, maximumFractionDigits: 1 }}
             step={0.1}
-            minValue={0.0}
             size="sm"
             label="Speed Threshold (knots)"
             placeholder="Enter speed threshold"
             labelPlacement="outside"
-            value={speedThreshold ?? ""}
+            value={speedThreshold}
             onChange={handleSpeedChange}
           />
         </div>

@@ -19,7 +19,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
   const [shipList, setShipList] = useState([]);
   const [mapApi, setMapApi] = useState(null);
   const [alerts, setAlerts] = useState({
-    speedThreshold: "",
+    speedThreshold: null,
     enterZoneEnabled: false,
     exitZoneEnabled: false,
   });
@@ -233,7 +233,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          maxSpeed: Number(alertsConfig.speedThreshold),
+          maxSpeed: alertsConfig.speedThreshold,
           entersZone: alertsConfig.enterZoneEnabled,
           exitsZone: alertsConfig.exitZoneEnabled,
         }),
