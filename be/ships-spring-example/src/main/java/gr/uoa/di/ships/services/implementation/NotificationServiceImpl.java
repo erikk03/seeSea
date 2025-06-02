@@ -69,7 +69,7 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
   public boolean violatesMaxSpeed(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData) {
-    double currentDistance = getDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
+    double currentDistance = getHaversineDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
     if (user.getZoneOfInterest().getRadius() < currentDistance) {
       return false;
     }
@@ -88,12 +88,12 @@ public class NotificationServiceImpl implements NotificationService {
     if (!user.getZoneOfInterestOptions().isEntersZone()) {
       return false;
     }
-    double currentDistance = getDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
+    double currentDistance = getHaversineDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
     double radius = user.getZoneOfInterest().getRadius();
     if (Objects.isNull(previousVesselData)) {
       return currentDistance <= radius;
     } else {
-      double previousDistance = getDistance(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
+      double previousDistance = getHaversineDistance(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
       return previousDistance > radius && currentDistance <= radius;
     }
   }
@@ -103,21 +103,40 @@ public class NotificationServiceImpl implements NotificationService {
     if (!user.getZoneOfInterestOptions().isExitsZone()) {
       return false;
     }
-    double currentDistance = getDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
+    double currentDistance = getHaversineDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
     double radius = user.getZoneOfInterest().getRadius();
     if (Objects.isNull(previousVesselData)) {
       return false;
     } else {
-      double previousDistance = getDistance(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
+      double previousDistance = getHaversineDistance(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
       return previousDistance <= radius && currentDistance > radius;
     }
   }
 
-  private static double getDistance(RegisteredUser user, double vesselLatitude, double vesselLongitude) {
+  private static double getEuclideanDistance(RegisteredUser user, double vesselLatitude, double vesselLongitude) {
     double centerPointLatitude = user.getZoneOfInterest().getCenterPointLatitude();
     double centerPointLongitude = user.getZoneOfInterest().getCenterPointLongitude();
     return Math.sqrt(Math.pow(vesselLatitude - centerPointLatitude, 2)
                          + Math.pow(vesselLongitude - centerPointLongitude, 2));
+  }
+
+  private static double getHaversineDistance(RegisteredUser user, double vesselLatitude, double vesselLongitude) {
+    double R = 6371000; // Earth radius in meters
+    double lat1 = Math.toRadians(user.getZoneOfInterest().getCenterPointLatitude());
+    double lon1 = Math.toRadians(user.getZoneOfInterest().getCenterPointLongitude());
+    double lat2 = Math.toRadians(vesselLatitude);
+    double lon2 = Math.toRadians(vesselLongitude);
+
+    double deltaLat = lat2 - lat1;
+    double deltaLon = lon2 - lon1;
+
+    double a = Math.pow(Math.sin(deltaLat / 2), 2)
+        + Math.cos(lat1) * Math.cos(lat2)
+        * Math.pow(Math.sin(deltaLon / 2), 2);
+
+    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // distance in meters
   }
 
   private void validateDeletion(Long notificationId, Long userId) {
