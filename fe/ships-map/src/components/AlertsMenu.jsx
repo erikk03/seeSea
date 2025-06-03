@@ -11,7 +11,7 @@ import {
 import { Trash2 } from "lucide-react";
 import { useEffect } from "react";
 
-export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelection, onRemoveZone, zone, zoneDrawing, onCancelZoneDrawing}) {
+export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelection, onRemoveZone, zone, zoneDrawing, onCancelZoneDrawing, onClearAlerts}) {
   const [speedThreshold, setSpeedThreshold] = useState(alerts?.speedThreshold || null);
   const [enterZoneEnabled, setEnterZoneEnabled] = useState(alerts?.enterZoneEnabled || false);
   const [exitZoneEnabled, setExitZoneEnabled] = useState(alerts?.exitZoneEnabled || false);
@@ -75,6 +75,7 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
     setSpeedThreshold(null);
     setEnterZoneEnabled(false);
     setExitZoneEnabled(false);
+    onClearAlerts?.(); // Notify parent to clear alerts
     onAlertsChange?.({ speedThreshold: null, enterZoneEnabled: false, exitZoneEnabled: false });
   };
 
