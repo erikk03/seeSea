@@ -13,6 +13,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
   const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState(null);
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
+  const [hasActiveAlerts, setHasActiveAlerts] = useState(false);
   const [filteredShips, setFilteredShips] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState(null);
   const [previousFilters, setPreviousFilters] = useState(null);
@@ -26,8 +27,6 @@ export default function RegisteredMapPage({ token, onLogout }) {
   const [zoneDrawing, setZoneDrawing] = useState(false);
   const [zone, setZone] = useState(null);
   const [zoneRefreshToggle, setZoneRefreshToggle] = useState(false);
-
-
 
   useEffect(() => {
     const fetchZone = async () => {
@@ -73,7 +72,6 @@ export default function RegisteredMapPage({ token, onLogout }) {
     setZoneDrawing(false);
     console.log("Zone drawing canceled.");
   };
-
 
   const handleZoneDrawComplete = async ({ center, radius }) => {
     console.log("Zone completed:", center, radius);
@@ -128,12 +126,6 @@ export default function RegisteredMapPage({ token, onLogout }) {
     }
   };
 
-
-
-
-
-
-
   const handleProtectedClick = (label) => {
     console.log(`"${label}" clicked, but guest access. Prompting login.`);
   };
@@ -166,21 +158,54 @@ export default function RegisteredMapPage({ token, onLogout }) {
     });
   };
 
+    const handleAlertsChange = async (alertsConfig) => {
+    try {
+      const token = localStorage.getItem("token");
 
-  const clearFilters = () => {
-    // Clear filters and reset state
-    const cleared = {
-      filterFrom: "All",
-      vesselStatusIds: [],
-      vesselTypeIds: [],
+      // Save alerts to backend
+      const res = await fetch("https://localhost:8443/zone-of-interest/set-zone-options", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          maxSpeed: alertsConfig.speedThreshold,
+          entersZone: alertsConfig.enterZoneEnabled,
+          exitsZone: alertsConfig.exitZoneEnabled,
+        }),
+      });
+
+      setAlerts(alertsConfig); // Update local state
+      setHasActiveAlerts(
+        alertsConfig.speedThreshold !== null ||
+        alertsConfig.enterZoneEnabled ||
+        alertsConfig.exitZoneEnabled
+      );
+
+      if (!res.ok) throw new Error("Failed to save alerts configuration");
+
+      console.log("Alerts saved successfully:", alertsConfig);
+    } catch (err) {
+      console.error("Error saving alerts configuration:", err);
     }
-
-    setHasActiveFilters(false);
-    setFilteredShips(null);
-    setSelectedFilters(null);
-
-    handleFiltersChange(cleared);
   };
+
+  const clearAlerts = () => {
+    setAlerts({
+      speedThreshold: null,
+      enterZoneEnabled: false,
+      exitZoneEnabled: false,
+    });
+    setHasActiveAlerts(false);
+    // Optionally notify backend to clear alerts
+    handleAlertsChange({
+      speedThreshold: null,
+      enterZoneEnabled: false,
+      exitZoneEnabled: false,
+    });
+  };
+
 
   const handleFiltersChange = async (filters) => {
     const hasFilters =
@@ -216,37 +241,24 @@ export default function RegisteredMapPage({ token, onLogout }) {
     }
   };
 
+  const clearFilters = () => {
+    // Clear filters and reset state
+    const cleared = {
+      filterFrom: "All",
+      vesselStatusIds: [],
+      vesselTypeIds: [],
+    }
+
+    setHasActiveFilters(false);
+    setFilteredShips(null);
+    setSelectedFilters(null);
+
+    handleFiltersChange(cleared);
+  };
+
   const handleLogout = () => {
     navigate('/');
     onLogout();
-  };
-
-  const handleAlertsChange = async (alertsConfig) => {
-    try {
-      const token = localStorage.getItem("token");
-
-      // Save alerts to backend
-      const res = await fetch("https://localhost:8443/zone-of-interest/set-zone-options", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          maxSpeed: alertsConfig.speedThreshold,
-          entersZone: alertsConfig.enterZoneEnabled,
-          exitsZone: alertsConfig.exitZoneEnabled,
-        }),
-      });
-
-      setAlerts(alertsConfig); // Update local state
-
-      if (!res.ok) throw new Error("Failed to save alerts configuration");
-
-      console.log("Alerts saved successfully:", alertsConfig);
-    } catch (err) {
-      console.error("Error saving alerts configuration:", err);
-    }
   };
 
   return (
@@ -287,10 +299,11 @@ export default function RegisteredMapPage({ token, onLogout }) {
           zone={zone}
           onCancelZoneDrawing={handleCancelZoneDrawing}
           zoneDrawing={zoneDrawing}
+          onClearAlerts={clearAlerts}
         />
       )}
 
-      {/* Show filters tag only when filters menu is active and filters are enabled */}
+      {/* Show filters tag only when filters are enabled */}
       {hasActiveFilters && activeMenu !== "My Fleet" && (
         <div className="fixed top-1/2 translate-y-48 left-4 z-[1200]">
           <div className="flex items-center bg-black text-white text-sm px-3 py-1 rounded-lg shadow-md gap-2">
@@ -305,6 +318,22 @@ export default function RegisteredMapPage({ token, onLogout }) {
         </div>
       )}
 
+      {/* Show alerts tag only when alerts are enabled */}
+      {hasActiveAlerts && activeMenu !== "My Fleet" && (
+        <div className="fixed top-1/2 translate-y-56 left-4 z-[1200]">
+          <div className="flex items-center bg-black text-white text-sm px-3 py-1 rounded-lg shadow-md gap-2">
+            <span>Alerts</span>
+            <button
+              onClick={clearAlerts}
+              className="hover:text-red-400 text-white font-bold"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Main Map Area */}
       <div className="pt-[60px] h-full relative">
         <Map
           token={token}
