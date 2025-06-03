@@ -1,6 +1,7 @@
 package gr.uoa.di.ships.services.interfaces;
 
 import gr.uoa.di.ships.api.dto.ChangePasswordDTO;
+import gr.uoa.di.ships.api.dto.ChangeUsernameDTO;
 import gr.uoa.di.ships.api.dto.JwtTokenDTO;
 import gr.uoa.di.ships.api.dto.UserAuthDTO;
 import gr.uoa.di.ships.api.dto.UserInfoDTO;
@@ -18,6 +19,8 @@ public interface RegisteredUserService {
 
   void changePassword(ChangePasswordDTO changePasswordDTO);
 
+  JwtTokenDTO changeUsername(ChangeUsernameDTO changeUsernameDTO);
+
   RegisteredUser getRegisteredUserById(Long id);
 
   void updateRegisteredUser(RegisteredUser registeredUser);
@@ -27,4 +30,6 @@ public interface RegisteredUserService {
   Set<RegisteredUser> getAllRegisteredUsers();
 
   void saveRegisteredUser(RegisteredUser registeredUser);
+
+  void deleteRegisteredUser(String password);
 }
