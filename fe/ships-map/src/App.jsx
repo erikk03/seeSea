@@ -71,7 +71,7 @@ export default function App() {
             !token ? (
               <Navigate to="/" />
             ) : (
-              <UserProfile token={token} onLogout={handleLogout}/>
+              <UserProfile token={token} onLogout={handleLogout} setToken={setToken}/>
             )
           }
         />

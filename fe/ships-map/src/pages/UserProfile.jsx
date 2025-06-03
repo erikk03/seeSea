@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 import TopBar from '../components/TopBar';
 
-export default function UserProfile({ token, onLogout }) {
+export default function UserProfile({ token, onLogout, setToken }) {
   const [userInfo, setUserInfo] = useState(null);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -73,25 +73,41 @@ export default function UserProfile({ token, onLogout }) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          newUsername,
+          username: newUsername,
           password: confirmPassword,
         }),
       });
 
       if (!res.ok) throw new Error('Username update failed');
 
-      const updatedUser = await res.json();
-      setUserInfo(updatedUser);
+      const { token: newToken } = await res.json();
+
+      // ✅ Update token in localStorage
+      localStorage.setItem('token', newToken);
+      setToken(newToken);
+
       setStatus({ success: true, message: 'Username updated successfully' });
       setNewUsername('');
       setConfirmPassword('');
       setShowUsernameModal(false);
+
+      // Fetch updated user info with the new token
+      const updatedRes = await fetch('https://localhost:8443/registered-user/get-user-info', {
+        headers: {
+          Authorization: `Bearer ${newToken}`,
+        },
+      });
+
+      if (updatedRes.ok) {
+        const updatedUser = await updatedRes.json();
+        setUserInfo(updatedUser);
+      }
+
     } catch (err) {
       console.error('Username change error:', err);
       setStatus({ success: false, message: 'Failed to update username' });
     }
   };
-
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -120,17 +136,16 @@ export default function UserProfile({ token, onLogout }) {
 
   const handleDeleteAccount = async (password) => {
     try {
-      const res = await fetch('https://localhost:8443/registered-user/delete', {
+      const res = await fetch(`https://localhost:8443/registered-user/delete-user?password=${encodeURIComponent(password)}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ password }),
       });
 
       if (!res.ok) throw new Error('Account deletion failed');
 
-      onLogout();
+      onLogout(); // clear token and redirect
       navigate('/');
     } catch (err) {
       console.error('Delete error:', err);
