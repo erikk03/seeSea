@@ -170,15 +170,17 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
           stompClient.subscribe(`/user/queue/alerts`, message => {
             try {
               const alert = JSON.parse(message.body);
-              // TODO: Show this alert to the user somehow
               console.log("🚨 Alert received:", alert);
-              addToast({
-                title: `Alert received for MMSI: ${alert.vesselMmsi}`,
-                description: `${alert.alertDescriptions[0]}`,
-                timeout: 3000,
-                shouldShowTimeoutProgress: true,
-                variant: "bordered",
-                color: "danger",
+              // Show alert toast
+              alert.alertDescriptions.forEach((desc, index) => {
+                addToast({
+                  title: `Alert for MMSI: ${alert.vesselMmsi}`,
+                  description: desc,
+                  timeout: 3000,
+                  shouldShowTimeoutProgress: true,
+                  variant: "bordered",
+                  color: "danger",
+                });
               });
             } catch (error) {
               console.error("Error parsing alert WebSocket message:", error);

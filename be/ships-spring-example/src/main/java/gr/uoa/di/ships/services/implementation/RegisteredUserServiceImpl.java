@@ -7,6 +7,7 @@ import gr.uoa.di.ships.api.dto.UserAuthDTO;
 import gr.uoa.di.ships.api.dto.UserInfoDTO;
 import gr.uoa.di.ships.api.dto.UserRegisterDTO;
 import gr.uoa.di.ships.api.mapper.interfaces.RegisteredUserMapper;
+import gr.uoa.di.ships.configurations.exceptions.InvalidCredentialsException;
 import gr.uoa.di.ships.configurations.exceptions.UserNotFoundException;
 import gr.uoa.di.ships.configurations.security.JwtService;
 import gr.uoa.di.ships.configurations.security.SecurityConfig;
@@ -37,6 +38,7 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   private static final String ACCOUNT_WITH_THAT_EMAIL = "There is already a user with the email: ";
   private static final String INCORRECT_EMAIL_OR_PASSWORD = "Incorrect email or password";
   private static final String YOU_CANNOT_DELETE_AN_ADMINISTRATOR_ACCOUNT = "You cannot delete an administrator account.";
+  private static final String USER_WITH_EMAIL_S_DOES_NOT_EXIST = "User with email [%s] does not exist";
 
   private final JwtService jwtService;
   private final AuthenticationManager authManager;
@@ -80,7 +82,7 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
       String principal = Objects.nonNull(userAuthDTO.getUsername())
           ? userAuthDTO.getUsername()
           : registeredUserRepository.findByEmail(userAuthDTO.getEmail())
-          .orElseThrow(() -> new RuntimeException(INCORRECT_EMAIL_OR_PASSWORD))
+          .orElseThrow(() -> new InvalidCredentialsException(USER_WITH_EMAIL_S_DOES_NOT_EXIST.formatted(userAuthDTO.getEmail())))
           .getUsername();
       Authentication authentication = authManager.authenticate(
           new UsernamePasswordAuthenticationToken(principal, userAuthDTO.getPassword()));
@@ -90,9 +92,9 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
             .build();
       }
     } catch (AuthenticationException e) {
-      throw new RuntimeException(INCORRECT_EMAIL_OR_PASSWORD, e);
+      throw new InvalidCredentialsException(INCORRECT_EMAIL_OR_PASSWORD, e);
     }
-    return null;
+    throw new InvalidCredentialsException(INCORRECT_EMAIL_OR_PASSWORD);
   }
 
   @Override
@@ -212,6 +214,18 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   private void validate(UserRegisterDTO userRegisterDTO) {
     if (Objects.nonNull(registeredUserRepository.findByEmail(userRegisterDTO.getEmail()).orElse(null))) {
       throw new RuntimeException(ACCOUNT_WITH_THAT_EMAIL + userRegisterDTO.getEmail());
+    }
+    if (userRegisterDTO.getPassword().length() < 8) {
+      throw new RuntimeException("Password must be at least 8 characters long");
+    }
+    if (!userRegisterDTO.getPassword().matches(".*[A-Z].*")) {
+      throw new RuntimeException("Password must contain at least one capital letter");
+    }
+    if (!userRegisterDTO.getPassword().matches(".*\\d.*")) {
+      throw new RuntimeException("Password must contain at least one number");
+    }
+    if (!userRegisterDTO.getPassword().matches(".*[!@#$%^&*(),.?:{}|<>].*")) {
+      throw new RuntimeException("Password must contain at least one of the following symbols: !@#$%^&*(),.?:{}|<>");
     }
   }
 

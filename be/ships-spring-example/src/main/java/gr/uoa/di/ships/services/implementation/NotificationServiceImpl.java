@@ -11,6 +11,8 @@ import gr.uoa.di.ships.persistence.repository.NotificationRepository;
 import gr.uoa.di.ships.services.interfaces.NotificationService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -62,6 +64,7 @@ public class NotificationServiceImpl implements NotificationService {
             Notification.builder()
                 .description(description)
                 .registeredUser(user)
+                .datetimeCreated(LocalDateTime.now(ZoneOffset.UTC))
                 .build()));
     user.setNotifications(notifications);
     registeredUserService.updateRegisteredUser(user);
@@ -111,13 +114,6 @@ public class NotificationServiceImpl implements NotificationService {
       double previousDistance = getHaversineDistance(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
       return previousDistance <= radius && currentDistance > radius;
     }
-  }
-
-  private static double getEuclideanDistance(RegisteredUser user, double vesselLatitude, double vesselLongitude) {
-    double centerPointLatitude = user.getZoneOfInterest().getCenterPointLatitude();
-    double centerPointLongitude = user.getZoneOfInterest().getCenterPointLongitude();
-    return Math.sqrt(Math.pow(vesselLatitude - centerPointLatitude, 2)
-                         + Math.pow(vesselLongitude - centerPointLongitude, 2));
   }
 
   private static double getHaversineDistance(RegisteredUser user, double vesselLatitude, double vesselLongitude) {
