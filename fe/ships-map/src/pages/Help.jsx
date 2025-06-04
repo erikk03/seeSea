@@ -44,7 +44,7 @@ export default function Help() {
         <Divider className="my-6"/>
 
         <CardBody className="p-6 h-[700px]">
-          <ScrollShadow className="h-full pr-2">
+          <ScrollShadow className="h-full p-3">
             <Accordion variant="splitted" className="text-black dark:text-white">
               <AccordionItem key="1" title="How do I sign in?">
                 Click the "Sign In" button at the top right, then enter your email and password.

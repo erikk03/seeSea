@@ -16,6 +16,7 @@ import {
   ModalBody,
   ModalFooter,
   Divider,
+  user,
 } from '@heroui/react';
 
 export default function UserProfile({ token, onLogout, setToken }) {
@@ -195,9 +196,13 @@ export default function UserProfile({ token, onLogout, setToken }) {
           <Button onClick={() => setShowPasswordModal(true)} className="w-fit px-4">
             Change Password
           </Button>
-          <Button onClick={() => setShowDeleteModal(true)} className="w-fit px-4" color="danger" variant="bordered">
-            Delete Account
-          </Button>
+          
+          {userInfo?.role !== 'Administrator' && (
+            <Button onClick={() => setShowDeleteModal(true)} className="w-fit px-4" color="danger" variant="bordered">
+              Delete Account
+            </Button>
+          )}
+          
           {status.message && (
             <p className={`mt-4 text-sm ${status.success ? 'text-green-600' : 'text-red-600'}`}>
               {status.message}

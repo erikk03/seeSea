@@ -94,28 +94,36 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
 
   // Endpoint to fetch vessels based on filters
   useEffect(() => {
-    if (!vessels) {
-      const headers = token
-        ? { Authorization: `Bearer ${token}` }
-        : {};
+  if (!vessels) {
+    const fetchData = async () => {
+      try {
+        let response;
 
-      authFetch('https://localhost:8443/vessel/get-map', {
-        headers
-      })
-        .then(res => res.json())
-        .then(data => {
-          const defaultShips = {};
-          data.forEach(ship => {
-            defaultShips[ship.mmsi] = ship;
-          });
-          setShips(defaultShips); // Replace with default or filtered vessels
-          onShipsUpdate?.(Object.values(defaultShips)); // Notify parent of new ships
-        })
-        .catch(err => {
-          console.error("Failed to fetch vessels from /vessel/get-map:", err);
+        if (token) {
+          // Use authFetch for registered users
+          response = await authFetch('https://localhost:8443/vessel/get-map');
+        } else {
+          // Use regular fetch for guests
+          response = await fetch('https://localhost:8443/vessel/get-map');
+        }
+
+        if (!response || !response.ok) throw new Error('Failed to fetch vessels');
+
+        const data = await response.json();
+        const defaultShips = {};
+        data.forEach(ship => {
+          defaultShips[ship.mmsi] = ship;
         });
-    }
-  }, [vessels, token]);
+        setShips(defaultShips);
+        onShipsUpdate?.(Object.values(defaultShips));
+      } catch (err) {
+        console.error("Failed to fetch vessels from /vessel/get-map:", err);
+      }
+    };
+
+    fetchData();
+  }
+}, [vessels, token]);
 
 
   // Replace ships entirely when new filtered vessels come in
