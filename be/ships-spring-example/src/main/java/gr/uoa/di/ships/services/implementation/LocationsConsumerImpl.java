@@ -17,10 +17,8 @@ import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselStatusService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselTypeService;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -37,8 +35,6 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private static final String ENTERS_ZONE_DESCRIPTION = "Enter Zone Alert: The vessel [mmsi: %s] has entered the zone of interest.";
   private static final String EXITS_ZONE_DESCRIPTION = "Exit Zone Alert: The vessel [mmsi: %s] has exited the zone of interest.";
   private final ObjectMapper objectMapper;
-  private final List<JsonNode> buffer = Collections.synchronizedList(new ArrayList<>());
-  private final AtomicInteger batchCount = new AtomicInteger(0);
 
   private final SimpMessagingTemplate template;
   private final VesselHistoryDataService vesselHistoryDataService;
