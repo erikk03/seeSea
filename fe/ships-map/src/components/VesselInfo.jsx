@@ -1,17 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { Button, addToast } from '@heroui/react';
-import { Trash2, Clock, Plus } from 'lucide-react';
+import { Button, addToast, Select, SelectItem } from '@heroui/react';
+import { Trash2, Clock, Plus, Pencil } from 'lucide-react';
 import { getColorByStatus } from '../utils/statusColor';
 import { authFetch } from '../utils/authFetch';
 
 export default function VesselInfo({ ship, onShowTrack }) {
 	const [inFleet, setInFleet] = useState(false);
-
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [selectedVesselType, setSelectedVesselType] = useState(ship.vesselType || 'unknown');
+  const [vesselTypes, setVesselTypes] = useState([]);
 
   if (!ship) return null;
 
 	const statusColor = getColorByStatus(ship.status);
 	const token = localStorage.getItem('token');
+  // Check if user is admin
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchUserInfo = async () => {
+      try {
+        const res = await authFetch('https://localhost:8443/registered-user/get-user-info');
+        if (!res.ok) throw new Error('Failed to fetch user info');
+        const data = await res.json();
+        setIsAdmin(data.role === 'Administrator');
+      } catch (err) {
+        console.error('Error fetching user info:', err);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
+  // Fetch vessel types for admin users
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const fetchVesselTypes = async () => {
+      try {
+        const res = await authFetch('https://localhost:8443/admin/get-vessel-types');
+        if (!res.ok) throw new Error('Failed to fetch vessel types');
+        const data = await res.json();
+        setVesselTypes(data);
+        console.log('Fetched vessel types:', data);
+
+        const match = data.find(v => v.name === ship.vesselType);
+        setSelectedVesselType(match?.name || data[0]?.name); // fallback to first option
+      } catch (err) {
+        console.error('Error fetching vessel types:', err);
+      }
+    };
+
+    fetchVesselTypes();
+  }, [isAdmin]);
 
 	useEffect(() => {
     if (!token) return; // For guest users, skip fleet check 
@@ -74,15 +115,79 @@ export default function VesselInfo({ ship, onShowTrack }) {
     }
   };
 
+  const updateVesselType = async (newType) => {
+    try {
+      const res = await authFetch('https://localhost:8443/admin/change-vessel-type', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mmsi: ship.mmsi,
+          newType,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed to update vessel type');
+
+      setSelectedVesselType(newType);
+
+      addToast({
+        title: 'Vessel type updated',
+        description: `New type: ${newType}`,
+        timeout: 3000,
+        shouldShowTimeoutProgress: true,
+        variant: 'bordered',
+      });
+
+    } catch (err) {
+      console.error(err);
+      addToast({
+        title: 'Error',
+        description: `Failed to update vessel type: ${err.message}`,
+        timeout: 5000,
+        color: 'danger',
+        variant: 'solid',
+        shouldShowTimeoutProgress: true,
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col items-center bg-white/70 dark:bg-black/30 p-4 rounded-xl shadow-md text-sm w-[350px]">
       {/* MMSI and Vessel Type */}
       <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
         MMSI: {ship.mmsi}
       </h3>
-      <p className="text-xs text-gray-500 dark:text-gray-400">
-        {ship.vesselType || 'Unknown Type'}
-      </p>
+      {isAdmin ? (
+        vesselTypes.length > 0 && vesselTypes.some(t => t.name === selectedVesselType) ? (
+          <div className="w-full my-2">
+            <Select
+              label="Vessel Type:"
+              className="max-w-xs"
+              selectedKeys={new Set([selectedVesselType])}
+              onSelectionChange={(keys) => {
+                const [key] = Array.from(keys);
+                updateVesselType(key);
+              }}
+              startContent={<Pencil size={16}/>}
+              labelPlacement='outside-left'
+              variant='bordered'
+            >
+              {vesselTypes.map((type) => (
+                <SelectItem key={type.name}>{type.name}</SelectItem>
+              ))}
+            </Select>
+          </div>
+        ) : (
+          <p className="text-xs text-gray-500 dark:text-gray-400 italic">Loading vessel types...</p>
+        )
+      ) : (
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          {ship.vesselType || 'Unknown Type'}
+        </p>
+      )}
+
 
       {/* Custom badge-style status */}
       {ship.status && (
