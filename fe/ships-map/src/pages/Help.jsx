@@ -20,7 +20,7 @@ export default function Help() {
     if (token) {
       navigate("/registered-map");
     } else {
-      navigate("/map");
+      navigate("/guest-map");
     }
   }
 

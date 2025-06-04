@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { authFetch } from './utils/authFetch';
 
 import WelcomePage from './pages/WelcomePage';
 import Login from './features/auth/Login';
@@ -71,7 +72,7 @@ export default function App() {
             !token ? (
               <Navigate to="/" />
             ) : (
-              <UserProfile token={token} onLogout={handleLogout}/>
+              <UserProfile token={token} onLogout={handleLogout} setToken={setToken}/>
             )
           }
         />

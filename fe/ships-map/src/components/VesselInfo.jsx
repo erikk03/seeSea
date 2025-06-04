@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, addToast } from '@heroui/react';
 import { Trash2, Clock, Plus } from 'lucide-react';
 import { getColorByStatus } from '../utils/statusColor';
+import { authFetch } from '../utils/authFetch';
 
 export default function VesselInfo({ ship, onShowTrack }) {
 	const [inFleet, setInFleet] = useState(false);
@@ -17,10 +18,7 @@ export default function VesselInfo({ ship, onShowTrack }) {
 
     const fetchFleet = async () => {
       try {
-        const res = await fetch('https://localhost:8443/registered-user/get-my-fleet', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await authFetch('https://localhost:8443/registered-user/get-my-fleet', {
         });
         if (!res.ok) throw new Error('Failed to fetch fleet');
         const data = await res.json();
@@ -42,11 +40,10 @@ export default function VesselInfo({ ship, onShowTrack }) {
       : 'https://localhost:8443/registered-user/add-vessel-to-fleet';
 
     try {
-      const res = await fetch(url, {
+      const res = await authFetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'text/plain',
-          Authorization: `Bearer ${token}`,
         },
         body: ship.mmsi,
       });

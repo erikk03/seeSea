@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { authFetch } from '../../utils/authFetch';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMapEvent } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Client } from '@stomp/stompjs';
 import MouseCoordinates from './MouseCoordinates';
 import VesselInfo from '../../components/VesselInfo';
 import MapCenterOnOpen from './MapCenterOnOpen';
-import {Slider, Button} from '@heroui/react';
+import {Slider, Button, addToast} from '@heroui/react';
 import { createShipIcon } from '../../utils/shipIcons';
-import { useMapEvent } from 'react-leaflet';
-import { Circle } from 'react-leaflet';
 
 export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComplete, zone, onVesselSelect, onShipsUpdate }) {
   const [ships, setShips] = useState({});
@@ -100,7 +99,7 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
         ? { Authorization: `Bearer ${token}` }
         : {};
 
-      fetch('https://localhost:8443/vessel/get-map', {
+      authFetch('https://localhost:8443/vessel/get-map', {
         headers
       })
         .then(res => res.json())
@@ -165,6 +164,14 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
               const alert = JSON.parse(message.body);
               // TODO: Show this alert to the user somehow
               console.log("🚨 Alert received:", alert);
+              addToast({
+                title: `Alert received for MMSI: ${alert.vesselMmsi}`,
+                description: `${alert.alertDescriptions[0]}`,
+                timeout: 3000,
+                shouldShowTimeoutProgress: true,
+                variant: "bordered",
+                color: "danger",
+              });
             } catch (error) {
               console.error("Error parsing alert WebSocket message:", error);
             }
@@ -199,9 +206,7 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
 
   const handleShowTrack = async (mmsi) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`https://localhost:8443/vessel/get-vessel-history?mmsi=${mmsi}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await authFetch(`https://localhost:8443/vessel/get-vessel-history?mmsi=${mmsi}`, {
       });
 
       if (!res.ok) throw new Error("Failed to fetch track");

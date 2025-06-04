@@ -76,7 +76,6 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     try {
       JsonNode jsonNode = objectMapper.readTree(message);
       ObjectNode jsonNodeToBeSent = getTunedJsonNode(jsonNode);
-      sendAlerts(jsonNodeToBeSent);
       sentToAnonymousUsers(jsonNodeToBeSent);
       sendToFilterCompliantRegisteredUsers(jsonNode, jsonNodeToBeSent);
       System.out.println("Sent message: " + jsonNodeToBeSent.toPrettyString());
@@ -87,19 +86,18 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     }
   }
 
-  private void sendAlerts(ObjectNode jsonNodeToBeSent) {
-    registeredUserService.getAllRegisteredUsers().stream()
-        .filter(user -> Objects.nonNull(user.getZoneOfInterest()))
-        .forEach(user -> {
-          List<String> alertDescriptions = getAlertDescriptions(user, jsonNodeToBeSent);
-          if (!alertDescriptions.isEmpty()) {
-            template.convertAndSendToUser(
-                user.getId().toString(),
-                "/queue/alerts",
-                createZoneViolations(user, jsonNodeToBeSent, alertDescriptions)
-            );
-          }
-        });
+  private void sendUserAlerts(ObjectNode jsonNodeToBeSent, RegisteredUser user) {
+    if (Objects.isNull(user.getZoneOfInterest())) {
+      return;
+    }
+    List<String> alertDescriptions = getAlertDescriptions(user, jsonNodeToBeSent);
+    if (!alertDescriptions.isEmpty()) {
+      template.convertAndSendToUser(
+          user.getId().toString(),
+          "/queue/alerts",
+          createZoneViolations(user, jsonNodeToBeSent, alertDescriptions)
+      );
+    }
   }
 
   private AlertDTO createZoneViolations(RegisteredUser user, ObjectNode jsonNodeToBeSent, List<String> alertDescriptions) {
@@ -137,10 +135,10 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private void sendToFilterCompliantRegisteredUsers(JsonNode jsonNode, ObjectNode tunedJsonNode) {
     registeredUserService.getAllUsersIds().stream()
         .filter(userId -> filtersService.compliesWithUserFilters(jsonNode, userId))
-        .forEach(userId -> template.convertAndSendToUser(
-            userId.toString(),
-            "/queue/locations",
-            tunedJsonNode));
+        .forEach(userId -> {
+          sendUserAlerts(tunedJsonNode, registeredUserService.getRegisteredUserById(userId));
+          template.convertAndSendToUser(userId.toString(), "/queue/locations", tunedJsonNode);
+        });
   }
 
   private ObjectNode getTunedJsonNode(JsonNode jsonNode) {

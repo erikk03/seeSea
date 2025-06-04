@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { addToast } from "@heroui/react";
 import {
+  addToast,
   Card,
   CardHeader,
   CardBody,
@@ -12,6 +12,7 @@ import {
 } from "@heroui/react";
 import { Trash2 } from "lucide-react";
 import { getColorByStatus } from "../utils/statusColor";
+import { authFetch } from "../utils/authFetch";
 
 export default function MyVessels({ onLoadFleet }) {
   const [fleet, setFleet] = useState([]);
@@ -19,12 +20,7 @@ export default function MyVessels({ onLoadFleet }) {
 
   const fetchFleetAndUpdateMap = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("https://localhost:8443/registered-user/get-my-fleet", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await authFetch("https://localhost:8443/registered-user/get-my-fleet");
 
       if (!res.ok) throw new Error("Failed to load fleet");
       const data = await res.json();
@@ -47,12 +43,10 @@ export default function MyVessels({ onLoadFleet }) {
 
   const removeVessel = async (mmsi) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch("https://localhost:8443/registered-user/remove-vessel-from-fleet", {
+      const res = await authFetch("https://localhost:8443/registered-user/remove-vessel-from-fleet", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: mmsi,
       });

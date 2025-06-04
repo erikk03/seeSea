@@ -1,6 +1,7 @@
 package gr.uoa.di.ships.services.implementation;
 
 import gr.uoa.di.ships.api.dto.ChangePasswordDTO;
+import gr.uoa.di.ships.api.dto.ChangeUsernameDTO;
 import gr.uoa.di.ships.api.dto.JwtTokenDTO;
 import gr.uoa.di.ships.api.dto.UserAuthDTO;
 import gr.uoa.di.ships.api.dto.UserInfoDTO;
@@ -35,6 +36,7 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
 
   private static final String ACCOUNT_WITH_THAT_EMAIL = "There is already a user with the email: ";
   private static final String INCORRECT_EMAIL_OR_PASSWORD = "Incorrect email or password";
+  private static final String YOU_CANNOT_DELETE_AN_ADMINISTRATOR_ACCOUNT = "You cannot delete an administrator account.";
 
   private final JwtService jwtService;
   private final AuthenticationManager authManager;
@@ -75,17 +77,19 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   @Override
   public JwtTokenDTO verify(UserAuthDTO userAuthDTO) {
     try {
-      String username = Objects.nonNull(userAuthDTO.getUsername()) ? userAuthDTO.getUsername() : getUsernameFromEmail(userAuthDTO.getEmail());
+      String principal = Objects.nonNull(userAuthDTO.getUsername())
+          ? userAuthDTO.getUsername()
+          : registeredUserRepository.findByEmail(userAuthDTO.getEmail())
+          .orElseThrow(() -> new RuntimeException(INCORRECT_EMAIL_OR_PASSWORD))
+          .getUsername();
       Authentication authentication = authManager.authenticate(
-          new UsernamePasswordAuthenticationToken(username, userAuthDTO.getPassword()));
+          new UsernamePasswordAuthenticationToken(principal, userAuthDTO.getPassword()));
       if (authentication.isAuthenticated()) {
-        log.info("User with email {} authenticated successfully.", userAuthDTO.getEmail());
         return JwtTokenDTO.builder()
-            .token(jwtService.generateToken(username))
+            .token(jwtService.generateToken(principal))
             .build();
       }
     } catch (AuthenticationException e) {
-      log.error("Authentication failed: {}", e.getMessage(), e);
       throw new RuntimeException(INCORRECT_EMAIL_OR_PASSWORD, e);
     }
     return null;
@@ -107,6 +111,19 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
     registeredUser.setPassword(securityConfig.encoder().encode(changePasswordDTO.getNewPassword()));
     registeredUserRepository.save(registeredUser);
     log.info("Password changed successfully for user: {}", registeredUser.getUsername());
+  }
+
+  @Override
+  public JwtTokenDTO changeUsername(ChangeUsernameDTO changeUsernameDTO) {
+    RegisteredUser registeredUser = getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId());
+    registeredUser.setUsername(changeUsernameDTO.getUsername());
+    registeredUserRepository.save(registeredUser);
+    log.info("Username changed successfully for user: {}", registeredUser.getEmail());
+    return verify(UserAuthDTO.builder()
+                      .email(registeredUser.getEmail())
+                      .username(changeUsernameDTO.getUsername())
+                      .password(changeUsernameDTO.getPassword())
+                      .build());
   }
 
   @Override
@@ -138,6 +155,58 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   @Override
   public void saveRegisteredUser(RegisteredUser registeredUser) {
     registeredUserRepository.save(registeredUser);
+  }
+
+  @Override
+  public void deleteRegisteredUser(String password) {
+    RegisteredUser user = getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId());
+    if (user.getRole().getName().equals(RoleEnum.ADMINISTRATOR.name())) {
+      throw new RuntimeException(YOU_CANNOT_DELETE_AN_ADMINISTRATOR_ACCOUNT);
+    }
+    verify(UserAuthDTO.builder()
+               .email(user.getEmail())
+               .username(user.getUsername())
+               .password(password)
+               .build());
+    deleteRegisteredUser(user);
+  }
+
+  private void deleteRegisteredUser(RegisteredUser registeredUser) {
+    Long filtersId = Objects.nonNull(registeredUser.getFilters()) ? registeredUser.getFilters().getId() : null;
+    Long zoneOfInterestId = Objects.nonNull(registeredUser.getZoneOfInterest()) ? registeredUser.getZoneOfInterest().getId() : null;
+    Long zoneOfInterestOptionsId = Objects.nonNull(registeredUser.getZoneOfInterestOptions()) ? registeredUser.getZoneOfInterestOptions().getId() : null;
+    String email = registeredUser.getEmail();
+    registeredUserRepository.deleteRegisteredUserVessels(registeredUser.getId());
+    registeredUserRepository.deleteRegisteredUserNotifications(registeredUser.getId());
+    deleteFilterTypesAndStatuses(filtersId);
+    registeredUserRepository.delete(registeredUser);
+    unlinkForeignKeys(registeredUser, zoneOfInterestOptionsId, zoneOfInterestId, filtersId);
+    registeredUserRepository.deleteRegisteredUserFilters(Objects.nonNull(filtersId) ? filtersId : null);
+    registeredUserRepository.deleteRegisteredUserZoneOfInterest(Objects.nonNull(zoneOfInterestId) ? zoneOfInterestId : null);
+    registeredUserRepository.deleteRegisteredUserZoneOfInterestOptions(Objects.nonNull(zoneOfInterestOptionsId) ? zoneOfInterestOptionsId : null);
+    log.info("Deleted user with email: {}", email);
+  }
+
+  private static void unlinkForeignKeys(RegisteredUser registeredUser, Long zoneOfInterestOptionsId, Long zoneOfInterestId, final Long filtersId) {
+    if (Objects.nonNull(filtersId)) {
+      registeredUser.getFilters().setRegisteredUser(null);
+      registeredUser.setFilters(null);
+    }
+    if (Objects.nonNull(zoneOfInterestId)) {
+      registeredUser.getZoneOfInterest().setRegisteredUser(null);
+      registeredUser.setZoneOfInterest(null);
+    }
+    if (Objects.nonNull(zoneOfInterestOptionsId)) {
+      registeredUser.getZoneOfInterestOptions().setRegisteredUser(null);
+      registeredUser.setZoneOfInterestOptions(null);
+    }
+  }
+
+  private void deleteFilterTypesAndStatuses(Long filtersId) {
+    if (Objects.nonNull(filtersId)) {
+      registeredUserRepository.deleteRegisteredUserFiltersVesselTypes(filtersId);
+      registeredUserRepository.deleteRegisteredUserFiltersVesselStatuses(filtersId);
+    }
   }
 
   private void validate(UserRegisterDTO userRegisterDTO) {

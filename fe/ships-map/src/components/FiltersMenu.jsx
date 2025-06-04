@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { authFetch } from "../utils/authFetch"; 
 import {
   Card,
   CardHeader,
@@ -23,15 +24,9 @@ export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const token = localStorage.getItem("token");
-
         const [filtersRes, currentFiltersRes] = await Promise.all([
-          fetch("https://localhost:8443/filters/get-available-filters", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch("https://localhost:8443/filters/get-current-filters", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          authFetch("https://localhost:8443/filters/get-available-filters"),
+          authFetch("https://localhost:8443/filters/get-current-filters"),
         ]);
 
         if (!filtersRes.ok || !currentFiltersRes.ok)
@@ -178,11 +173,6 @@ export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
                 ))}
               </div>
             </ScrollShadow>
-          </AccordionItem>
-
-          {/* Placeholder for other filters */}
-          <AccordionItem key="other" aria-label="Other" title="OTHER">
-            <p className="text-sm text-default-500">Other filters here...</p>
           </AccordionItem>
         </Accordion>
 
