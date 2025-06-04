@@ -36,6 +36,7 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
 
   private static final String ACCOUNT_WITH_THAT_EMAIL = "There is already a user with the email: ";
   private static final String INCORRECT_EMAIL_OR_PASSWORD = "Incorrect email or password";
+  private static final String YOU_CANNOT_DELETE_AN_ADMINISTRATOR_ACCOUNT = "You cannot delete an administrator account.";
 
   private final JwtService jwtService;
   private final AuthenticationManager authManager;
@@ -158,13 +159,16 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
 
   @Override
   public void deleteRegisteredUser(String password) {
-    RegisteredUser registeredUser = getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId());
+    RegisteredUser user = getRegisteredUserById(seeSeaUserDetailsService.getUserDetails().getId());
+    if (user.getRole().getName().equals(RoleEnum.ADMINISTRATOR.name())) {
+      throw new RuntimeException(YOU_CANNOT_DELETE_AN_ADMINISTRATOR_ACCOUNT);
+    }
     verify(UserAuthDTO.builder()
-               .email(registeredUser.getEmail())
-               .username(registeredUser.getUsername())
+               .email(user.getEmail())
+               .username(user.getUsername())
                .password(password)
                .build());
-    deleteRegisteredUser(registeredUser);
+    deleteRegisteredUser(user);
   }
 
   private void deleteRegisteredUser(RegisteredUser registeredUser) {
