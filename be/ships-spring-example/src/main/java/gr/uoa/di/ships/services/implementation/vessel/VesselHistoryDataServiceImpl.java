@@ -34,12 +34,8 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
   }
 
   @Override
-  public void saveVesselHistoryData(List<JsonNode> vesselHistoryDataList) {
-    vesselHistoryDataRepository.saveAll(
-        vesselHistoryDataList.stream()
-            .map(vesselHistoryDataMapper::toVesselHistoryData)
-            .toList()
-    );
+  public void saveVesselHistoryData(JsonNode vesselHistoryData) {
+    vesselHistoryDataRepository.save(vesselHistoryDataMapper.toVesselHistoryData(vesselHistoryData));
   }
 
   @Override
