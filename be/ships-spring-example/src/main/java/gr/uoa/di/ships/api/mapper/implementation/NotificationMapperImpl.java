@@ -15,6 +15,7 @@ public class NotificationMapperImpl implements NotificationMapper {
     return NotificationDTO.builder()
         .id(notification.getId())
         .description(notification.getDescription())
+        .datetimeCreated(notification.getDatetimeCreated())
         .build();
   }
 }
