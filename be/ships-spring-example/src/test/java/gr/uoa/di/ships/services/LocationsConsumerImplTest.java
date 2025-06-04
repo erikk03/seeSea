@@ -3,6 +3,7 @@ package gr.uoa.di.ships.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -92,11 +93,11 @@ public class LocationsConsumerImplTest {
     user.setId(1L);
     user.setZoneOfInterest(ZoneOfInterest.builder().build());
     user.setZoneOfInterestOptions(ZoneOfInterestOptions.builder().maxSpeed(20f).build());
-    when(registeredUserService.getAllRegisteredUsers()).thenReturn(Set.of(user));
     when(vesselHistoryDataService.getLastVesselHistoryData("123456789")).thenReturn(Optional.empty());
     when(notificationService.violatesMaxSpeed(eq(user), any(), any())).thenReturn(true);
     when(notificationService.entersZone(eq(user), any(), any())).thenReturn(true);
     when(notificationService.exitsZone(eq(user), any(), any())).thenReturn(true);
+    when(registeredUserService.getRegisteredUserById(anyLong())).thenReturn(user);
 
     // Act
     locationsConsumer.consume(message);
