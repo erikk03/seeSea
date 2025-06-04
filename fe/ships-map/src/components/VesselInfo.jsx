@@ -42,7 +42,6 @@ export default function VesselInfo({ ship, onShowTrack }) {
         if (!res.ok) throw new Error('Failed to fetch vessel types');
         const data = await res.json();
         setVesselTypes(data);
-        console.log('Fetched vessel types:', data);
 
         const match = data.find(v => v.name === ship.vesselType);
         setSelectedVesselType(match?.name || data[0]?.name); // fallback to first option

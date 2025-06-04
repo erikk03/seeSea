@@ -18,7 +18,7 @@ export default function LoginForm({ onLogin }) {
       });
       if (!res.ok) {
         const body = await res.json();
-        throw new Error(body.message || res.statusText);
+        throw new Error(body.message || body.error || res.statusText);
       }
       const { token } = await res.json();
       onLogin(token);
