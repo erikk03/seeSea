@@ -39,7 +39,6 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   private static final String INCORRECT_EMAIL_OR_PASSWORD = "Incorrect email or password";
   private static final String YOU_CANNOT_DELETE_AN_ADMINISTRATOR_ACCOUNT = "You cannot delete an administrator account.";
   private static final String USER_WITH_EMAIL_S_DOES_NOT_EXIST = "User with email [%s] does not exist";
-  private static final String ERROR_DURING_THE_LOGIN_PROCEDURE = "Error during the login procedure";
 
   private final JwtService jwtService;
   private final AuthenticationManager authManager;
@@ -93,7 +92,7 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
             .build();
       }
     } catch (AuthenticationException e) {
-      throw new InvalidCredentialsException(ERROR_DURING_THE_LOGIN_PROCEDURE, e);
+      throw new InvalidCredentialsException(INCORRECT_EMAIL_OR_PASSWORD, e);
     }
     throw new InvalidCredentialsException(INCORRECT_EMAIL_OR_PASSWORD);
   }
@@ -215,6 +214,18 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
   private void validate(UserRegisterDTO userRegisterDTO) {
     if (Objects.nonNull(registeredUserRepository.findByEmail(userRegisterDTO.getEmail()).orElse(null))) {
       throw new RuntimeException(ACCOUNT_WITH_THAT_EMAIL + userRegisterDTO.getEmail());
+    }
+    if (userRegisterDTO.getPassword().length() < 8) {
+      throw new RuntimeException("Password must be at least 8 characters long");
+    }
+    if (!userRegisterDTO.getPassword().matches(".*[A-Z].*")) {
+      throw new RuntimeException("Password must contain at least one capital letter");
+    }
+    if (!userRegisterDTO.getPassword().matches(".*\\d.*")) {
+      throw new RuntimeException("Password must contain at least one number");
+    }
+    if (!userRegisterDTO.getPassword().matches(".*[!@#$%^&*(),.?:{}|<>].*")) {
+      throw new RuntimeException("Password must contain at least one of the following symbols: !@#$%^&*(),.?:{}|<>");
     }
   }
 
