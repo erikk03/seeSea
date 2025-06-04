@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { ArrowLeft, Pencil } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { authFetch } from '../utils/authFetch';
+import TopBar from '../components/TopBar';
 import {
   Card,
   CardHeader,
@@ -13,10 +17,6 @@ import {
   ModalFooter,
   Divider,
 } from '@heroui/react';
-import { ArrowLeft, Pencil } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-
-import TopBar from '../components/TopBar';
 
 export default function UserProfile({ token, onLogout, setToken }) {
   const [userInfo, setUserInfo] = useState(null);
@@ -36,17 +36,15 @@ export default function UserProfile({ token, onLogout, setToken }) {
     if (token) {
       navigate('/registered-map');
     } else {
-      navigate('/map');
+      navigate('/guest-map');
     }
   };
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch('https://localhost:8443/registered-user/get-user-info', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await authFetch('https://localhost:8443/registered-user/get-user-info', {
+          method: 'GET',
         });
 
         if (!res.ok) throw new Error('Failed to fetch user info');
@@ -66,11 +64,10 @@ export default function UserProfile({ token, onLogout, setToken }) {
     if (!newUsername || !confirmPassword) return;
 
     try {
-      const res = await fetch('https://localhost:8443/registered-user/change-username', {
+      const res = await authFetch('https://localhost:8443/registered-user/change-username', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           username: newUsername,
@@ -82,7 +79,7 @@ export default function UserProfile({ token, onLogout, setToken }) {
 
       const { token: newToken } = await res.json();
 
-      // ✅ Update token in localStorage
+      // Update token in localStorage
       localStorage.setItem('token', newToken);
       setToken(newToken);
 
@@ -92,10 +89,8 @@ export default function UserProfile({ token, onLogout, setToken }) {
       setShowUsernameModal(false);
 
       // Fetch updated user info with the new token
-      const updatedRes = await fetch('https://localhost:8443/registered-user/get-user-info', {
-        headers: {
-          Authorization: `Bearer ${newToken}`,
-        },
+      const updatedRes = await authFetch('https://localhost:8443/registered-user/get-user-info', {
+        method: 'GET',
       });
 
       if (updatedRes.ok) {
@@ -111,14 +106,13 @@ export default function UserProfile({ token, onLogout, setToken }) {
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
-    if (!oldPassword || !newPassword) return;
+    console.log('Changing password:', oldPassword, newPassword);
 
     try {
-      const res = await fetch('https://localhost:8443/registered-user/change-password', {
+      const res = await authFetch('https://localhost:8443/registered-user/change-password', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ oldPassword, newPassword }),
       });
@@ -136,11 +130,8 @@ export default function UserProfile({ token, onLogout, setToken }) {
 
   const handleDeleteAccount = async (password) => {
     try {
-      const res = await fetch(`https://localhost:8443/registered-user/delete-user?password=${encodeURIComponent(password)}`, {
+      const res = await authFetch(`https://localhost:8443/registered-user/delete-user?password=${encodeURIComponent(password)}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
       if (!res.ok) throw new Error('Account deletion failed');
@@ -218,9 +209,9 @@ export default function UserProfile({ token, onLogout, setToken }) {
       {/* Password Modal */}
       <Modal isOpen={showPasswordModal} onClose={() => setShowPasswordModal(false)}>
         <ModalContent>
-          <ModalHeader>Change Password</ModalHeader>
-          <ModalBody>
-            <form onSubmit={handlePasswordChange}>
+          <form onSubmit={handlePasswordChange}>
+            <ModalHeader>Change Password</ModalHeader>
+            <ModalBody>
               <Input
                 type="password"
                 value={newPassword}
@@ -236,16 +227,16 @@ export default function UserProfile({ token, onLogout, setToken }) {
                 placeholder="Current Password"
                 required
               />
-            </form>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onClick={() => setShowPasswordModal(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" color='primary' isDisabled={!oldPassword || !newPassword}>
-              Change
-            </Button>
-          </ModalFooter>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="light" onClick={() => setShowPasswordModal(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" color='primary' isDisabled={!oldPassword || !newPassword}>
+                Change
+              </Button>
+            </ModalFooter>
+          </form>
         </ModalContent>
       </Modal>
 

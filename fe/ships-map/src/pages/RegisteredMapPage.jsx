@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authFetch } from '../utils/authFetch';
+
 import Map from '../features/map/Map';
 import SideMenu from '../components/SideMenu';
 import TopBar from '../components/TopBar';
-import { Button } from '@heroui/react';
 import FiltersMenu from '../components/FiltersMenu';
 import MyVessels from '../components/MyVessels';
 import AlertsMenu from '../components/AlertsMenu';
-import { useEffect } from 'react';
 
 export default function RegisteredMapPage({ token, onLogout }) {
   const navigate = useNavigate();
@@ -31,11 +31,9 @@ export default function RegisteredMapPage({ token, onLogout }) {
   useEffect(() => {
     const fetchZone = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("https://localhost:8443/zone-of-interest/get-zone", {
+        const res = await authFetch("https://localhost:8443/zone-of-interest/get-zone", {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -80,13 +78,10 @@ export default function RegisteredMapPage({ token, onLogout }) {
 
 
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch("https://localhost:8443/zone-of-interest/set-zone", {
+      const res = await authFetch("https://localhost:8443/zone-of-interest/set-zone", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           centerPointLatitude: center.lat,
@@ -110,12 +105,9 @@ export default function RegisteredMapPage({ token, onLogout }) {
         console.warn("No zone to delete.");
         return;
       }
-      const token = localStorage.getItem("token");
-      const res = await fetch(`https://localhost:8443/zone-of-interest/remove-zone?id=${zone.id}`, {
+
+      const res = await authFetch(`https://localhost:8443/zone-of-interest/remove-zone?id=${zone.id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
       if (!res.ok) throw new Error("Failed to delete zone.");
       setZone(null);
@@ -160,14 +152,11 @@ export default function RegisteredMapPage({ token, onLogout }) {
 
     const handleAlertsChange = async (alertsConfig) => {
     try {
-      const token = localStorage.getItem("token");
-
       // Save alerts to backend
-      const res = await fetch("https://localhost:8443/zone-of-interest/set-zone-options", {
+      const res = await authFetch("https://localhost:8443/zone-of-interest/set-zone-options", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           maxSpeed: alertsConfig.speedThreshold,
@@ -217,13 +206,10 @@ export default function RegisteredMapPage({ token, onLogout }) {
     setSelectedFilters(filters);
 
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch("https://localhost:8443/vessel/set-filters-and-get-map", {
+      const res = await authFetch("https://localhost:8443/vessel/set-filters-and-get-map", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           filterFrom: filters.filterFrom,

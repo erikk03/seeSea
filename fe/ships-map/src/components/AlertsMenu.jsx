@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { authFetch } from "../utils/authFetch";
 import {
   Card,
   CardHeader,
@@ -9,7 +10,6 @@ import {
   Button,
 } from "@heroui/react";
 import { Trash2 } from "lucide-react";
-import { useEffect } from "react";
 
 export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelection, onRemoveZone, zone, zoneDrawing, onCancelZoneDrawing, onClearAlerts}) {
   const [speedThreshold, setSpeedThreshold] = useState(alerts?.speedThreshold || null);
@@ -21,10 +21,8 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("https://localhost:8443/zone-of-interest/get-zone-options", {
+        const res = await authFetch("https://localhost:8443/zone-of-interest/get-zone-options", {
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
           }
         });

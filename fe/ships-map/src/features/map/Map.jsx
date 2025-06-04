@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { authFetch } from '../../utils/authFetch';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMapEvent } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Client } from '@stomp/stompjs';
@@ -7,7 +8,6 @@ import VesselInfo from '../../components/VesselInfo';
 import MapCenterOnOpen from './MapCenterOnOpen';
 import {Slider, Button, addToast} from '@heroui/react';
 import { createShipIcon } from '../../utils/shipIcons';
-import { color } from 'framer-motion';
 
 export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComplete, zone, onVesselSelect, onShipsUpdate }) {
   const [ships, setShips] = useState({});
@@ -99,7 +99,7 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
         ? { Authorization: `Bearer ${token}` }
         : {};
 
-      fetch('https://localhost:8443/vessel/get-map', {
+      authFetch('https://localhost:8443/vessel/get-map', {
         headers
       })
         .then(res => res.json())
@@ -206,9 +206,7 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
 
   const handleShowTrack = async (mmsi) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`https://localhost:8443/vessel/get-vessel-history?mmsi=${mmsi}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await authFetch(`https://localhost:8443/vessel/get-vessel-history?mmsi=${mmsi}`, {
       });
 
       if (!res.ok) throw new Error("Failed to fetch track");
