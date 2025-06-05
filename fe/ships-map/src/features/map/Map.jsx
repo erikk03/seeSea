@@ -72,6 +72,13 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
   }
   const markerRefs = useRef({});
 
+  useEffect(() => {
+    if (!zoneDrawing) {
+      setZoneCenter(null);
+      setZoneRadius(null);
+    }
+  }, [zoneDrawing]);
+
 
   // Detect Tailwind "dark" class on <html>
   useEffect(() => {
