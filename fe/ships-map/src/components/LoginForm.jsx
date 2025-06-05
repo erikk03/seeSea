@@ -1,11 +1,13 @@
 // components/LoginForm.jsx
 import React, { useState } from 'react';
-import { Button } from "@heroui/react";
+import { Button, Input } from "@heroui/react";
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const submit = async e => {
     e.preventDefault();
@@ -28,28 +30,46 @@ export default function LoginForm({ onLogin }) {
   };
 
   return (
-    <form onSubmit={submit}>
-      <div className="mb-4">
-        <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
-        <input
-          type="email"
+    <form onSubmit={submit} className="space-y-3 max-w-md m-5">
+      <div className="space-y-10">
+        <Input
+          label="Email"
+          labelPlacement='outside'
+          placeholder='Enter your email'
+          type='email'
           value={email}
           onChange={e => setEmail(e.target.value)}
+          variant='bordered'
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         />
-      </div>
-      <div className="mb-4">
-        <label className="block mb-1 text-sm font-medium text-gray-700">Password</label>
-        <input
-          type="password"
+        <Input
+          label="Password"
+          labelPlacement="outside"
+          placeholder="Enter your password"
+          type={showPassword ? 'text' : 'password'}
           value={password}
           onChange={e => setPassword(e.target.value)}
+          variant="bordered"
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          endContent={
+            <button
+              type="button"
+              onClick={() => setShowPassword(prev => !prev)}
+              aria-label="Toggle password visibility"
+              className="focus:outline-none"
+            >
+              {showPassword ? (
+                <EyeOff className="w-5 h-5 text-default-400" />
+              ) : (
+                <Eye className="w-5 h-5 text-default-400" />
+              )}
+            </button>
+          }
         />
       </div>
-      {error && <div className="text-red-600 text-sm mb-4">{error}</div>}
+
+      {error && <div className="text-red-600 text-sm">{error}</div>}
+
       <Button
         type="submit"
         className="w-full bg-[#003C62] text-white font-bold rounded-md"

@@ -21,6 +21,7 @@ import {
 
 export default function UserProfile({ token, onLogout, setToken }) {
   const [userInfo, setUserInfo] = useState(null);
+  const [error, setError] = useState('');
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [status, setStatus] = useState({ success: null, message: '' });
@@ -54,7 +55,7 @@ export default function UserProfile({ token, onLogout, setToken }) {
         setUserInfo(data);
       } catch (err) {
         console.error('User info fetch error:', err);
-        setStatus({ success: false, message: 'Failed to load user info' });
+        setStatus({ success: false, message: err.message || 'Failed to load user info' });
       }
     };
 
@@ -101,13 +102,13 @@ export default function UserProfile({ token, onLogout, setToken }) {
 
     } catch (err) {
       console.error('Username change error:', err);
-      setStatus({ success: false, message: 'Failed to update username' });
+      setStatus({ success: false, message: err.message || 'Failed to update username' });
     }
   };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
-    console.log('Changing password:', oldPassword, newPassword);
+    setError('');
 
     try {
       const res = await authFetch('https://localhost:8443/registered-user/change-password', {
@@ -118,14 +119,17 @@ export default function UserProfile({ token, onLogout, setToken }) {
         body: JSON.stringify({ oldPassword, newPassword }),
       });
 
-      if (!res.ok) throw new Error('Password update failed');
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.message || body.error || res.statusText);
+      }
 
       setStatus({ success: true, message: 'Password updated successfully' });
       setOldPassword('');
       setNewPassword('');
       setShowPasswordModal(false);
-    } catch {
-      setStatus({ success: false, message: 'Password change failed' });
+    } catch (err){
+      setStatus({ success: false, message: err.message || err.error || 'Password change failed' });
     }
   };
 
@@ -232,6 +236,11 @@ export default function UserProfile({ token, onLogout, setToken }) {
                 placeholder="Current Password"
                 required
               />
+              {status.message && (
+                <p className={`text-sm mt-2 ${status.success ? 'text-green-600' : 'text-red-600'}`}>
+                  {status.message}
+                </p>
+              )}
             </ModalBody>
             <ModalFooter>
               <Button variant="light" onClick={() => setShowPasswordModal(false)}>
@@ -269,6 +278,11 @@ export default function UserProfile({ token, onLogout, setToken }) {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
+            {status.message && (
+              <p className={`text-sm mt-2 ${status.success ? 'text-green-600' : 'text-red-600'}`}>
+                {status.message}
+              </p>
+            )}
           </ModalBody>
           <ModalFooter>
             <Button variant="light" onClick={() => {
@@ -306,6 +320,11 @@ export default function UserProfile({ token, onLogout, setToken }) {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
+            {status.message && (
+              <p className={`text-sm mt-2 ${status.success ? 'text-green-600' : 'text-red-600'}`}>
+                {status.message}
+              </p>
+            )}
           </ModalBody>
           <ModalFooter>
             <Button variant="light" onClick={() => {

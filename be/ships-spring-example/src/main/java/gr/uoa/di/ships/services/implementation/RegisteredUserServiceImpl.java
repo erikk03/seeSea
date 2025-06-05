@@ -17,10 +17,8 @@ import gr.uoa.di.ships.persistence.repository.RegisteredUserRepository;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.RoleService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -110,6 +108,7 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
                .password(changePasswordDTO.getOldPassword())
                .username(registeredUser.getUsername())
                .build());
+    validatePassword(changePasswordDTO.getNewPassword());
     registeredUser.setPassword(securityConfig.encoder().encode(changePasswordDTO.getNewPassword()));
     registeredUserRepository.save(registeredUser);
     log.info("Password changed successfully for user: {}", registeredUser.getUsername());
@@ -147,11 +146,6 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
         .stream()
         .map(RegisteredUser::getId)
         .collect(Collectors.toList());
-  }
-
-  @Override
-  public Set<RegisteredUser> getAllRegisteredUsers() {
-    return new HashSet<>(registeredUserRepository.findAll());
   }
 
   @Override
@@ -215,16 +209,20 @@ public class RegisteredUserServiceImpl implements RegisteredUserService {
     if (Objects.nonNull(registeredUserRepository.findByEmail(userRegisterDTO.getEmail()).orElse(null))) {
       throw new RuntimeException(ACCOUNT_WITH_THAT_EMAIL + userRegisterDTO.getEmail());
     }
-    if (userRegisterDTO.getPassword().length() < 8) {
+    validatePassword(userRegisterDTO.getPassword());
+  }
+
+  private static void validatePassword(String password) {
+    if (password.length() < 8) {
       throw new RuntimeException("Password must be at least 8 characters long");
     }
-    if (!userRegisterDTO.getPassword().matches(".*[A-Z].*")) {
+    if (!password.matches(".*[A-Z].*")) {
       throw new RuntimeException("Password must contain at least one capital letter");
     }
-    if (!userRegisterDTO.getPassword().matches(".*\\d.*")) {
+    if (!password.matches(".*\\d.*")) {
       throw new RuntimeException("Password must contain at least one number");
     }
-    if (!userRegisterDTO.getPassword().matches(".*[!@#$%^&*(),.?:{}|<>].*")) {
+    if (!password.matches(".*[!@#$%^&*(),.?:{}|<>].*")) {
       throw new RuntimeException("Password must contain at least one of the following symbols: !@#$%^&*(),.?:{}|<>");
     }
   }
