@@ -48,6 +48,20 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
     fetchAlerts();
   }, []); // run only on load
 
+   useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'c' || e.key === 'C') {
+        if (zoneDrawing) {
+          onCancelZoneDrawing?.();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [zoneDrawing, onCancelZoneDrawing]);
+
+
   const handleSpeedChange = (value) => {
     const parsedValue = value === "" || value === undefined || isNaN(value) ? null : value;
     // Manual validation: allow null, but block negatives
@@ -101,7 +115,7 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
               className="w-full text-sm font-semibold"
               onPress={onCancelZoneDrawing}
             >
-              Cancel
+              Cancel or Press 'C' to Cancel
             </Button>
           ):(
             <Button
