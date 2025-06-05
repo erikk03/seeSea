@@ -115,7 +115,7 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
               className="w-full text-sm font-semibold"
               onPress={onCancelZoneDrawing}
             >
-              Cancel or Press 'C' to Cancel
+              Cancel [ or Press 'C' ]
             </Button>
           ):(
             <Button
