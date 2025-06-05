@@ -8,6 +8,7 @@ import TopBar from '../components/TopBar';
 import FiltersMenu from '../components/FiltersMenu';
 import MyVessels from '../components/MyVessels';
 import AlertsMenu from '../components/AlertsMenu';
+import NotificationsTab from '../components/Notifications';
 
 export default function RegisteredMapPage({ token, onLogout }) {
   const navigate = useNavigate();
@@ -288,6 +289,8 @@ export default function RegisteredMapPage({ token, onLogout }) {
           onClearAlerts={clearAlerts}
         />
       )}
+
+      <NotificationsTab />
 
       {/* Show filters tag only when filters are enabled */}
       {hasActiveFilters && activeMenu !== "My Fleet" && (
