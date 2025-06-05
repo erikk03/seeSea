@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LocationsConsumerImpl implements LocationsConsumer {
 
   private static final String UNKNOWN = "unknown";
-  private static final String SPEED_ALERT_DESCRIPTION = "Speed Alert: The vessel [speed: %s] is exceeding the maximum speed limit of %s.";
+  private static final String SPEED_ALERT_DESCRIPTION = "Speed Alert: The vessel [mmsi: %s, speed: %s] is exceeding the maximum speed limit of %s.";
   private static final String ENTERS_ZONE_DESCRIPTION = "Enter Zone Alert: The vessel [mmsi: %s] has entered the zone of interest.";
   private static final String EXITS_ZONE_DESCRIPTION = "Exit Zone Alert: The vessel [mmsi: %s] has exited the zone of interest.";
   private final ObjectMapper objectMapper;
@@ -106,16 +106,17 @@ public class LocationsConsumerImpl implements LocationsConsumer {
 
   private List<String> getAlertDescriptions(RegisteredUser user, ObjectNode jsonNodeToBeSent) {
     List<String> alertDescriptions = new ArrayList<>();
-    VesselHistoryData previousVesselData = vesselHistoryDataService.getLastVesselHistoryData(jsonNodeToBeSent.get("mmsi").asText())
+    String mmsi = jsonNodeToBeSent.get("mmsi").asText();
+    VesselHistoryData previousVesselData = vesselHistoryDataService.getLastVesselHistoryData(mmsi)
         .orElse(null);
     if (notificationService.violatesMaxSpeed(user, jsonNodeToBeSent, previousVesselData)) {
-      alertDescriptions.add(SPEED_ALERT_DESCRIPTION.formatted(jsonNodeToBeSent.get("speed").asDouble(), user.getZoneOfInterestOptions().getMaxSpeed()));
+      alertDescriptions.add(SPEED_ALERT_DESCRIPTION.formatted(mmsi, jsonNodeToBeSent.get("speed").asDouble(), user.getZoneOfInterestOptions().getMaxSpeed()));
     }
     if (notificationService.entersZone(user, jsonNodeToBeSent, previousVesselData)) {
-      alertDescriptions.add(ENTERS_ZONE_DESCRIPTION.formatted(jsonNodeToBeSent.get("mmsi").asText()));
+      alertDescriptions.add(ENTERS_ZONE_DESCRIPTION.formatted(mmsi));
     }
     if (notificationService.exitsZone(user, jsonNodeToBeSent, previousVesselData)) {
-      alertDescriptions.add(EXITS_ZONE_DESCRIPTION.formatted(jsonNodeToBeSent.get("mmsi").asText()));
+      alertDescriptions.add(EXITS_ZONE_DESCRIPTION.formatted(mmsi));
     }
     return alertDescriptions;
   }
