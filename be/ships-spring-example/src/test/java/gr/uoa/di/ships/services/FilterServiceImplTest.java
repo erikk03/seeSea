@@ -323,7 +323,6 @@ public class FilterServiceImplTest {
   @Test
   void getVesselHistoryDataFiltered_nullRegisteredUser() {
     // Prepare
-    Long userId = 1L;
     when(seeSeaUserDetailsService.getUserDetails())
         .thenReturn(null);
     when(vesselTypeService.findAllVesselTypes())

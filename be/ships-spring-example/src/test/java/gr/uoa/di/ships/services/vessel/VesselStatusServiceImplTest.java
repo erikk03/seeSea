@@ -28,16 +28,16 @@ public class VesselStatusServiceImplTest {
   @Test
   void getVesselStatusById() {
     // Prepare
-    Long status = 1L;
+    Long statusId = 1L;
 
-    when(vesselStatusRepository.findById(1L))
+    when(vesselStatusRepository.findById(statusId))
         .thenReturn(Optional.of(VesselStatus.builder().name("tempVesselStatusName").build()));
 
     when(vesselStatusRepository.findById(15L))
         .thenReturn(Optional.of(new VesselStatus()));
 
     // Execute
-    VesselStatus result = vesselStatusService.getVesselStatusById(1L);
+    VesselStatus result = vesselStatusService.getVesselStatusById(statusId);
 
     // Verify
     assertNotNull(result);
