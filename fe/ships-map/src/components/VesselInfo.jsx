@@ -4,7 +4,7 @@ import { Trash2, Clock, Plus, Pencil } from 'lucide-react';
 import { getColorByStatus } from '../utils/statusColor';
 import { authFetch } from '../utils/authFetch';
 
-export default function VesselInfo({ ship, onShowTrack }) {
+export default function VesselInfo({ ship, onShowTrack, onFleetChanged }) {
 	const [inFleet, setInFleet] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedVesselType, setSelectedVesselType] = useState(ship.vesselType || 'unknown');
@@ -100,6 +100,7 @@ export default function VesselInfo({ ship, onShowTrack }) {
       if (!res.ok) throw new Error(`Failed to ${inFleet ? 'remove' : 'add'} vessel`);
 
       setInFleet(!inFleet);
+      onFleetChanged?.();
     } catch (err) {
       console.error(err.message);
       // Show error toast

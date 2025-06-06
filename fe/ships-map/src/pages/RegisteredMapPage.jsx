@@ -77,7 +77,6 @@ export default function RegisteredMapPage({ token, onLogout }) {
     setZoneDrawing(false);
     setZone({ center, radius });
 
-
     try {
       const res = await authFetch("https://localhost:8443/zone-of-interest/set-zone", {
         method: "POST",
@@ -248,6 +247,13 @@ export default function RegisteredMapPage({ token, onLogout }) {
     onLogout();
   };
 
+
+  const [fleetRefreshToggle, setFleetRefreshToggle] = useState(false);
+
+  const handleFleetChanged = () => {
+    setFleetRefreshToggle(prev => !prev);
+  };
+
   return (
     <div className="relative h-screen w-screen bg-white text-black dark:bg-black dark:text-white overflow-hidden">
       <TopBar
@@ -265,11 +271,22 @@ export default function RegisteredMapPage({ token, onLogout }) {
       />
 
       {activeMenu === 'My Fleet' && (
-        <MyVessels />
+        <MyVessels 
+          fleetRefreshToggle={fleetRefreshToggle}
+          onLoadFleet={() => {
+            handleFiltersChange({
+              filterFrom: "MyFleet",
+              vesselStatusIds: [],
+              vesselTypeIds: [],
+            });
+          }}
+        />
       )}
+
 
       {activeMenu === 'Filters' && (
         <FiltersMenu
+          selectedFilters={selectedFilters}
           onFiltersChange={handleFiltersChange}
           onClearFilters={clearFilters}
         />
@@ -332,6 +349,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
           zone={zone}
           onVesselSelect={setMapApi}
           onShipsUpdate={setShipList}
+          onFleetChanged={handleFleetChanged}
         />
       </div>
     </div>

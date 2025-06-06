@@ -61,6 +61,12 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [zoneDrawing, onCancelZoneDrawing]);
 
+  useEffect(() => {
+    setSpeedThreshold(alerts?.speedThreshold || null);
+    setEnterZoneEnabled(alerts?.enterZoneEnabled || false);
+    setExitZoneEnabled(alerts?.exitZoneEnabled || false);
+  }, [alerts]);
+
 
   const handleSpeedChange = (value) => {
     const parsedValue = value === "" || value === undefined || isNaN(value) ? null : value;

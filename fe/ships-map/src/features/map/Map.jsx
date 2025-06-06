@@ -9,7 +9,7 @@ import MapCenterOnOpen from './MapCenterOnOpen';
 import {Slider, Button, addToast} from '@heroui/react';
 import { createShipIcon } from '../../utils/shipIcons';
 
-export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComplete, zone, onVesselSelect, onShipsUpdate }) {
+export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComplete, zone, onVesselSelect, onShipsUpdate, onFleetChanged  }) {
   const [ships, setShips] = useState({});
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mapCenter, setMapCenter] = useState([48.30915, -4.91719]);
@@ -303,7 +303,7 @@ export default function Map({ token, vessels = null, zoneDrawing, onZoneDrawComp
 
           >
             <Popup className="leaflet-custom-popup" closeButton={false}>
-              <VesselInfo ship={ship} onShowTrack={handleShowTrack}/>
+              <VesselInfo ship={ship} onShowTrack={handleShowTrack} onFleetChanged={onFleetChanged}/>
             </Popup>
           </Marker>
         ))}

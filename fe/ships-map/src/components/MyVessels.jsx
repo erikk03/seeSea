@@ -14,7 +14,7 @@ import { Trash2 } from "lucide-react";
 import { getColorByStatus } from "../utils/statusColor";
 import { authFetch } from "../utils/authFetch";
 
-export default function MyVessels({ onLoadFleet }) {
+export default function MyVessels({ onLoadFleet, fleetRefreshToggle }) {
   const [fleet, setFleet] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -39,7 +39,8 @@ export default function MyVessels({ onLoadFleet }) {
 
   useEffect(() => {
     fetchFleetAndUpdateMap();
-  }, []);
+  }, [fleetRefreshToggle]);
+
 
   const removeVessel = async (mmsi) => {
     try {

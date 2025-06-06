@@ -15,7 +15,7 @@ import {
 } from "@heroui/react";
 import { Trash2 } from "lucide-react";
 
-export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
+export default function FiltersMenu({ selectedFilters, onFiltersChange, onClearFilters }) {
   const [availableFilters, setAvailableFilters] = useState(null);
   const [selectedVesselTypeIds, setSelectedVesselTypeIds] = useState([]);
   const [selectedStatusIds, setSelectedStatusIds] = useState([]);
@@ -103,6 +103,13 @@ export default function FiltersMenu({ onFiltersChange, onClearFilters }) {
       vesselStatusIds: [],
     });
   };
+
+  // listen for changes in selectedFilters prop
+  useEffect(() => {
+    setSelectedVesselTypeIds(selectedFilters?.vesselTypeIds || []);
+    setSelectedStatusIds(selectedFilters?.vesselStatusIds || []);
+    setFilterFrom(selectedFilters?.filterFrom || "All");
+  }, [selectedFilters]);
 
   return (
     <Card
