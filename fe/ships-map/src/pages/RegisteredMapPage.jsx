@@ -286,6 +286,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
 
       {activeMenu === 'Filters' && (
         <FiltersMenu
+          selectedFilters={selectedFilters}
           onFiltersChange={handleFiltersChange}
           onClearFilters={clearFilters}
         />
