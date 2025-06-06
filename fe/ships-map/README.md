@@ -13,19 +13,9 @@ npm install
 
 ### 🧪 Start in development mode (with HTTPS)
 ```bash
-npm run dev
+./start.sh
 ```
 > Make sure you have `ships.key` and `ships.crt` in the project root for HTTPS. You can generate a dev cert with OpenSSL if needed.
-
-### 📦 Build for production
-```bash
-npm run build
-```
-
-### 🔍 Preview production build locally
-```bash
-npm run preview
-```
 
 ---
 
@@ -67,32 +57,6 @@ Make sure both files are in the root folder next to `vite.config.js`.
 
 ---
 
-## 🧪 Testing Setup
-
-- `@testing-library/react` and `jest-dom` are installed.
-- You can write tests in `*.test.js(x)` files.
-- Test setup lives in: `src/config/setupTests.js`
-
-Run tests with:
-
-```bash
-npm test
-```
-
-(Optional: configure `vitest` for Vite-native testing)
-
----
-
-## ✅ Scripts
-
-```bash
-npm run dev        # Start dev server (https://localhost:3000)
-npm run build      # Build for production
-npm run preview    # Preview production build locally
-```
-
----
-
 ## 🛠 Tech Stack
 
 - **React 19**
@@ -100,16 +64,3 @@ npm run preview    # Preview production build locally
 - **React Router v7**
 - **Leaflet / React Leaflet**
 - **SockJS + STOMP.js** (for real-time map data)
-- **Testing Library**
-
----
-
-## 📦 Deployment Tips
-
-- Build output is in the `/dist` folder
-- Ensure any HTTPS certs used in production are real and trusted
-- Vite assets are served as static files — can be hosted on any static host (Netlify, Vercel, Nginx, etc.)
-
----
-
-This structure is modular, fast, and easy to scale. Happy coding! ⚓🗺️

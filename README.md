@@ -1,65 +1,168 @@
-# **[YΣ09] SOFTWARE TECHNOLOGY 2025**
 
-## **TEAM MEMBERS [TEAM 1]**
+# seeSea – Real-Time Vessel Monitoring Platform
 
-| AM          | NAME                   | EMAIL                |
-| ----------- | ---------------------- | -------------------- |
-| 11152100043 | KAJACKA ERIK           | sdi2100043@di.uoa.gr |
-| 11152100045 | KALAMPOKIS EVAGGELOS   | sdi2100045@di.uoa.gr |
-| 11152100108 | MOUMOULIDIS ANASTASIOS | sdi2100108@di.uoa.gr |
-| 11152100192 | TSELIKAS PANAGIOTIS    | sdi2100192@di.uoa.gr |
-| 11152100275 | CHRYSOS DIMITRIOS      | sdi2100275@di.uoa.gr |
+## 👨‍💻 Team Members – Team 1
 
-## **ASSIGMENT**
+| AM           | Name                     | Email                        |
+|--------------|--------------------------|------------------------------|
+| 11152100043  | Kajacka Erik             | sdi2100043@di.uoa.gr         |
+| 11152100045  | Kalampokis Evaggelos     | sdi2100045@di.uoa.gr         |
+| 11152100108  | Moumoulidis Anastasios   | sdi2100108@di.uoa.gr         |
+| 11152100192  | Tselikas Panagiotis      | sdi2100192@di.uoa.gr         |
+| 11152100275  | Chrysos Dimitrios        | sdi2100275@di.uoa.gr         |
 
-### **PART 1**
+## 📝 Project Overview
 
-./docs/srs.md: SRS– Software Requirements Specification
-./docs/ui.md: UI design using figma
+This repository contains the implementation of **"seeSea"**, a Vessel Traffic Service (VTS), with real-time vessel tracking and maritime monitoring developed for the course **Software Technology [YΣ09] – Spring Semester 2025**.
 
-### **PART 2**
+The platform leverages **AIS (Automatic Identification System)** data to support real-time vessel location tracking, zone violation alerts, and fleet management functionality. This system aims to improve maritime situational awareness and supports secure, scalable monitoring for various user roles.
 
-./docs/presentation.pdf:
-Slides presentation describing how we will implement the requirements in the SRS and possible changes from previous version.
-Presentation will have an UML diagram about specific part of the system.
-Also some UI wireframes from the part 1 of the assigment.
+## 🎯 Assignment Objectives
 
-### **PART 3**
+As defined in the assignment, the goal was to develop a complete web platform with the following phases:
 
-PART 3  
-./src/: Implementation of the system
+### Part 1: Requirements & Design
+- `./docs/srs.md`: Software Requirements Specification (SRS) including functional and non-functional requirements.
+- `./docs/ui.md`: UI wireframes and user interface prototypes (designed with Figma).
 
-In this final part, we implemented a real-time vessel monitoring platform based on the specifications defined in Parts 1 and 2. The platform allows users to visualize live ship movements, receive alerts, and manage their Zones of Interest (ZOIs). The system is designed with scalability, real-time performance, and role-based access in mind.
+### Part 2: System Architecture & Presentation
+- `./docs/presentation.pdf`: Presentation with UML diagrams, detailed implementation plans, and updated design decisions based on Part 1.
 
-#### 🧱 Core Technologies
-- **Frontend**: React.js with HeroUI for UI components and Leaflet for interactive maps.
-- **Backend**: Spring Boot with RESTful APIs and WebSocket support for live data.
-- **Streaming**: Apache Kafka with a Python producer (AIS data) and a Java consumer.
-- **Database**: MSSQL with Docker and Flyway for schema migration.
-- **Security**: JWT-based authentication, HTTPS with self-signed certificates.
-- **Version Control**: Git + GitHub.
+### Part 3: Implementation
+- `./src/`: Full-stack implementation of the system using the technologies described below.
 
-#### ⚙️ Key Features Implemented
-- **Live Map**: Real-time display of vessel positions via Kafka and WebSocket.
-- **Zone of Interest**:
-  - Users can draw a circular zone.
-  - Define speed threshold, and enable alerts for zone entry/exit.
-  - Violations trigger real-time notifications.
-- **Vessel History**:
-  - View past movements of a vessel for the last 12 hours.
-- **Fleet Management**:
-  - Registered users can save and manage their personal fleet.
-- **Filtering and Search**:
-  - Filter vessels by type, status, or fleet membership.
-  - Live search by MMSI with map zoom and highlight.
-- **Notification System**:
-  - Persistent alert notifications per user with delete capability.
-- **Role-Based Access**:
-  - Administrators can edit static vessel data (e.g. vessel type).
+---
 
-#### 🔒 Security & Compliance
-- Encrypted data transmission using HTTPS.
-- Role-based access control.
-- GDPR-compliant handling of user data.
+## ⚒️ Technologies Used
 
-This implementation completes the system as envisioned in the SRS and aligns with the design decisions from the presentation.
+- **Frontend:** React.js with HeroUI components and Leaflet.js for interactive mapping
+- **Backend:** Spring Boot (Java) exposing RESTful APIs, integrated with WebSocket for real-time updates
+- **Streaming:** Apache Kafka with a Python AIS data producer and Java consumer
+- **Database:** MSSQL, containerized via Docker and managed with Flyway for schema versioning
+- **Security:** HTTPS (self-signed cert), JWT-based authentication, role-based access
+- **Version Control:** Git (hosted on GitHub)
+
+---
+
+## 🧩 Key Features
+
+- **📡 Live Vessel Map:** Real-time AIS data stream replayed through Kafka for live ship tracking
+- **🛟 Zone of Interest (ZOI):**
+  - User-defined circular zones
+  - Speed thresholds and violation alerts
+  - Single active ZOI per user
+- **📜 Vessel History:** Past 12 hours of vessel movements
+- **📁 Fleet Management:** Users manage personal fleets, viewable on map
+- **🔍 Filtering & Search:** By vessel type/status, fleet, MMSI
+- **🔔 Notification System:** Real-time, persistent user alerts
+- **🔐 Role-Based Access:**
+  - Admins can edit static vessel attributes (e.g., vessel type)
+  - Registered and admin users have access to more features in the app
+
+---
+
+## 🔐 Security & Compliance
+
+- HTTPS secured communication
+- GDPR-compliant user data handling
+- Role-based permission management
+
+---
+
+## 📂 Project Structure
+
+```
+SOFTWARETECHNOLOGY/
+├─ be/ships-spring-example/        # Backend Spring Boot application
+├─ docs/
+│  ├─ assets/
+│  ├─ Presentation.pdf             # Project presentation slides
+│  ├─ srs.md                       # Software Requirements Specification
+│  ├─ ui.md                        # UI mockups and design
+│  └─ UML-ClassDiagram.pdf         # UML Class Diagram
+├─ fe/ships-map/                   # Frontend (React)
+├─ kafka/VTS/
+│  ├─ dataset/                     # AIS dataset files
+│  └─ kafka_2.12-3.9.0/            # Apache Kafka distribution
+├─ .gitignore
+├─ README.md                       # Project overview and documentation
+```
+
+## ⚠️ SetUp and Configuration before Running
+
+In order to run properly user must have:
+
+1. **Kafka and Zookeeper must be installed**
+2. **Docker must be installed**
+3. **Database must be configured as described below:**
+    - Pull Image:
+      ```bash
+      docker pull mcr.microsoft.com/mssql/server:2019-latest
+      ```
+    
+    - Run docker:
+      ```bash
+      docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Password()2003" -p 1433:1433  --name seesea --hostname sqlserver -d mcr.microsoft.com/mssql/server:2019-latest
+      ```
+    - Connect project data source (IntelliJ recommended):
+      - Host: localhost
+      - Port: 1433
+      - User: sa
+      - Password: Password()2003
+      - Driver: MSSQL Server 
+
+    - Run query to create database (IntelliJ Query Console recommended):
+      ```bash
+      CREATE DATABASE SeeSea;
+      ```
+4. **Folder dataset must be downloaded independently**
+    - Download Kafka_intro.zip folder from:
+      https://owncloud.skel.iit.demokritos.gr/index.php/s/9EsxBK0Bk4ebudk
+    - Export folder
+    - Move dataset folder from Kafka_intro/VTS/ to /kafka/VTS/
+
+5. **Node.js must be installed**
+
+6. **Java 21 must be installed**
+
+
+## 🚀 How to Run
+
+Follow these steps to run the full system locally:
+
+0. **Start the Docker Image using Docker**
+
+1. **Start the Backend**
+   - Navigate to the backend directory:
+     ```bash
+     cd be/ships-spring-example
+     ```
+   - Build and run the Spring Boot application
+
+2. **Start Kafka**
+   - Go to the Kafka folder:
+     ```bash
+     cd kafka/VTS/kafka_2.12-3.9.0
+     ```
+   - Start Zookeeper and Kafka servers:
+     ```bash
+     ./start.sh
+     ```
+
+3. **Run the Dataset Producer**
+   - Execute the Python script that streams AIS data to Kafka:
+      ```bash
+      cd kafka/VTS/dataset
+      python3 producer.py
+      ```
+
+4. **Start the Frontend**
+   - Navigate to the frontend directory:
+     ```bash
+     cd fe/ships-map
+     ```
+   - Install dependencies and start the development server:
+     ```bash
+     npm install
+     ./start.sh
+     ```
