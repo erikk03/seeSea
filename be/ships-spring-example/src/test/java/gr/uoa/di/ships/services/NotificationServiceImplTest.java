@@ -39,7 +39,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class NotificaionServiceImplTest {
+public class NotificationServiceImplTest {
 
   @Mock
   private NotificationRepository notificationRepository;
@@ -48,10 +48,10 @@ public class NotificaionServiceImplTest {
   private SeeSeaUserDetailsService seeSeaUserDetailsService;
 
   @Mock
-  private NotificationMapper notificationMapper;
+  private RegisteredUserService registeredUserService;
 
   @Mock
-  private RegisteredUserService registeredUserService;
+  private NotificationMapper notificationMapper;
 
   @InjectMocks
   private NotificationServiceImpl notificationService;
