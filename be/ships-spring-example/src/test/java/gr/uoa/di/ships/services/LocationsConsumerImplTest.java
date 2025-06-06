@@ -29,7 +29,7 @@ import gr.uoa.di.ships.services.interfaces.vessel.VesselService;
 import gr.uoa.di.ships.services.interfaces.vessel.VesselStatusService;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -37,15 +37,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class LocationsConsumerImplTest {
-
-  @InjectMocks
-  private LocationsConsumerImpl locationsConsumer;
-
-  @Mock
-  private ObjectMapper objectMapper;
 
   @Mock
   private SimpMessagingTemplate template;
@@ -68,9 +63,19 @@ public class LocationsConsumerImplTest {
   @Mock
   private NotificationService notificationService;
 
+  @InjectMocks
+  private LocationsConsumerImpl locationsConsumer;
+
+  private final ObjectMapper objectMapper = new ObjectMapper();
+
+  @BeforeEach
+  void setup() {
+    ReflectionTestUtils.setField(locationsConsumer, "objectMapper", objectMapper);
+  }
+
   @Test
   void consume_shouldProcessValidMessage() throws Exception {
-    // Arrange
+    // Prepare
     String message = """
             {"mmsi":"123456789","status":"1","speed":20.5,"vesselType":"Cargo"}
         """;
@@ -82,7 +87,6 @@ public class LocationsConsumerImplTest {
     tunedJsonNode.put("vesselType", "Cargo");
     tunedJsonNode.put("status", "Active");
 
-    when(objectMapper.readTree(message)).thenReturn(jsonNode);
     when(vesselService.getVesselByMMSI("123456789")).thenReturn(Optional.of(vessel));
     when(vesselStatusService.getVesselStatusById(1L)).thenReturn(VesselStatus.builder().name("Active").build());
 
@@ -99,15 +103,14 @@ public class LocationsConsumerImplTest {
     when(notificationService.exitsZone(eq(user), any(), any())).thenReturn(true);
     when(registeredUserService.getRegisteredUserById(anyLong())).thenReturn(user);
 
-    // Act
+    // Execute
     locationsConsumer.consume(message);
 
-    // Assert
+    // Verify
     verify(template, times(1)).convertAndSend("/topic/locations", tunedJsonNode.toPrettyString());
     verify(template, times(1)).convertAndSendToUser("1", "/queue/locations", tunedJsonNode);
 
-    // Capture and assert AlertDTO
-    ArgumentCaptor<AlertDTO> alertCaptor = ArgumentCaptor.forClass(AlertDTO.class);
+    ArgumentCaptor<AlertDTO> alertCaptor = ArgumentCaptor.forClass(AlertDTO.class); // Capture and assert AlertDTO
     verify(template, times(1)).convertAndSendToUser(eq("1"), eq("/queue/alerts"), alertCaptor.capture());
     AlertDTO sentAlert = alertCaptor.getValue();
     assertEquals("123456789", sentAlert.getVesselMmsi());
@@ -117,10 +120,9 @@ public class LocationsConsumerImplTest {
   }
 
   @Test
-  void consume_shouldLogErrorForInvalidJson() throws Exception {
+  void consume_shouldLogErrorForInvalidJson() {
     // Arrange
     String invalidMessage = "INVALID_JSON";
-    when(objectMapper.readTree(invalidMessage)).thenThrow(new RuntimeException("Invalid JSON"));
 
     // Act
     locationsConsumer.consume(invalidMessage);

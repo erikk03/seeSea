@@ -119,20 +119,20 @@ public class FiltersServiceImpl implements FiltersService {
     Filters filters = filtersRepository.findByRegisteredUserId(seeSeaUserDetailsService.getUserDetails().getId());
     if (Objects.isNull(filters)) {
       return CurrentFiltersDTO.builder()
-                              .filterFrom(FilterFromEnum.ALL.getDescription())
-                              .vesselTypeIds(List.of())
-                              .vesselStatusIds(List.of())
-                              .build();
+          .filterFrom(FilterFromEnum.ALL.getDescription())
+          .vesselTypeIds(List.of())
+          .vesselStatusIds(List.of())
+          .build();
     }
     return CurrentFiltersDTO.builder()
-                            .filterFrom(filters.getFilterFrom())
-                            .vesselTypeIds(Optional.ofNullable(filters.getVesselTypes())
-                                                   .orElse(List.of())
-                                                   .stream().map(VesselType::getId).toList())
-                            .vesselStatusIds(Optional.ofNullable(filters.getVesselStatuses())
-                                                     .orElse(List.of())
-                                                     .stream().map(VesselStatus::getId).toList())
-                            .build();
+        .filterFrom(filters.getFilterFrom())
+        .vesselTypeIds(Optional.ofNullable(filters.getVesselTypes())
+                           .orElse(List.of())
+                           .stream().map(VesselType::getId).toList())
+        .vesselStatusIds(Optional.ofNullable(filters.getVesselStatuses())
+                             .orElse(List.of())
+                             .stream().map(VesselStatus::getId).toList())
+        .build();
   }
 
   private static List<String> getMmsisFromFleet(Optional<RegisteredUser> optionalRegisteredUser) {
