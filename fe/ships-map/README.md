@@ -1,6 +1,6 @@
 # Ships Map – Frontend (React + Vite)
 
-This is the frontend for the **Ships Map** project, built with [React](https://react.dev/) and [Vite](https://vitejs.dev/) for modern, fast development.
+This is the frontend for the **SeeSea** project, built with [React](https://react.dev/) and [Vite](https://vitejs.dev/) for modern, fast development.
 
 ---
 
