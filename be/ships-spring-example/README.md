@@ -1,10 +1,36 @@
-# Ships Map – Backend (Java 21 + MSSQL)
+# SeeSea – Backend (Spring Boot Java + MSSQL)
 
-This is the backend for the **Ships Map** project, built with Spring Boot and MSSQL.
+This is the backend for the **SeeSea** project, built with Spring Boot, Java, MSSQL and many more!
 
 ## 🔍 Overview
 
-[todo: add text here]
+**SeeSea** is a role-based ship tracking web application with a backend system designed to support distinct user experiences for **Admins**, **Registered Users**, and **Guests**. The backend handles authentication, user management, fleet operations, and geofencing alerts while enforcing access control across all services.
+
+### 🔐 Authentication & Authorization
+- Supports user **sign-up**, **sign-in**, and **secure session management**.
+- Implements **role-based access control** to distinguish between admin, registered, and guest users.
+- Protects premium features (e.g., alerts, filters) from unauthorized access.
+
+### 👥 User Management
+- Manages user profiles and settings.
+- Supports persistent storage of user-specific data like **personal fleets** and **alert configurations**.
+
+### 🚢 Ship Data Management
+- Provides APIs to **retrieve**, **display**, and **update** vessel data.
+- Admin users can edit static ship attributes (e.g., vessel type).
+- All users can view live ship data and access individual ship details.
+
+### ⚓ Fleet Operations
+- Enables users to **add** or **remove** vessels from their personal fleet.
+- Maintains a persistent relationship between users and their selected vessels.
+
+### 🧭 Filters & Alerts
+- Allows users to apply **filters** based on ship type and operational status.
+- Supports **zone-based alerts** using geofencing logic.
+
+### ⚙️ System Responsibilities
+- Integrates with real-time vessel data sources via a kafka consumer.
+- Ensures **data consistency**, **security**, and **high availability** of all core services.
 
 ---
 
