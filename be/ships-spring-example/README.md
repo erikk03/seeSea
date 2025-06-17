@@ -2,6 +2,8 @@
 
 This is the backend for the **SeeSea** project, built with Spring Boot, Java, MSSQL and many more!
 
+---
+
 ## 🔍 Overview
 
 **SeeSea** is a role-based ship tracking web application with a backend system designed to support distinct user experiences for **Admins**, **Registered Users**, and **Guests**. The backend handles authentication, user management, fleet operations, and geofencing alerts while enforcing access control across all services.
