@@ -23,7 +23,7 @@ public class VesselMapperImpl implements VesselMapper {
     return VesselDTO.builder()
         .mmsi(vessel.getMmsi())
         .type(vessel.getVesselType().getName())
-        .status(vesselHistoryDataService.getLastVesselHistoryData(vessel.getMmsi())
+        .status(vesselHistoryDataService.getLastVesselHistoryDataForMmsi(vessel.getMmsi())
                     .map(vhd -> vhd.getVesselStatus().getName())
                     .orElse(NOT_DEFINED_DEFAULT_ALSO_USED_BY_AIS_SART_UNDER_TEST))
         .build();

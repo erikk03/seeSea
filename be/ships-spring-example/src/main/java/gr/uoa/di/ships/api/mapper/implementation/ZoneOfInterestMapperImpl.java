@@ -30,6 +30,7 @@ public class ZoneOfInterestMapperImpl implements ZoneOfInterestMapper {
         .maxSpeed(setZoneOfInterestOptionsDTO.getMaxSpeed())
         .entersZone(setZoneOfInterestOptionsDTO.isEntersZone())
         .exitsZone(setZoneOfInterestOptionsDTO.isExitsZone())
+        .collisionMonitoring(setZoneOfInterestOptionsDTO.isCollisionMonitoring())
         .build();
   }
 
@@ -40,6 +41,7 @@ public class ZoneOfInterestMapperImpl implements ZoneOfInterestMapper {
         .maxSpeed(Objects.nonNull(zoneOfInterestOptions) ? zoneOfInterestOptions.getMaxSpeed() : null)
         .entersZone(Objects.nonNull(zoneOfInterestOptions) && zoneOfInterestOptions.isEntersZone())
         .exitsZone(Objects.nonNull(zoneOfInterestOptions) && zoneOfInterestOptions.isExitsZone())
+        .collisionMonitoring(Objects.nonNull(zoneOfInterestOptions) && zoneOfInterestOptions.isCollisionMonitoring())
         .build();
   }
 }

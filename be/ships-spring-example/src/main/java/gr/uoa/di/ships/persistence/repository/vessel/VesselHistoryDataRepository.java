@@ -31,5 +31,21 @@ public interface VesselHistoryDataRepository extends JpaRepository<VesselHistory
       nativeQuery = true)
   Optional<VesselHistoryData> findLastVesselHistoryDataForMmsi(@Param("mmsi") String mmsi);
 
+  @Query(value = """
+      SELECT vhd.*
+      FROM vessel_history_data vhd
+      JOIN (
+          SELECT vessel_mmsi, MAX(timestamp) AS max_timestamp
+          FROM vessel_history_data
+          GROUP BY vessel_mmsi
+      ) t1 ON vhd.vessel_mmsi = t1.vessel_mmsi AND vhd.timestamp = t1.max_timestamp
+      JOIN (
+          SELECT vessel_mmsi, timestamp, MAX(datetime_created) AS max_datetime_created
+          FROM vessel_history_data
+          GROUP BY vessel_mmsi, timestamp
+      ) t2 ON vhd.vessel_mmsi = t2.vessel_mmsi AND vhd.timestamp = t2.timestamp AND vhd.datetime_created = t2.max_datetime_created""",
+      nativeQuery = true)
+  List<VesselHistoryData> findLastVesselHistoryData();
+
   List<VesselHistoryData> findVesselHistoryDataByVessel_Mmsi(String mmsi);
 }

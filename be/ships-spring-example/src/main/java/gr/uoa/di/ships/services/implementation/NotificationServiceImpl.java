@@ -11,8 +11,10 @@ import gr.uoa.di.ships.persistence.repository.NotificationRepository;
 import gr.uoa.di.ships.services.interfaces.NotificationService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
 import gr.uoa.di.ships.services.interfaces.SeeSeaUserDetailsService;
+import gr.uoa.di.ships.services.interfaces.vessel.VesselHistoryDataService;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -30,15 +32,18 @@ public class NotificationServiceImpl implements NotificationService {
   private final SeeSeaUserDetailsService seeSeaUserDetailsService;
   private final NotificationMapper notificationMapper;
   private final RegisteredUserService registeredUserService;
+  private final VesselHistoryDataService vesselHistoryDataService;
 
   public NotificationServiceImpl(NotificationRepository notificationRepository,
                                  SeeSeaUserDetailsService seeSeaUserDetailsService,
                                  NotificationMapper notificationMapper,
-                                 RegisteredUserService registeredUserService) {
+                                 RegisteredUserService registeredUserService,
+                                 VesselHistoryDataService vesselHistoryDataService) {
     this.notificationRepository = notificationRepository;
     this.seeSeaUserDetailsService = seeSeaUserDetailsService;
     this.notificationMapper = notificationMapper;
     this.registeredUserService = registeredUserService;
+    this.vesselHistoryDataService = vesselHistoryDataService;
   }
 
   @Override
@@ -72,7 +77,7 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
   public boolean violatesMaxSpeed(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData) {
-    double currentDistance = getHaversineDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
+    double currentDistance = getHaversineDistanceWithZoneOfInterestCenter(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
     if (user.getZoneOfInterest().getRadius() < currentDistance || Objects.isNull(user.getZoneOfInterestOptions().getMaxSpeed())) {
       return false;
     }
@@ -91,12 +96,12 @@ public class NotificationServiceImpl implements NotificationService {
     if (!user.getZoneOfInterestOptions().isEntersZone()) {
       return false;
     }
-    double currentDistance = getHaversineDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
+    double currentDistance = getHaversineDistanceWithZoneOfInterestCenter(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
     double radius = user.getZoneOfInterest().getRadius();
     if (Objects.isNull(previousVesselData)) {
       return currentDistance <= radius;
     } else {
-      double previousDistance = getHaversineDistance(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
+      double previousDistance = getHaversineDistanceWithZoneOfInterestCenter(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
       return previousDistance > radius && currentDistance <= radius;
     }
   }
@@ -106,20 +111,50 @@ public class NotificationServiceImpl implements NotificationService {
     if (!user.getZoneOfInterestOptions().isExitsZone()) {
       return false;
     }
-    double currentDistance = getHaversineDistance(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
+    double currentDistance = getHaversineDistanceWithZoneOfInterestCenter(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
     double radius = user.getZoneOfInterest().getRadius();
     if (Objects.isNull(previousVesselData)) {
       return false;
     } else {
-      double previousDistance = getHaversineDistance(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
+      double previousDistance = getHaversineDistanceWithZoneOfInterestCenter(user, previousVesselData.getLatitude(), previousVesselData.getLongitude());
       return previousDistance <= radius && currentDistance > radius;
     }
   }
 
-  private static double getHaversineDistance(RegisteredUser user, double vesselLatitude, double vesselLongitude) {
+  @Override
+  public List<String> collisionWarningWithVessels(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData) {
+    List<String> vesselsMmsisWithCollisionWarning = new ArrayList<>();
+    double currentDistance = getHaversineDistanceWithZoneOfInterestCenter(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
+    if (user.getZoneOfInterest().getRadius() < currentDistance || !user.getZoneOfInterestOptions().isExitsZone()) {
+      return vesselsMmsisWithCollisionWarning;
+    }
+
+    //todo: add to this logic
+    List<VesselHistoryData> vesselHistoryData = vesselHistoryDataService.getLastVesselHistoryData();
+    vesselHistoryData.stream()
+        .filter(historyData -> user.getZoneOfInterest().getRadius() >= getHaversineDistanceWithZoneOfInterestCenter(user, historyData.getLatitude(), historyData.getLongitude()))
+        .forEach(historyData -> {
+          double distanceBetweenVessels = calculateHaversineDistance(
+              historyData.getLatitude(), historyData.getLongitude(), jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble()
+          );
+          if (distanceBetweenVessels < 100000 && !historyData.getVessel().getMmsi().equals(jsonNodeToBeSent.get("mmsi").asText())) {
+            vesselsMmsisWithCollisionWarning.add(historyData.getVessel().getMmsi());
+          }
+        });
+
+    return vesselsMmsisWithCollisionWarning;
+  }
+
+  private static double getHaversineDistanceWithZoneOfInterestCenter(RegisteredUser user, double vesselLatitude, double vesselLongitude) {
+    double zoiLatitude = user.getZoneOfInterest().getCenterPointLatitude();
+    double zoiLongitude = user.getZoneOfInterest().getCenterPointLongitude();
+    return calculateHaversineDistance(vesselLatitude, vesselLongitude, zoiLatitude, zoiLongitude);
+  }
+
+  private static double calculateHaversineDistance(double vesselLatitude, double vesselLongitude, double latitude, double longitude) {
     double R = 6371000; // Earth radius in meters
-    double lat1 = Math.toRadians(user.getZoneOfInterest().getCenterPointLatitude());
-    double lon1 = Math.toRadians(user.getZoneOfInterest().getCenterPointLongitude());
+    double lat1 = Math.toRadians(latitude);
+    double lon1 = Math.toRadians(longitude);
     double lat2 = Math.toRadians(vesselLatitude);
     double lon2 = Math.toRadians(vesselLongitude);
 
@@ -132,7 +167,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c; // distance in meters
+    return R * c;
   }
 
   private void validateDeletion(Long notificationId, Long userId) {

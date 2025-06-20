@@ -16,7 +16,9 @@ public interface VesselHistoryDataService {
 
   void deleteOldVesselHistoryData();
 
-  Optional<VesselHistoryData> getLastVesselHistoryData(String mmsi);
+  Optional<VesselHistoryData> getLastVesselHistoryDataForMmsi(String mmsi);
+
+  List<VesselHistoryData> getLastVesselHistoryData();
 
   List<VesselHistoryDataDTO> getVesselHistoryForTwelveHours(String mmsi);
 }
