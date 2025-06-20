@@ -137,7 +137,7 @@ public class NotificationServiceImpl implements NotificationService {
           double distanceBetweenVessels = calculateHaversineDistance(
               historyData.getLatitude(), historyData.getLongitude(), jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble()
           );
-          if (distanceBetweenVessels < 100000 && !historyData.getVessel().getMmsi().equals(jsonNodeToBeSent.get("mmsi").asText())) {
+          if (distanceBetweenVessels < 1000 && !historyData.getVessel().getMmsi().equals(jsonNodeToBeSent.get("mmsi").asText())) {
             vesselsMmsisWithCollisionWarning.add(historyData.getVessel().getMmsi());
           }
         });
