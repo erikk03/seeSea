@@ -167,7 +167,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c;
+    return R * c; // distance in meters
   }
 
   private void validateDeletion(Long notificationId, Long userId) {
