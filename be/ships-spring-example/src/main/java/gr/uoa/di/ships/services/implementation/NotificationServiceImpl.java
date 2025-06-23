@@ -125,7 +125,7 @@ public class NotificationServiceImpl implements NotificationService {
   public List<String> collisionWarningWithVessels(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData) {
     List<String> vesselsMmsisWithCollisionWarning = new ArrayList<>();
     double currentDistance = getHaversineDistanceWithZoneOfInterestCenter(user, jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble());
-    if (user.getZoneOfInterest().getRadius() < currentDistance || !user.getZoneOfInterestOptions().isExitsZone()) {
+    if (user.getZoneOfInterest().getRadius() < currentDistance || !user.getZoneOfInterestOptions().isCollisionMonitoring()) {
       return vesselsMmsisWithCollisionWarning;
     }
 
@@ -137,12 +137,16 @@ public class NotificationServiceImpl implements NotificationService {
           double distanceBetweenVessels = calculateHaversineDistance(
               historyData.getLatitude(), historyData.getLongitude(), jsonNodeToBeSent.get("lat").asDouble(), jsonNodeToBeSent.get("lon").asDouble()
           );
-          if (distanceBetweenVessels < 1000 && !historyData.getVessel().getMmsi().equals(jsonNodeToBeSent.get("mmsi").asText())) {
+          if (distanceBetweenVessels < 1000 && verifyDifferentVessels(jsonNodeToBeSent, historyData)) {
             vesselsMmsisWithCollisionWarning.add(historyData.getVessel().getMmsi());
           }
         });
 
     return vesselsMmsisWithCollisionWarning;
+  }
+
+  private static boolean verifyDifferentVessels(ObjectNode jsonNodeToBeSent, VesselHistoryData historyData) {
+    return !historyData.getVessel().getMmsi().equals(jsonNodeToBeSent.get("mmsi").asText());
   }
 
   private static double getHaversineDistanceWithZoneOfInterestCenter(RegisteredUser user, double vesselLatitude, double vesselLongitude) {
