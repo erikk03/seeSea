@@ -108,7 +108,7 @@ public class VesselHistoryDataServiceImplTest {
   }
 
   @Test
-  void getLastVesselHistoryData() {
+  void getLastVesselHistoryDataForMmsi() {
     // Prepare
     String mmsi = "123456789";
 
@@ -116,7 +116,7 @@ public class VesselHistoryDataServiceImplTest {
         .thenReturn(Optional.of(VesselHistoryData.builder().vessel(Vessel.builder().mmsi(mmsi).build()).build()));
 
     // Execute
-    Optional<VesselHistoryData> result = vesselHistoryDataService.getLastVesselHistoryData(mmsi);
+    Optional<VesselHistoryData> result = vesselHistoryDataService.getLastVesselHistoryDataForMmsi(mmsi);
 
     // Verify
     assertNotNull(result);

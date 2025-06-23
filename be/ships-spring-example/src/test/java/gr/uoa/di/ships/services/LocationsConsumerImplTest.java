@@ -97,7 +97,7 @@ public class LocationsConsumerImplTest {
     user.setId(1L);
     user.setZoneOfInterest(ZoneOfInterest.builder().build());
     user.setZoneOfInterestOptions(ZoneOfInterestOptions.builder().maxSpeed(20f).build());
-    when(vesselHistoryDataService.getLastVesselHistoryData("123456789")).thenReturn(Optional.empty());
+    when(vesselHistoryDataService.getLastVesselHistoryDataForMmsi("123456789")).thenReturn(Optional.empty());
     when(notificationService.violatesMaxSpeed(eq(user), any(), any())).thenReturn(true);
     when(notificationService.entersZone(eq(user), any(), any())).thenReturn(true);
     when(notificationService.exitsZone(eq(user), any(), any())).thenReturn(true);
