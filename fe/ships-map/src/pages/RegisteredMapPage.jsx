@@ -24,6 +24,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
     speedThreshold: null,
     enterZoneEnabled: false,
     exitZoneEnabled: false,
+    collisionsEnabled: false,
   });
   const [zoneDrawing, setZoneDrawing] = useState(false);
   const [zone, setZone] = useState(null);
@@ -162,6 +163,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
           maxSpeed: alertsConfig.speedThreshold,
           entersZone: alertsConfig.enterZoneEnabled,
           exitsZone: alertsConfig.exitZoneEnabled,
+          collisionMonitoring: alertsConfig.collisionsEnabled,
         }),
       });
 
@@ -169,7 +171,9 @@ export default function RegisteredMapPage({ token, onLogout }) {
       setHasActiveAlerts(
         alertsConfig.speedThreshold !== null ||
         alertsConfig.enterZoneEnabled ||
-        alertsConfig.exitZoneEnabled
+        alertsConfig.exitZoneEnabled ||
+        alertsConfig.collisionsEnabled
+
       );
 
       if (!res.ok) throw new Error("Failed to save alerts configuration");
@@ -185,6 +189,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
       speedThreshold: null,
       enterZoneEnabled: false,
       exitZoneEnabled: false,
+      collisionsEnabled: false,
     });
     setHasActiveAlerts(false);
     // Optionally notify backend to clear alerts
@@ -192,6 +197,7 @@ export default function RegisteredMapPage({ token, onLogout }) {
       speedThreshold: null,
       enterZoneEnabled: false,
       exitZoneEnabled: false,
+      collisionsEnabled: false,
     });
   };
 
