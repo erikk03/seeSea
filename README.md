@@ -166,3 +166,8 @@ Follow these steps to run the full system locally:
      npm install
      ./start.sh
      ```
+
+## 🤖 Admin Credentials
+To LogIn as admin you can use:
+- username: admin
+- password: admin
