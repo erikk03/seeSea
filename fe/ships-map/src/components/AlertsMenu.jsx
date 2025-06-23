@@ -15,6 +15,7 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
   const [speedThreshold, setSpeedThreshold] = useState(alerts?.speedThreshold || null);
   const [enterZoneEnabled, setEnterZoneEnabled] = useState(alerts?.enterZoneEnabled || false);
   const [exitZoneEnabled, setExitZoneEnabled] = useState(alerts?.exitZoneEnabled || false);
+  const [collisionsEnabled, setCollisionsEnabled] = useState(alerts?.collisionsEnabled || false);
 
 
   // Fetch current alerts from the backend when the component loads
@@ -33,12 +34,14 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
         setSpeedThreshold(data.maxSpeed ?? null);
         setEnterZoneEnabled(data.entersZone ?? false);
         setExitZoneEnabled(data.exitsZone ?? false);
+        setCollisionsEnabled(data.collisionMonitoring ?? false);
 
         // Notify parent about the fetched data
         onAlertsChange?.({
           speedThreshold: data.maxSpeed ?? null,
           enterZoneEnabled: data.entersZone ?? false,
-          exitZoneEnabled: data.exitsZone ?? false
+          exitZoneEnabled: data.exitsZone ?? false,
+          collisionsEnabled: data.collisionMonitoring ?? false
         });
       } catch (err) {
         console.error("Error fetching alert options:", err);
@@ -65,6 +68,7 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
     setSpeedThreshold(alerts?.speedThreshold || null);
     setEnterZoneEnabled(alerts?.enterZoneEnabled || false);
     setExitZoneEnabled(alerts?.exitZoneEnabled || false);
+    setCollisionsEnabled(alerts?.collisionsEnabled || false);
   }, [alerts]);
 
 
@@ -76,23 +80,29 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
     }
 
     setSpeedThreshold(parsedValue);
-    onAlertsChange?.({ speedThreshold: parsedValue, enterZoneEnabled, exitZoneEnabled });
+    onAlertsChange?.({ speedThreshold: parsedValue, enterZoneEnabled, exitZoneEnabled, collisionsEnabled });
   };
 
   const handleEnterToggle = (val) => {
     setEnterZoneEnabled(val);
-    onAlertsChange?.({ speedThreshold, enterZoneEnabled: val, exitZoneEnabled });
+    onAlertsChange?.({ speedThreshold, enterZoneEnabled: val, exitZoneEnabled, collisionsEnabled });
   };
 
   const handleExitToggle = (val) => {
     setExitZoneEnabled(val);
-    onAlertsChange?.({ speedThreshold, enterZoneEnabled, exitZoneEnabled: val });
+    onAlertsChange?.({ speedThreshold, enterZoneEnabled, exitZoneEnabled: val, collisionsEnabled });
   };
+
+  const handleCollisionsToggle = (val) => {
+    setCollisionsEnabled(val);
+    onAlertsChange?.({ speedThreshold, enterZoneEnabled, exitZoneEnabled, collisionsEnabled: val });
+  }
 
   const clearAlerts = () => {
     setSpeedThreshold(null);
     setEnterZoneEnabled(false);
     setExitZoneEnabled(false);
+    setCollisionsEnabled(false);
     onClearAlerts?.(); // Notify parent to clear alerts
     onAlertsChange?.({ speedThreshold: null, enterZoneEnabled: false, exitZoneEnabled: false });
   };
@@ -167,6 +177,15 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
               size="sm"
               isSelected={exitZoneEnabled}
               onValueChange={handleExitToggle}
+            />
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Collisions</span>
+            <Switch
+              size="sm"
+              isSelected={collisionsEnabled}
+              onValueChange={handleCollisionsToggle}
             />
           </div>
         </div>

@@ -35,6 +35,9 @@ public class ZoneOfInterestOptions {
   @Column(name = "exits_zone")
   private boolean exitsZone;
 
+  @Column(name = "collision_monitoring")
+  private boolean collisionMonitoring;
+
   @OneToOne(mappedBy = "zoneOfInterestOptions")
   private RegisteredUser registeredUser;
 }

@@ -34,6 +34,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private static final String SPEED_ALERT_DESCRIPTION = "Speed Alert: The vessel [mmsi: %s, speed: %s] is exceeding the maximum speed limit of %s.";
   private static final String ENTERS_ZONE_DESCRIPTION = "Enter Zone Alert: The vessel [mmsi: %s] has entered the zone of interest.";
   private static final String EXITS_ZONE_DESCRIPTION = "Exit Zone Alert: The vessel [mmsi: %s] has exited the zone of interest.";
+  private static final String COLLISION_WARNING_DESCRIPTION = "Collision Warning Alert: The vessel [mmsi: %s] is in collision warning range with the following vessels: %s";
   private final ObjectMapper objectMapper;
 
   private final SimpMessagingTemplate template;
@@ -107,7 +108,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private List<String> getAlertDescriptions(RegisteredUser user, ObjectNode jsonNodeToBeSent) {
     List<String> alertDescriptions = new ArrayList<>();
     String mmsi = jsonNodeToBeSent.get("mmsi").asText();
-    VesselHistoryData previousVesselData = vesselHistoryDataService.getLastVesselHistoryData(mmsi)
+    VesselHistoryData previousVesselData = vesselHistoryDataService.getLastVesselHistoryDataForMmsi(mmsi)
         .orElse(null);
     if (notificationService.violatesMaxSpeed(user, jsonNodeToBeSent, previousVesselData)) {
       alertDescriptions.add(SPEED_ALERT_DESCRIPTION.formatted(mmsi, jsonNodeToBeSent.get("speed").asDouble(), user.getZoneOfInterestOptions().getMaxSpeed()));
@@ -118,7 +119,15 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     if (notificationService.exitsZone(user, jsonNodeToBeSent, previousVesselData)) {
       alertDescriptions.add(EXITS_ZONE_DESCRIPTION.formatted(mmsi));
     }
+    List<String> vesselsMmsis = notificationService.collisionWarningWithVessels(user, jsonNodeToBeSent, previousVesselData);
+    if (!vesselsMmsis.isEmpty()) {
+      alertDescriptions.add(COLLISION_WARNING_DESCRIPTION.formatted(mmsi, getStringFromList(vesselsMmsis)));
+    }
     return alertDescriptions;
+  }
+
+  private static String getStringFromList(List<String> items) {
+    return "[" + String.join(", ", items) + "]";
   }
 
   private void sentToAnonymousUsers(JsonNode jsonNode) {

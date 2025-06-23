@@ -88,6 +88,7 @@ public class ZoneOfInterestServiceImpl implements ZoneOfInterestService {
       zoneOfInterestOptions.setMaxSpeed(setZoneOfInterestOptionsDTO.getMaxSpeed());
       zoneOfInterestOptions.setEntersZone(setZoneOfInterestOptionsDTO.isEntersZone());
       zoneOfInterestOptions.setExitsZone(setZoneOfInterestOptionsDTO.isExitsZone());
+      zoneOfInterestOptions.setCollisionMonitoring(setZoneOfInterestOptionsDTO.isCollisionMonitoring());
     }
     resetZoneOfInterestDateTimeCreated(registeredUser);
     registeredUserService.updateRegisteredUser(registeredUser);

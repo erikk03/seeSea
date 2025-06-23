@@ -58,8 +58,13 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
   }
 
   @Override
-  public Optional<VesselHistoryData> getLastVesselHistoryData(String mmsi) {
+  public Optional<VesselHistoryData> getLastVesselHistoryDataForMmsi(String mmsi) {
     return vesselHistoryDataRepository.findLastVesselHistoryDataForMmsi(mmsi);
+  }
+
+  @Override
+  public List<VesselHistoryData> getLastVesselHistoryData() {
+    return vesselHistoryDataRepository.findLastVesselHistoryData();
   }
 
   @Override

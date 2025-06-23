@@ -18,4 +18,6 @@ public interface NotificationService {
   boolean entersZone(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData);
 
   boolean exitsZone(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData);
+
+  List<String> collisionWarningWithVessels(RegisteredUser user, ObjectNode jsonNodeToBeSent, VesselHistoryData previousVesselData);
 }

@@ -15,4 +15,5 @@ public class SetZoneOfInterestOptionsDTO {
   private Float maxSpeed;
   private boolean entersZone;
   private boolean exitsZone;
+  private boolean collisionMonitoring;
 }
