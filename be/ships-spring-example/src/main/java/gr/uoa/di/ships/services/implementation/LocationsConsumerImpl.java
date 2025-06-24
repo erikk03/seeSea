@@ -8,6 +8,7 @@ import gr.uoa.di.ships.persistence.model.RegisteredUser;
 import gr.uoa.di.ships.persistence.model.vessel.Vessel;
 import gr.uoa.di.ships.persistence.model.vessel.VesselHistoryData;
 import gr.uoa.di.ships.persistence.model.vessel.VesselType;
+import gr.uoa.di.ships.services.interfaces.CollisionWarningService;
 import gr.uoa.di.ships.services.interfaces.FiltersService;
 import gr.uoa.di.ships.services.interfaces.LocationsConsumer;
 import gr.uoa.di.ships.services.interfaces.NotificationService;
@@ -45,6 +46,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
   private final VesselService vesselService;
   private final VesselTypeService vesselTypeService;
   private final NotificationService notificationService;
+  private final CollisionWarningService collisionWarningService;
 
   public LocationsConsumerImpl(ObjectMapper objectMapper,
                                SimpMessagingTemplate template,
@@ -54,7 +56,8 @@ public class LocationsConsumerImpl implements LocationsConsumer {
                                VesselStatusService vesselStatusService,
                                VesselService vesselService,
                                VesselTypeService vesselTypeService,
-                               NotificationService notificationService) {
+                               NotificationService notificationService,
+                               CollisionWarningService collisionWarningService) {
     this.objectMapper = objectMapper;
     this.template = template;
     this.vesselHistoryDataService = vesselHistoryDataService;
@@ -64,6 +67,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     this.vesselService = vesselService;
     this.vesselTypeService = vesselTypeService;
     this.notificationService = notificationService;
+    this.collisionWarningService = collisionWarningService;
   }
 
   @KafkaListener(topics = "${kafka.topic}")
@@ -119,7 +123,7 @@ public class LocationsConsumerImpl implements LocationsConsumer {
     if (notificationService.exitsZone(user, jsonNodeToBeSent, previousVesselData)) {
       alertDescriptions.add(EXITS_ZONE_DESCRIPTION.formatted(mmsi));
     }
-    List<String> vesselsMmsis = notificationService.collisionWarningWithVessels(user, jsonNodeToBeSent, previousVesselData);
+    List<String> vesselsMmsis = collisionWarningService.collisionWarningWithVessels(user, jsonNodeToBeSent, previousVesselData);
     if (!vesselsMmsis.isEmpty()) {
       alertDescriptions.add(COLLISION_WARNING_DESCRIPTION.formatted(mmsi, getStringFromList(vesselsMmsis)));
     }
