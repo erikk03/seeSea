@@ -1,4 +1,4 @@
-# SeeSea – Backend (Spring Boot Java + MSSQL)
+# seeSea – Backend (Spring Boot Java + MSSQL)
 
 This is the backend for the **SeeSea** project, built with Spring Boot, Java, MSSQL and many more!
 
