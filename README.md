@@ -172,4 +172,17 @@ Follow these steps to run the full system locally:
 ## 🤖 Admin Credentials
 To LogIn as admin you can use:
 - username: admin
-- password: admin
+- password: Admin123@
+
+## 💥 Collision Detection (Bonus task)
+Checks for collisions between 2 or more vessels and returns an alert.
+- Motionless vessels are skipped from the calculations (cannot collide with others, but others can collide with them)
+- If vessels have a distance greater than 10.000 meters collision check will not be calculated.
+- A distance greater than 1.000 meters is considered safe (no alerts will be sent, but collision checks will be made).
+- Collision detection is based on a 15-minute predictive horizon. ( if a CPA distance smaller than 1.000 meters is to be reached in the next 15 minutes, an alert will be sent)
+
+CPA Reference:
+[On the closest point of approach (CPA)](https://pierdusud.com/en/on-the-closest-point-of-approach)
+
+
+
