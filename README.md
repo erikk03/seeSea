@@ -1,4 +1,5 @@
-![alt text](https://github.com/erikk03/seeSea/blob/main/fe/ships-map/public/logo.png)
+<img src="https://github.com/erikk03/seeSea/blob/main/fe/ships-map/public/logo.png?raw=true"
+     alt="SeeSea logo" width="250" />
 
 # Α VTS (Vessel Traffic Services) App
 
