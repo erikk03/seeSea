@@ -19,7 +19,7 @@ public class CollisionWarningServiceImpl implements CollisionWarningService {
 
   private static final double DISTANCE_TO_CHECK_FOR_ALERTS = 10000; // do not check for collision warnings if distance is greater than this
   private static final double SAFE_DISTANCE_M = 1000; // “radius” at CPA (Closest Point of Approach)
-  private static final double TIME_HORIZON_S  = 15 * 60; // 30 min look-ahead
+  private static final double TIME_HORIZON_S  = 15 * 60; // 15 min look-ahead
 
   private final VesselHistoryDataService vesselHistoryDataService;
 
