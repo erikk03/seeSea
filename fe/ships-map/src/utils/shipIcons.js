@@ -28,6 +28,7 @@ export const typeToIconUrl = {
   // Leisure and pleasure craft
   "sailingvessel": leisureIcon,
   "pleasurecraft": leisureIcon,
+  "passenger": leisureIcon,
 
   // Security and law enforcement
   "militaryops": securityIcon,

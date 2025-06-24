@@ -79,6 +79,10 @@ public class CollisionWarningServiceImpl implements CollisionWarningService {
   private boolean needsAlarm(VesselHistoryData otherVesselHistoryData, VesselInfoForAlarm vesselInfoForAlarm) {
     boolean alarm = false;
 
+    if ((vesselInfoForAlarm.speed == 0.0 || Double.isNaN(vesselInfoForAlarm.speed)) &&
+            (otherVesselHistoryData.getSpeed() == 0.0 || Double.isNaN(otherVesselHistoryData.getSpeed()))) {
+      return false;
+    }
     // a) build ENU position vectors (metres)
     // r0 = (Dx, Dy)
     Vector2 r0 = enuVector(otherVesselHistoryData.getLatitude(), otherVesselHistoryData.getLongitude(), vesselInfoForAlarm.lat, vesselInfoForAlarm.lon);          // historyData − own
