@@ -1,6 +1,6 @@
 ![alt text](https://github.com/erikk03/seeSea/blob/main/fe/ships-map/public/logo.png)
 
-# Α Vessel Traffic Services (VTS) App
+# Α VTS (Vessel Traffic Services) App
 
 ## 👨‍💻 Team Members – Team 1
 
