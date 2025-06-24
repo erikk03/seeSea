@@ -101,8 +101,6 @@ public class CollisionWarningServiceImpl implements CollisionWarningService {
 
   // Small-angle ENU projection good for ≤ 100 NM.
   private Vector2 enuVector(double lat, double lon, double refLat, double refLon) {
-    double distance = MathUtils.calculateHaversineDistance(lat, lon, refLat, refLon);
-
     double dLat = Math.toRadians(lat - refLat);
     double dLon = Math.toRadians(lon - refLon);
     double meanLat = Math.toRadians((lat + refLat) * 0.5);
