@@ -17,8 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class CollisionWarningServiceImpl implements CollisionWarningService {
 
+  private static final double DISTANCE_TO_CHECK_FOR_ALERTS = 10000; // do not check for collision warnings if distance is greater than this
   private static final double SAFE_DISTANCE_M = 1000; // “radius” at CPA (Closest Point of Approach)
-  private static final double TIME_HORIZON_S  = 30 * 60; // 30 min look-ahead
+  private static final double TIME_HORIZON_S  = 15 * 60; // 30 min look-ahead
 
   private final VesselHistoryDataService vesselHistoryDataService;
 
@@ -62,7 +63,7 @@ public class CollisionWarningServiceImpl implements CollisionWarningService {
     double distanceBetweenVessels = MathUtils.calculateHaversineDistance(
         otherVesselHistoryData.getLatitude(), otherVesselHistoryData.getLongitude(), vesselInfoForAlarm.lat(), vesselInfoForAlarm.lon()
     );
-    return distanceBetweenVessels < SAFE_DISTANCE_M;
+    return distanceBetweenVessels < DISTANCE_TO_CHECK_FOR_ALERTS;
   }
 
   private static VesselInfoForAlarm getVesselAlarmInfo(ObjectNode jsonNodeToBeSent) {
@@ -79,12 +80,16 @@ public class CollisionWarningServiceImpl implements CollisionWarningService {
     boolean alarm = false;
 
     // a) build ENU position vectors (metres)
+    // r0 = (Dx, Dy)
     Vector2 r0 = enuVector(otherVesselHistoryData.getLatitude(), otherVesselHistoryData.getLongitude(), vesselInfoForAlarm.lat, vesselInfoForAlarm.lon);          // historyData − own
 
     // b) velocity vectors (m s-¹)
     Vector2 vOwn = velocityVector(vesselInfoForAlarm.course, vesselInfoForAlarm.speed);
-    Vector2 vTgt = velocityVector(otherVesselHistoryData.getCourse(), otherVesselHistoryData.getSpeed());
-    Vector2 vRel = vTgt.minus(vOwn);
+    Vector2 vTarget = velocityVector(otherVesselHistoryData.getCourse(), otherVesselHistoryData.getSpeed());
+
+    // relative velocity vector (m s-¹)
+    // vRel = (Dvx, Dvy) = vTgt − vOwn
+    Vector2 vRel = vTarget.minus(vOwn);
 
     double vRel2 = vRel.dot(vRel);
 
@@ -112,14 +117,16 @@ public class CollisionWarningServiceImpl implements CollisionWarningService {
   }
 
   // Heading (deg CW from N) & speed (knots) → EN velocity (m s-¹)
-  private Vector2 velocityVector(double cogDeg, double sogKnots) {
-    if (Double.isNaN(cogDeg) || Double.isNaN(sogKnots)) {
+  private Vector2 velocityVector(double courseDeg, double speedKnots) {
+    if (Double.isNaN(courseDeg) || Double.isNaN(speedKnots)) {
       return Vector2.ZERO;
     }
-    double sog = sogKnots * 0.514444; // knots → m s-¹
-    double hdg = Math.toRadians(cogDeg);
-    return new Vector2(sog * Math.sin(hdg), // east
-                                 sog * Math.cos(hdg)); // north
+    double speed = speedKnots * 0.514444; // knots → m s-¹
+    double hdg = Math.toRadians(courseDeg); // heading angle expressed in radians
+    return new Vector2(
+        speed * Math.sin(hdg), // east
+        speed * Math.cos(hdg) // north
+    );
   }
 
   private static boolean verifyDifferentVessels(String ownMmsi, VesselHistoryData otherVesselHistoryData) {
