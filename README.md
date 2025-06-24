@@ -4,13 +4,13 @@
 
 ## 👨‍💻 Team Members – Team 1
 
-| AM           | Name                     | Email                        |
-|--------------|--------------------------|------------------------------|
-| 11152100043  | Kajacka Erik             | sdi2100043@di.uoa.gr         |
-| 11152100045  | Kalampokis Evaggelos     | sdi2100045@di.uoa.gr         |
-| 11152100108  | Moumoulidis Anastasios   | sdi2100108@di.uoa.gr         |
-| 11152100192  | Tselikas Panagiotis      | sdi2100192@di.uoa.gr         |
-| 11152100275  | Chrysos Dimitrios        | sdi2100275@di.uoa.gr         |
+| AM           | Name                                                    | Email                        |
+|--------------|---------------------------------------------------------|------------------------------|
+| 11152100043  | [Kajacka Erik](https://github.com/erikk03)              | sdi2100043@di.uoa.gr         |
+| 11152100045  | [Kalampokis Evaggelos](https://github.com/vaggeliskg)   | sdi2100045@di.uoa.gr         |
+| 11152100108  | [Moumoulidis Anastasios](https://github.com/sdi2100108) | sdi2100108@di.uoa.gr         |
+| 11152100192  | [Tselikas Panagiotis](https://github.com/sdi2100192)    | sdi2100192@di.uoa.gr         |
+| 11152100275  | [Chrysos Dimitrios](https://github.com/DimitrisChrysos) | sdi2100275@di.uoa.gr         |
 
 ## 📝 Project Overview
 
