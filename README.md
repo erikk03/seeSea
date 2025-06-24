@@ -1,5 +1,6 @@
+![alt text](https://github.com/erikk03/softwareTechnology/blob/main/fe/ships-map/public/logo.png)
 
-# seeSea – Real-Time Vessel Monitoring Platform
+# seeSea – Vessel Traffic Services (VTS) App
 
 ## 👨‍💻 Team Members – Team 1
 
@@ -13,9 +14,9 @@
 
 ## 📝 Project Overview
 
-This repository contains the implementation of **"seeSea"**, a Vessel Traffic Service (VTS), with real-time vessel tracking and maritime monitoring developed for the course **Software Technology [YΣ09] – Spring Semester 2025**.
+This repository contains the implementation of **"seeSea"**, a Vessel Traffic Services (VTS) app, with real-time vessel tracking and maritime monitoring developed for the course **Software Technology [YΣ09] – Spring Semester 2025**.
 
-The platform leverages **AIS (Automatic Identification System)** data to support real-time vessel location tracking, zone violation alerts, and fleet management functionality. This system aims to improve maritime situational awareness and supports secure, scalable monitoring for various user roles.
+The platform leverages **AIS (Automatic Identification System)** data to support real-time vessel location tracking, zone violation alerts, and fleet management functionality. This system aims to improve maritime situational awareness and supports secure, and scalable monitoring for various user roles.
 
 ## 🎯 Assignment Objectives
 
