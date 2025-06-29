@@ -94,7 +94,7 @@ SOFTWARETECHNOLOGY/
 
 In order to run properly user must have:
 
-1. **Kafka and Zookeeper must be installed**
+1. **Kafka 3.9.0 and Zookeeper must be installed**
 2. **Docker must be installed**
 3. **Database must be configured as described below:**
     - Pull Image:
