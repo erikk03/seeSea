@@ -98,7 +98,8 @@ In order to run properly user must have:
 2. **Docker must be installed**
 3. **Node.js must be installed**
 4. **Java 21 must be installed**
-5. **Database must be configured as described below:**
+5. **Python, Pandas and Confluent Kafka must be installed**
+6. **Database must be configured as described below:**
     - Pull Image:
       ```bash
       docker pull mcr.microsoft.com/mssql/server:2019-latest
@@ -119,7 +120,7 @@ In order to run properly user must have:
       ```bash
       CREATE DATABASE SeeSea;
       ```
-6. **Folder dataset must be downloaded independently**
+7. **Folder dataset must be downloaded independently**
     - Download Kafka_intro.zip folder from:
       https://owncloud.skel.iit.demokritos.gr/index.php/s/9EsxBK0Bk4ebudk
     - Export folder
