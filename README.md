@@ -96,7 +96,9 @@ In order to run properly user must have:
 
 1. **Kafka 3.9.0 and Zookeeper must be installed**
 2. **Docker must be installed**
-3. **Database must be configured as described below:**
+3. **Node.js must be installed**
+4. **Java 21 must be installed**
+5. **Database must be configured as described below:**
     - Pull Image:
       ```bash
       docker pull mcr.microsoft.com/mssql/server:2019-latest
@@ -117,31 +119,27 @@ In order to run properly user must have:
       ```bash
       CREATE DATABASE SeeSea;
       ```
-4. **Folder dataset must be downloaded independently**
+6. **Folder dataset must be downloaded independently**
     - Download Kafka_intro.zip folder from:
       https://owncloud.skel.iit.demokritos.gr/index.php/s/9EsxBK0Bk4ebudk
     - Export folder
     - Move dataset folder from Kafka_intro/VTS/ to /kafka/VTS/
-
-5. **Node.js must be installed**
-
-6. **Java 21 must be installed**
 
 
 ## 🚀 How to Run
 
 Follow these steps to run the full system locally:
 
-0. **Start the Docker Image using Docker**
+1. **Start the Docker Image using Docker**
 
-1. **Start the Backend**
+2. **Start the Backend**
    - Navigate to the backend directory:
      ```bash
      cd be/ships-spring-example
      ```
    - Build and run the Spring Boot application
 
-2. **Start Kafka**
+3. **Start Kafka**
    - Go to the Kafka folder:
      ```bash
      cd kafka/VTS/kafka_2.12-3.9.0
@@ -151,14 +149,14 @@ Follow these steps to run the full system locally:
      ./start.sh
      ```
 
-3. **Run the Dataset Producer**
+4. **Run the Dataset Producer**
    - Execute the Python script that streams AIS data to Kafka:
       ```bash
       cd kafka/VTS/dataset
       python3 producer.py
       ```
 
-4. **Start the Frontend**
+5. **Start the Frontend**
    - Navigate to the frontend directory:
      ```bash
      cd fe/ships-map
