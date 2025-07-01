@@ -169,8 +169,8 @@ Follow these steps to run the full system locally:
      ```
 
 ## 🤖 Admin Credentials
-To LogIn as admin you can use:
-- username: admin@seesea.com
+To log in as an admin, you can use the following:
+- email: admin@seesea.com
 - password: admin
 
 ## 💥 Collision Detection (Bonus task)
