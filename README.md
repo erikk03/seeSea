@@ -170,8 +170,8 @@ Follow these steps to run the full system locally:
 
 ## 🤖 Admin Credentials
 To LogIn as admin you can use:
-- username: admin
-- password: Admin123@
+- username: admin@seesea.com
+- password: admin
 
 ## 💥 Collision Detection (Bonus task)
 Checks for collisions between 2 or more vessels and returns an alert.
