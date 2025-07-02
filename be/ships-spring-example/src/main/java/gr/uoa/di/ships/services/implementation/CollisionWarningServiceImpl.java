@@ -35,13 +35,9 @@ public class CollisionWarningServiceImpl implements CollisionWarningService {
         || !vesselIsInsideZoneOfInterest(user, vesselInfoForAlarm.lat, vesselInfoForAlarm.lon)) {
       return vesselsMmsisWithCollisionWarning;
     }
-
-    //todo: add to this logic
     vesselHistoryDataService.getLastVesselHistoryDataList().stream()
         .filter(historyData -> vesselIsInsideZoneOfInterest(user, historyData.getLatitude(), historyData.getLongitude()))
-        .forEach(otherVesselHistoryData -> {
-          addWarningIfCollisionDanger(otherVesselHistoryData, vesselInfoForAlarm, vesselsMmsisWithCollisionWarning);
-        });
+        .forEach(otherVesselHistoryData -> addWarningIfCollisionDanger(otherVesselHistoryData, vesselInfoForAlarm, vesselsMmsisWithCollisionWarning));
     return vesselsMmsisWithCollisionWarning;
   }
 
