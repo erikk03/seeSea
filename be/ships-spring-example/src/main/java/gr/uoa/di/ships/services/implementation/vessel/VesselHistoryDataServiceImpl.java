@@ -63,7 +63,7 @@ public class VesselHistoryDataServiceImpl implements VesselHistoryDataService {
   }
 
   @Override
-  public List<VesselHistoryData> getLastVesselHistoryData() {
+  public List<VesselHistoryData> getLastVesselHistoryDataList() {
     return vesselHistoryDataRepository.findLastVesselHistoryData();
   }
 

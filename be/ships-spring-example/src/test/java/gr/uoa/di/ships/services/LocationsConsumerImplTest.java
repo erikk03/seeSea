@@ -21,6 +21,7 @@ import gr.uoa.di.ships.persistence.model.vessel.Vessel;
 import gr.uoa.di.ships.persistence.model.vessel.VesselStatus;
 import gr.uoa.di.ships.persistence.model.vessel.VesselType;
 import gr.uoa.di.ships.services.implementation.LocationsConsumerImpl;
+import gr.uoa.di.ships.services.interfaces.CollisionWarningService;
 import gr.uoa.di.ships.services.interfaces.FiltersService;
 import gr.uoa.di.ships.services.interfaces.NotificationService;
 import gr.uoa.di.ships.services.interfaces.RegisteredUserService;
@@ -62,6 +63,9 @@ public class LocationsConsumerImplTest {
 
   @Mock
   private NotificationService notificationService;
+
+  @Mock
+  private CollisionWarningService collisionWarningService;
 
   @InjectMocks
   private LocationsConsumerImpl locationsConsumer;

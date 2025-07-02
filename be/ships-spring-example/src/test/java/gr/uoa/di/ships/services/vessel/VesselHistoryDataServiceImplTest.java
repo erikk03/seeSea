@@ -108,7 +108,7 @@ public class VesselHistoryDataServiceImplTest {
   }
 
   @Test
-  void getLastVesselHistoryDataForMmsi() {
+  void getLastVesselHistoryDataListForMmsi() {
     // Prepare
     String mmsi = "123456789";
 

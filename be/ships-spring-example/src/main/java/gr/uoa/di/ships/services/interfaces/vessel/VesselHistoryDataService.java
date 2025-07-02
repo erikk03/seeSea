@@ -18,7 +18,7 @@ public interface VesselHistoryDataService {
 
   Optional<VesselHistoryData> getLastVesselHistoryDataForMmsi(String mmsi);
 
-  List<VesselHistoryData> getLastVesselHistoryData();
+  List<VesselHistoryData> getLastVesselHistoryDataList();
 
   List<VesselHistoryDataDTO> getVesselHistoryForTwelveHours(String mmsi);
 }
