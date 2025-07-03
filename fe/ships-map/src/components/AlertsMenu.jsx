@@ -151,6 +151,7 @@ export default function AlertsMenu({ alerts, onAlertsChange, onStartZoneSelectio
 
         <div className="flex flex-col gap-2">
           <NumberInput
+            minValue={0.1}
             step={0.1}
             size="sm"
             label="Speed Threshold (knots)"
