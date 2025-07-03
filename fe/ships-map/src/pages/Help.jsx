@@ -83,10 +83,6 @@ export default function Help() {
                 You can remove a vessel either from the popup on the map or from the “My Fleet” side menu by clicking the trash icon next to the vessel.
               </AccordionItem>
 
-              <AccordionItem key="10" title="Why do I see vessels in My Fleet after removing them?">
-                Try reopening the “My Fleet” panel or refreshing the page. Sometimes the list takes a moment to update.
-              </AccordionItem>
-
               <AccordionItem key="11" title="What are alerts and when do they appear?">
                 Alerts notify you about important events, like unusual vessel activity or rule violations. They appear in real time for signed-in users.
               </AccordionItem>
