@@ -98,7 +98,7 @@ In order to run properly user must have:
 2. **Docker must be installed (Docker Desktop is also useful)**
 3. **Node.js must be installed**
 4. **Java 21 must be installed**
-5. **Python, Pandas and Confluent Kafka must be installed**
+5. **Python, Pandas, and Confluent Kafka must be installed**
 6. **Database must be configured as described below:**
     - Pull Image:
       ```bash
