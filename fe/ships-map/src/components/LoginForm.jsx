@@ -76,11 +76,6 @@ export default function LoginForm({ onLogin }) {
       >
         Sign In
       </Button>
-      <div className="mt-4 text-sm">
-        <a href="/forgot-password" className="text-[#003C62] hover:underline">
-          Forgot password?
-        </a>
-      </div>
     </form>
   );
 }
