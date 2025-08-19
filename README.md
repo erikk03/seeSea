@@ -19,6 +19,10 @@ This repository contains the implementation of **"seeSea"**, a Vessel Traffic Se
 
 The platform leverages **AIS (Automatic Identification System)** data to support real-time vessel location tracking, zone violation alerts, and fleet management functionality. This system aims to improve maritime situational awareness and supports secure, and scalable monitoring for various user roles.
 
+## 📸 Check out the app in action!
+
+You can find screenshots and showcase images [here](https://github.com/erikk03/seeSea/tree/main/docs/app-showcase)
+
 ## 🎯 Assignment Objectives
 
 As defined in the assignment, the goal was to develop a complete web platform with the following phases:
