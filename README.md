@@ -15,9 +15,9 @@
 
 ## 📝 Project Overview
 
-This repository contains the implementation of **"seeSea"**, a Vessel Traffic Services (VTS) app, with real-time vessel tracking and maritime monitoring developed for the course **Software Technology [YΣ09] – Spring Semester 2025**.
+This repository contains the implementation of **"seeSea"**, a Vessel Traffic Services (VTS) application with real-time vessel tracking and maritime monitoring, developed for the course **Software Engineering – Spring Semester 2025**.
 
-The platform leverages **AIS (Automatic Identification System)** data to support real-time vessel location tracking, zone violation alerts, and fleet management functionality. This system aims to improve maritime situational awareness and supports secure, and scalable monitoring for various user roles.
+The platform leverages **AIS (Automatic Identification System)** data to support real-time vessel location tracking, zone violation alerts, and fleet management functionality. This system aims to improve maritime situational awareness and supports secure and scalable monitoring for various user roles.
 
 ## 📸 Check out the app in action!
 
